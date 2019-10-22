@@ -6,3 +6,5 @@ Externalize easily the plotting process to gnuplot from Rust
 - Time processes
   - Multi-dimension
 - Distributions / Histograms
+- Write proper presentation of the crate:
+ - 
