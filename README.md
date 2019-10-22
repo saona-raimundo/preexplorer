@@ -7,4 +7,5 @@ Externalize easily the plotting process to gnuplot from Rust
   - Multi-dimension
 - Distributions / Histograms
 - Write proper presentation of the crate:
- - 
+  - 
+- 
