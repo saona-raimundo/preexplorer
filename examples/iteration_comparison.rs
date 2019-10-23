@@ -16,7 +16,7 @@ fn main() {
 
     // Create comparison and plot
 
-    external_gnuplot::iteration::Comparison::new(&mut group_of_plottings)
+    external_gnuplot::iteration::Comparison::new(group_of_plottings)
         .set_title("All together")
         .plot(&1)
         .unwrap();
@@ -34,7 +34,7 @@ fn main() {
     let mut group_of_plottings = vec![];
     group_of_plottings.push(external_gnuplot::Iteration::new(data_2.iter()).set_title("Second"));
     let mut comparison_plotting = plotting_1
-        .compare(&mut group_of_plottings)
+        .compare(group_of_plottings)
         .set_title("More comparisons");
 
     // Keep adding more
@@ -42,7 +42,7 @@ fn main() {
     let data_3 = vec![0.1, 1.5, 7., 5.];
     let mut group_of_plottings = vec![];
     group_of_plottings.push(external_gnuplot::Iteration::new(data_3.iter()).set_title("Third"));
-    comparison_plotting.add(&group_of_plottings);
+    comparison_plotting.add(group_of_plottings);
 
     // Plot everything
 

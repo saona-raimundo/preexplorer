@@ -1,22 +1,22 @@
+use crate::errors::SavingError;
 pub use comparison::Comparison;
 
-/// Compare vaious iterations.
+/// Compare various ``Iteration`` types together.
 pub mod comparison;
 
 pub use crate::traits::PlotableStructure;
 
 // Trait bounds
 use core::fmt::Display;
-use failure::{Fallible, ResultExt};
 
 /// Iterator over the data to be consumed when saved or plotted. Can also be compared with other Iteration types.
-/// 
+///
 /// # Examples
-/// 
-/// ```
-/// 
+///
+/// ```no_run
+///
 /// use external_gnuplot::prelude::*;
-/// 
+///
 /// let data = vec![0, 1, 2, 3, 4];
 /// let plotting = Iteration::new(data.iter())
 ///     .set_title("My Title")
@@ -25,8 +25,8 @@ use failure::{Fallible, ResultExt};
 /// ```
 ///
 /// # Remarks
-/// 
-/// See ``compare`` method to compare two or more data sets. 
+///
+/// See ``compare`` method to compare two or more data sets.
 ///
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
@@ -63,22 +63,21 @@ where
         self
     }
 
-
-
-    /// Compare various ``Iteration`` types together. 
-    /// 
+    /// Compare various ``Iteration`` types together.
+    ///
     /// You can either put all together in a vector, or add them to a ``Comparison``
-    /// 
+    ///
     /// # Remarks
     ///
-    /// Titles of ``Iteration`` types involved in a ``Comparison`` are presented as legend. 
-    /// 
+    /// Titles of ``Iteration`` types involved in a ``Comparison`` are presented as legend.
+    ///
     /// # Examples
-    /// 
-    /// Compare many ``Iteration`` types by gathering all first. 
-    /// ```
+    ///
+    /// Compare many ``Iteration`` types by gathering all first.
+    ///
+    /// ```no_run
     /// use external_gnuplot::prelude::*;
-    /// 
+    ///
     /// // Computing the data
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
@@ -92,17 +91,17 @@ where
     ///
     /// // Create comparison and plot
     ///
-    /// external_gnuplot::iteration::Comparison::new(&mut group_of_plottings)
+    /// external_gnuplot::iteration::Comparison::new(group_of_plottings)
     ///     .set_title("All together")
     ///     .plot(&"my_serie_name")
     ///     .unwrap();
     /// ```
-    /// 
-    /// Compare some, keep computing, add to the comparison and then save/plot all together. 
-    /// 
-    /// ```
+    ///
+    /// Compare some, keep computing, add to the comparison and then save/plot all together.
+    ///
+    /// ```no_run
     /// use external_gnuplot::prelude::*;
-    /// 
+    ///
     /// // First iteration
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
@@ -114,7 +113,7 @@ where
     /// let mut group_of_plottings = vec![];
     /// group_of_plottings.push(external_gnuplot::Iteration::new(data_2.iter()).set_title("Second"));
     /// let mut comparison_plotting = plotting_1
-    ///     .compare(&mut group_of_plottings)
+    ///     .compare(group_of_plottings)
     ///     .set_title("More comparisons");
     ///
     /// // Keep adding more
@@ -122,16 +121,16 @@ where
     /// let data_3 = vec![0.1, 1.5, 7., 5.];
     /// let mut group_of_plottings = vec![];
     /// group_of_plottings.push(external_gnuplot::Iteration::new(data_3.iter()).set_title("Third"));
-    /// comparison_plotting.add(&group_of_plottings);
+    /// comparison_plotting.add(group_of_plottings);
     ///
     /// // Plot everything
     ///
     /// comparison_plotting.plot(&2).unwrap();
     /// ```
-    /// 
+    ///
     pub fn compare(
         self,
-        anothers: &mut std::vec::Vec<crate::iteration::Iteration<I>>,
+        mut anothers: std::vec::Vec<crate::iteration::Iteration<I>>,
     ) -> crate::iteration::comparison::Comparison<I> {
         anothers.push(self);
 
@@ -144,21 +143,20 @@ where
     I: Iterator + Clone,
     I::Item: Display,
 {
-	/// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution. 
-	/// 
-	/// # Remark
-	/// 
-	/// It is inteded for when one only wants to save the data, and not call any plotting
-	/// during the Rust program execution. Posterior plotting can easily be done with the 
-	/// quick template gnuplot script saved under ``plots`` directory. 
-    fn save<S: Display>(mut self, serie: &S) -> Fallible<()> {
-
-    	self.write_plot_script(serie)?;
+    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
+    ///
+    /// # Remark
+    ///
+    /// It is inteded for when one only wants to save the data, and not call any plotting
+    /// during the Rust program execution. Posterior plotting can easily be done with the
+    /// quick template gnuplot script saved under ``plots`` directory.
+    fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
+        self.write_plot_script(serie)?;
 
         // Files creation
 
         let data_dir = "data";
-        std::fs::create_dir_all(data_dir).unwrap();
+        std::fs::create_dir_all(data_dir)?;
 
         let data_name = &format!("{}.txt", serie);
         let path = &format!("{}\\{}", data_dir, data_name);
@@ -180,18 +178,18 @@ where
 
         // Write the data
 
-        std::fs::write(path, data_gnuplot).context("Failed to save simulation.")?;
+        std::fs::write(path, data_gnuplot)?;
 
         Ok(())
     }
 
-    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it. 
-    /// 
+    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
+    ///
     /// # Remark
-    /// 
-    /// The plot will be executed asyncroniously and idependently of the Rust program. 
-    /// 
-    fn plot<S: Display>(self, serie: &S) -> Fallible<()> {
+    ///
+    /// The plot will be executed asyncroniously and idependently of the Rust program.
+    ///
+    fn plot<S: Display>(self, serie: &S) -> Result<(), SavingError> {
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
@@ -204,10 +202,10 @@ where
         Ok(())
     }
 
-    /// Write simple gnuplot script for this type of data. 
-    /// 
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Fallible<()> {
-        std::fs::create_dir_all("plots").unwrap();
+    /// Write simple gnuplot script for this type of data.
+    ///
+    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<(), SavingError> {
+        std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
         let mut gnuplot_script = String::new();
@@ -239,10 +237,6 @@ where
     }
 }
 
-
-
-
-
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct IterationOptions {
     title: Option<String>,
@@ -269,5 +263,3 @@ impl IterationOptions {
         self.logy = Some(logy);
     }
 }
-
-

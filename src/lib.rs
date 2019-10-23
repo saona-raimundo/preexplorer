@@ -27,6 +27,9 @@ pub mod process;
 /// Common traits.
 pub mod traits;
 
+/// Errors wrapper from writting data
+pub mod errors;
+
 pub use iteration::Iteration;
 // pub use process::Process;
 // pub use distribution::Distribution;

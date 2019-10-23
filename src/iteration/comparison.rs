@@ -1,25 +1,26 @@
-/// Various iterations mixed together to be compared
+use crate::errors::SavingError;
 pub use crate::traits::PlotableStructure;
 
 // Trait bounds
 use core::fmt::Display;
-use failure::Fallible;
 
+/// See ``Iteration`` documentation for further use.
+///
 #[derive(Debug, PartialEq, PartialOrd)]
-pub struct Comparison<'a, I>
+pub struct Comparison<I>
 where
     I: Iterator + Clone,
     I::Item: Display,
 {
-    pub(crate) data_set: &'a mut Vec<crate::iteration::Iteration<I>>,
+    pub(crate) data_set: Vec<crate::iteration::Iteration<I>>,
     pub(crate) options: crate::iteration::IterationOptions,
 }
-impl<'a, I> Comparison<'a, I>
+impl<I> Comparison<I>
 where
     I: Iterator + Clone,
     I::Item: Display,
 {
-    pub fn new(data_set: &'a mut Vec<crate::iteration::Iteration<I>>) -> Comparison<'a, I> {
+    pub fn new(data_set: Vec<crate::iteration::Iteration<I>>) -> Comparison<I> {
         let options = crate::iteration::IterationOptions::default();
 
         Comparison { data_set, options }
@@ -38,17 +39,24 @@ where
         self
     }
 
-    pub fn add(&mut self, simulations: &Vec<crate::iteration::Iteration<I>>) {
-        self.data_set.extend_from_slice(simulations)
+    pub fn add(&mut self, simulations: Vec<crate::iteration::Iteration<I>>) {
+        self.data_set.extend_from_slice(&simulations)
     }
 }
 
-impl<'a, I> crate::traits::PlotableStructure for Comparison<'a, I>
+impl<I> crate::traits::PlotableStructure for Comparison<I>
 where
     I: Iterator + Clone,
     I::Item: Display,
 {
-    fn save<S: Display>(self, serie: &S) -> Fallible<()> {
+    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
+    ///
+    /// # Remark
+    ///
+    /// It is inteded for when one only wants to save the data, and not call any plotting
+    /// during the Rust program execution. Posterior plotting can easily be done with the
+    /// quick template gnuplot script saved under ``plots`` directory.
+    fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
         for i in (0..self.data_set.len()).rev() {
             match self.data_set.pop() {
                 Some(iteration) => {
@@ -61,7 +69,13 @@ where
         Ok(())
     }
 
-    fn plot<S: Display>(self, serie: &S) -> Fallible<()> {
+    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
+    ///
+    /// # Remark
+    ///
+    /// The plot will be executed asyncroniously and idependently of the Rust program.
+    ///
+    fn plot<S: Display>(self, serie: &S) -> Result<(), SavingError> {
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
@@ -74,8 +88,10 @@ where
         Ok(())
     }
 
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Fallible<()> {
-        std::fs::create_dir_all("plots").unwrap();
+    /// Write simple gnuplot script for this type of data.
+    ///
+    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<(), SavingError> {
+        std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
         let mut gnuplot_script = String::new();
