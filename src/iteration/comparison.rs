@@ -9,7 +9,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data_set: Vec<crate::iteration::Iteration<I>>,
@@ -17,7 +17,7 @@ where
 }
 impl<I> Comparison<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub fn new(data_set: Vec<crate::iteration::Iteration<I>>) -> Comparison<I> {
@@ -39,14 +39,19 @@ where
         self
     }
 
-    pub fn add(&mut self, simulations: Vec<crate::iteration::Iteration<I>>) {
-        self.data_set.extend_from_slice(&simulations)
+    pub fn add<J>(&mut self, anothers: J)
+    where
+        J: IntoIterator<Item = crate::iteration::Iteration<I>>,
+    {
+        for iteration in anothers.into_iter() {
+            self.data_set.push(iteration);
+        }
     }
 }
 
 impl<I> crate::traits::PlotableStructure for Comparison<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -95,26 +100,26 @@ where
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
         let mut gnuplot_script = String::new();
-        gnuplot_script += &format!("set key\n");
+        gnuplot_script += "set key\n";
         if let Some(title) = &self.options.title {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
         if let Some(logx) = &self.options.logx {
-            if *logx == -1.0 {
-                gnuplot_script += &format!("set logscale x\n");
+            if *logx <= 0.0 {
+                gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
         if let Some(logy) = &self.options.logy {
-            if *logy == -1.0 {
-                gnuplot_script += &format!("set logscale y\n");
+            if *logy <= 0.0 {
+                gnuplot_script += "set logscale y\n";
             } else {
                 gnuplot_script += &format!("set logscale y {}\n", logy);
             }
         }
 
-        gnuplot_script += &format!("plot ");
+        gnuplot_script += "plot ";
         for i in 0..self.data_set.len() {
             let legend = match &self.data_set[i].options.title {
                 Some(leg) => String::from(leg),
@@ -125,8 +130,8 @@ where
                 serie, i, legend
             );
         }
-        gnuplot_script += &format!("\n");
-        gnuplot_script += &format!("pause -1\n");
+        gnuplot_script += "\n";
+        gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 

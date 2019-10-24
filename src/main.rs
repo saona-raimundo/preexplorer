@@ -1,9 +1,6 @@
-use external_gnuplot::errors::SavingError;
-use failure::Fail;
+// use external_gnuplot::prelude::*;
 
 fn main() {
-    let e = std::io::Error::new(std::io::ErrorKind::Other, "oh no!");
-    println!("{:?}", e);
+	
 
-    println!("{:?}", SavingError::new(e).cause());
 }

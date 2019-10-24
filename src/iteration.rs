@@ -32,7 +32,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Iteration<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data: I,
@@ -41,7 +41,7 @@ where
 
 impl<I> Iteration<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub fn new(data: I) -> Iteration<I> {
@@ -105,42 +105,42 @@ where
     /// // First iteration
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    /// let plotting_1 = external_gnuplot::Iteration::new(data_1.iter()).set_title("First");
+    /// let plotting_1 = external_gnuplot::Iteration::new(data_1).set_title("First");
     ///
     /// // Add another data
     ///
     /// let data_2 = vec![0., 1.4, 10., 4.];
     /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_2.iter()).set_title("Second"));
+    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_2).set_title("Second"));
     /// let mut comparison_plotting = plotting_1
-    ///     .compare(group_of_plottings)
+    ///     .compare_with(group_of_plottings)
     ///     .set_title("More comparisons");
     ///
     /// // Keep adding more
     ///
     /// let data_3 = vec![0.1, 1.5, 7., 5.];
     /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_3.iter()).set_title("Third"));
+    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_3).set_title("Third"));
     /// comparison_plotting.add(group_of_plottings);
     ///
     /// // Plot everything
     ///
-    /// comparison_plotting.plot(&2).unwrap();
+    /// comparison_plotting.plot(&"my_serie_name").unwrap();
     /// ```
     ///
-    pub fn compare(
-        self,
-        mut anothers: std::vec::Vec<crate::iteration::Iteration<I>>,
-    ) -> crate::iteration::comparison::Comparison<I> {
-        anothers.push(self);
-
-        crate::iteration::comparison::Comparison::new(anothers)
+    pub fn compare_with<J>(self, anothers: J) -> crate::iteration::comparison::Comparison<I>
+    where
+        J: IntoIterator<Item = crate::iteration::Iteration<I>>,
+    {
+        let mut comp = crate::iteration::comparison::Comparison::new(vec![self]);
+        comp.add(anothers.into_iter());
+        comp
     }
 }
 
 impl<I> crate::traits::PlotableStructure for Iteration<I>
 where
-    I: Iterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -150,7 +150,7 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
+    fn save<S: Display>(self, serie: &S) -> Result<(), SavingError> {
         self.write_plot_script(serie)?;
 
         // Files creation
@@ -165,15 +165,8 @@ where
 
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# iteration value\n");
-        let mut counter = 0;
-        loop {
-            match self.data.next() {
-                Some(value) => {
-                    data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
-                    counter += 1;
-                }
-                None => break,
-            }
+        for (counter, value) in self.data.into_iter().enumerate() {
+        	data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }
 
         // Write the data
@@ -209,27 +202,27 @@ where
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
         let mut gnuplot_script = String::new();
-        gnuplot_script += &format!("unset key\n");
+        gnuplot_script += "unset key\n";
         if let Some(title) = &self.options.title {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
         if let Some(logx) = &self.options.logx {
-            if *logx == -1.0 {
-                gnuplot_script += &format!("set logscale x\n");
+            if *logx <= 0.0 {
+                gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
         if let Some(logy) = &self.options.logy {
-            if *logy == -1.0 {
-                gnuplot_script += &format!("set logscale y\n");
+            if *logy <= 0.0 {
+                gnuplot_script += "set logscale y\n";
             } else {
                 gnuplot_script += &format!("set logscale y {}\n", logy);
             }
         }
 
         gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with lines \n", serie);
-        gnuplot_script += &format!("pause -1\n");
+        gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
