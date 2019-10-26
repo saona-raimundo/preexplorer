@@ -18,7 +18,7 @@ use core::fmt::Display;
 /// use external_gnuplot::prelude::*;
 ///
 /// let data = vec![0, 1, 2, 3, 4];
-/// let plotting = Sequence::new(data.iter())
+/// let plotting = Sequence::new(&data)
 ///     .set_title("My Title")
 ///     .set_logx(-1.); // Default for gnuplot
 /// plotting.plot(&"my_serie_name").unwrap();
@@ -85,9 +85,10 @@ where
     ///
     /// // Arrange everything in a vector
     ///
-    /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_1.iter()));
-    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_2.iter()));
+    /// let mut group_of_plottings = vec![
+    ///     external_gnuplot::Sequence::new(&data_1),
+    ///     external_gnuplot::Sequence::new(&data_2)
+    /// ];
     ///
     /// // Create comparison and plot
     ///
@@ -105,13 +106,15 @@ where
     /// // First Sequence
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    /// let plotting_1 = external_gnuplot::Sequence::new(data_1).set_title("First");
+    /// let plotting_1 = external_gnuplot::Sequence::new(&data_1).set_title("First");
     ///
     /// // Add another data
     ///
     /// let data_2 = vec![0., 1.4, 10., 4.];
-    /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_2).set_title("Second"));
+    /// let group_of_plottings = vec![
+    ///     external_gnuplot::Sequence::new(&data_2)
+    ///         .set_title("Second")
+    /// ];
     /// let mut comparison_plotting = plotting_1
     ///     .compare_with(group_of_plottings)
     ///     .set_title("More comparisons");
@@ -119,8 +122,10 @@ where
     /// // Keep adding more
     ///
     /// let data_3 = vec![0.1, 1.5, 7., 5.];
-    /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_3).set_title("Third"));
+    /// let group_of_plottings = vec![
+    ///     external_gnuplot::Sequence::new(&data_3)
+    ///         .set_title("Third")
+    /// ];
     /// comparison_plotting.add(group_of_plottings);
     ///
     /// // Plot everything

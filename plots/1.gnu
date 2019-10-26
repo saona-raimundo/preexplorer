@@ -1,4 +1,3 @@
-set key
-set title "All together"
-plot "data/1_0.txt" using 1:2 with lines title "0", "data/1_1.txt" using 1:2 with lines title "1", 
+unset key
+plot "data/1.txt" using 1:2 with lines 
 pause -1
