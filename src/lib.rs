@@ -7,8 +7,8 @@
 //!
 //! # Philosophy
 //!
-//! Rust is great at computing, making the perfect plot takes times and iterations.
-//! This iterations should be done externally, and do not need Rust computing power.
+//! Rust is great at computing, making the perfect plot takes times and Sequences.
+//! This Sequences should be done externally, and do not need Rust computing power.
 //! Therefore, once you achieve the data in Rust, save it, have a quick glance, and
 //! leave a simple gnuplot-script to start the fine tunning of your perfect plot.
 //!
@@ -20,7 +20,7 @@
 /// Histograms or realizations of the same event that should be compare against each other.
 pub mod distribution;
 /// Process indexed by 1, 2, 3, ...
-pub mod iteration;
+pub mod sequence;
 /// Arbitrarily indexed process like functions or time-series.
 pub mod process;
 
@@ -30,14 +30,14 @@ pub mod traits;
 /// Errors wrapper from writting data
 pub mod errors;
 
-pub use iteration::Iteration;
+pub use sequence::Sequence;
 // pub use process::Process;
 // pub use distribution::Distribution;
 
 /// All you ussually need
 pub mod prelude {
 
-    pub use crate::iteration::Iteration;
+    pub use crate::sequence::Sequence;
     pub use crate::traits::PlotableStructure;
     // pub use crate::process::Process;
     // pub use crate::distribution::Distribution;

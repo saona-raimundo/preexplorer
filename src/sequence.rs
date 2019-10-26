@@ -1,7 +1,7 @@
 use crate::errors::SavingError;
 pub use comparison::Comparison;
 
-/// Compare various ``Iteration`` types together.
+/// Compare various ``Sequence`` types together.
 pub mod comparison;
 
 pub use crate::traits::PlotableStructure;
@@ -9,7 +9,7 @@ pub use crate::traits::PlotableStructure;
 // Trait bounds
 use core::fmt::Display;
 
-/// Iterator over the data to be consumed when saved or plotted. Can also be compared with other Iteration types.
+/// Iterator over the data to be consumed when saved or plotted. Can also be compared with other Sequence types.
 ///
 /// # Examples
 ///
@@ -18,7 +18,7 @@ use core::fmt::Display;
 /// use external_gnuplot::prelude::*;
 ///
 /// let data = vec![0, 1, 2, 3, 4];
-/// let plotting = Iteration::new(data.iter())
+/// let plotting = Sequence::new(data.iter())
 ///     .set_title("My Title")
 ///     .set_logx(-1.); // Default for gnuplot
 /// plotting.plot(&"my_serie_name").unwrap();
@@ -30,24 +30,24 @@ use core::fmt::Display;
 ///
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub struct Iteration<I>
+pub struct Sequence<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data: I,
-    pub(crate) options: IterationOptions,
+    pub(crate) options: SequenceOptions,
 }
 
-impl<I> Iteration<I>
+impl<I> Sequence<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new(data: I) -> Iteration<I> {
-        let options = IterationOptions::default();
+    pub fn new(data: I) -> Sequence<I> {
+        let options = SequenceOptions::default();
 
-        Iteration { data, options }
+        Sequence { data, options }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
@@ -63,17 +63,17 @@ where
         self
     }
 
-    /// Compare various ``Iteration`` types together.
+    /// Compare various ``Sequence`` types together.
     ///
     /// You can either put all together in a vector, or add them to a ``Comparison``
     ///
     /// # Remarks
     ///
-    /// Titles of ``Iteration`` types involved in a ``Comparison`` are presented as legend.
+    /// Titles of ``Sequence`` types involved in a ``Comparison`` are presented as legend.
     ///
     /// # Examples
     ///
-    /// Compare many ``Iteration`` types by gathering all first.
+    /// Compare many ``Sequence`` types by gathering all first.
     ///
     /// ```no_run
     /// use external_gnuplot::prelude::*;
@@ -86,12 +86,12 @@ where
     /// // Arrange everything in a vector
     ///
     /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_1.iter()));
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_2.iter()));
+    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_1.iter()));
+    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_2.iter()));
     ///
     /// // Create comparison and plot
     ///
-    /// external_gnuplot::iteration::Comparison::new(group_of_plottings)
+    /// external_gnuplot::sequence::Comparison::new(group_of_plottings)
     ///     .set_title("All together")
     ///     .plot(&"my_serie_name")
     ///     .unwrap();
@@ -102,16 +102,16 @@ where
     /// ```no_run
     /// use external_gnuplot::prelude::*;
     ///
-    /// // First iteration
+    /// // First Sequence
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    /// let plotting_1 = external_gnuplot::Iteration::new(data_1).set_title("First");
+    /// let plotting_1 = external_gnuplot::Sequence::new(data_1).set_title("First");
     ///
     /// // Add another data
     ///
     /// let data_2 = vec![0., 1.4, 10., 4.];
     /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_2).set_title("Second"));
+    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_2).set_title("Second"));
     /// let mut comparison_plotting = plotting_1
     ///     .compare_with(group_of_plottings)
     ///     .set_title("More comparisons");
@@ -120,7 +120,7 @@ where
     ///
     /// let data_3 = vec![0.1, 1.5, 7., 5.];
     /// let mut group_of_plottings = vec![];
-    /// group_of_plottings.push(external_gnuplot::Iteration::new(data_3).set_title("Third"));
+    /// group_of_plottings.push(external_gnuplot::Sequence::new(data_3).set_title("Third"));
     /// comparison_plotting.add(group_of_plottings);
     ///
     /// // Plot everything
@@ -128,17 +128,17 @@ where
     /// comparison_plotting.plot(&"my_serie_name").unwrap();
     /// ```
     ///
-    pub fn compare_with<J>(self, anothers: J) -> crate::iteration::comparison::Comparison<I>
+    pub fn compare_with<J>(self, anothers: J) -> crate::sequence::comparison::Comparison<I>
     where
-        J: IntoIterator<Item = crate::iteration::Iteration<I>>,
+        J: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
-        let mut comp = crate::iteration::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter());
+        let mut comp = crate::sequence::comparison::Comparison::new(vec![self]);
+        comp.add(anothers.into_iter()); 
         comp
     }
 }
 
-impl<I> crate::traits::PlotableStructure for Iteration<I>
+impl<I> crate::traits::PlotableStructure for Sequence<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -164,7 +164,7 @@ where
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        data_gnuplot.push_str("# iteration value\n");
+        data_gnuplot.push_str("# Sequence value\n");
         for (counter, value) in self.data.into_iter().enumerate() {
         	data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }
@@ -231,19 +231,19 @@ where
 }
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct IterationOptions {
+pub(crate) struct SequenceOptions {
     title: Option<String>,
     logx: Option<f64>,
     logy: Option<f64>,
 }
 
-impl IterationOptions {
-    pub(crate) fn default() -> IterationOptions {
+impl SequenceOptions {
+    pub(crate) fn default() -> SequenceOptions {
         let title = None;
         let logx = None;
         let logy = None;
 
-        IterationOptions { title, logx, logy }
+        SequenceOptions { title, logx, logy }
     }
 
     pub(crate) fn set_title(&mut self, title: String) {

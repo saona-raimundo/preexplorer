@@ -4,7 +4,7 @@ pub use crate::traits::PlotableStructure;
 // Trait bounds
 use core::fmt::Display;
 
-/// See ``Iteration`` documentation for further use.
+/// See ``Sequence`` documentation for further use.
 ///
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
@@ -12,16 +12,16 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub(crate) data_set: Vec<crate::iteration::Iteration<I>>,
-    pub(crate) options: crate::iteration::IterationOptions,
+    pub(crate) data_set: Vec<crate::sequence::Sequence<I>>,
+    pub(crate) options: crate::sequence::SequenceOptions,
 }
 impl<I> Comparison<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new(data_set: Vec<crate::iteration::Iteration<I>>) -> Comparison<I> {
-        let options = crate::iteration::IterationOptions::default();
+    pub fn new(data_set: Vec<crate::sequence::Sequence<I>>) -> Comparison<I> {
+        let options = crate::sequence::SequenceOptions::default();
 
         Comparison { data_set, options }
     }
@@ -41,15 +41,15 @@ where
 
     pub fn add<J>(&mut self, anothers: J)
     where
-        J: IntoIterator<Item = crate::iteration::Iteration<I>>,
+        J: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
-        for iteration in anothers.into_iter() {
-            self.data_set.push(iteration);
+        for sequence in anothers.into_iter() {
+            self.data_set.push(sequence);
         }
     }
 }
 
-impl<I> crate::traits::PlotableStructure for Comparison<I>
+impl<'a, I> crate::traits::PlotableStructure for Comparison<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -64,8 +64,8 @@ where
     fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
         for i in (0..self.data_set.len()).rev() {
             match self.data_set.pop() {
-                Some(iteration) => {
-                    crate::iteration::Iteration::save(iteration, &format!("{}_{}", serie, i))?
+                Some(sequence) => {
+                    crate::sequence::Sequence::save(sequence, &format!("{}_{}", serie, i))?
                 }
                 None => break,
             }
