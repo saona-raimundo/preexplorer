@@ -21,24 +21,22 @@
 pub mod distribution;
 /// Process indexed by 1, 2, 3, ...
 pub mod sequence;
-/// Arbitrarily indexed process like functions or time-series.
+/// Time-series, indexed by a subset of R.
 pub mod process;
 
 /// Common traits.
 pub mod traits;
-
 /// Errors wrapper from writting data
 pub mod errors;
 
 pub use sequence::Sequence;
-// pub use process::Process;
+pub use process::Process;
 // pub use distribution::Distribution;
 
 /// All you ussually need
 pub mod prelude {
 
-    pub use crate::sequence::Sequence;
+	pub use crate as ext;
     pub use crate::traits::PlotableStructure;
-    // pub use crate::process::Process;
     // pub use crate::distribution::Distribution;
 }

@@ -3,11 +3,12 @@ Externalize easily the plotting process to gnuplot from Rust
 
 # To do
 
+- ndsequences
 - Time processes
-  - Multi-dimension
+  - ndprocess
 - Distributions / Histograms
 - Write proper presentation of the crate:
-  - Porpouse
+  - Purpose
   - Installation
     - Recall gnuplot
   - Use with Rust

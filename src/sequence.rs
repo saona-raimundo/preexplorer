@@ -3,6 +3,8 @@ pub use comparison::Comparison;
 
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
+/// Sequence with values with n-dimensions. 
+pub mod ndsequence;
 
 pub use crate::traits::PlotableStructure;
 
@@ -18,7 +20,7 @@ use core::fmt::Display;
 /// use external_gnuplot::prelude::*;
 ///
 /// let data = vec![0, 1, 2, 3, 4];
-/// let plotting = Sequence::new(&data)
+/// let plotting = ext::Sequence::new(&data)
 ///     .set_title("My Title")
 ///     .set_logx(-1.); // Default for gnuplot
 /// plotting.plot(&"my_serie_name").unwrap();
@@ -54,12 +56,12 @@ where
         self.options.set_title(title.to_string());
         self
     }
-    pub fn set_logx(mut self, logx: f64) -> Self {
-        self.options.set_logx(logx);
+    pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
+        self.options.set_logx(logx.into());
         self
     }
-    pub fn set_logy(mut self, logy: f64) -> Self {
-        self.options.set_logy(logy);
+    pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
+        self.options.set_logy(logy.into());
         self
     }
 
@@ -169,7 +171,7 @@ where
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        data_gnuplot.push_str("# Sequence value\n");
+        data_gnuplot.push_str("# index value\n");
         for (counter, value) in self.data.into_iter().enumerate() {
         	data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }

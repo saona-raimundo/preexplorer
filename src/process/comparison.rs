@@ -1,67 +1,38 @@
-//! 
-//! ```math
-//! X: A \subseteq{\mathbb{R}} \to \mathbb{R} \,.
-//! ``` 
-//! 
-
-
 use crate::errors::SavingError;
-pub use comparison::Comparison;
-
-/// Compare various ``Process`` types together.
-pub mod comparison;
-/// Time-series with values in R^n. 
-pub mod ndprocess;
-
 pub use crate::traits::PlotableStructure;
 
 // Trait bounds
 use core::fmt::Display;
 
-/// Iterator over the data to be consumed when saved or plotted. Can also be compared with other ``Process`` types.
+/// See ``Process`` documentation for further use.
 ///
-/// # Examples
-///
-/// ```no_run
-///
-/// use external_gnuplot::prelude::*;
-///
-///	let times = vec![1., 10., 100.];
-///	let values = vec![1, 2, 4];
-/// let plotting = ext::Process::new(times, values)
-///     .set_title("My Title")
-///     .set_logx(-2); 
-/// plotting.plot(&"my_serie_name").unwrap();
-/// ```
-///
-/// # Remarks
-///
-/// See ``compare`` method to compare two or more data sets.
-///
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub struct Process<I, J>
+#[derive(Debug, PartialEq, PartialOrd)]
+pub struct Comparison<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
     J: IntoIterator + Clone,
     J::Item: Display,
 {
-    pub(crate) domain: I,
-    pub(crate) image: J,
-    pub(crate) options: ProcessOptions,
+    pub(crate) data_set: Vec<crate::process::Process<I, J>>,
+    pub(crate) options: crate::process::ProcessOptions,
 }
 
-impl<I, J> Process<I, J>
+impl<I, J> Comparison<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
     J: IntoIterator + Clone,
     J::Item: Display,
 {
-    pub fn new(domain: I, image: J) -> Process<I, J> {
-        let options = ProcessOptions::default();
-
-        Process { domain, image, options }
+    pub fn new<K>(data_set: K) -> Comparison<I, J> 
+    where
+        K: IntoIterator<Item = crate::process::Process<I, J>>,
+    {
+        let options = crate::process::ProcessOptions::default();
+        let data_set = data_set.into_iter()
+            .collect::<Vec<crate::process::Process<I, J>>>();
+        Comparison {data_set , options }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
@@ -77,19 +48,17 @@ where
         self
     }
 
-    /// Pending documentation. 
-    pub fn compare_with<K>(self, anothers: K) -> crate::process::comparison::Comparison<I, J>
+    pub fn add<K>(&mut self, anothers: K)
     where
         K: IntoIterator<Item = crate::process::Process<I, J>>,
     {
-        let mut comp = crate::process::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter()); 
-        comp    	
+        for process in anothers.into_iter() {
+            self.data_set.push(process);
+        }
     }
 }
 
-
-impl<I, J> crate::traits::PlotableStructure for Process<I, J>
+impl<I, J> crate::traits::PlotableStructure for Comparison<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -103,28 +72,15 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(self, serie: &S) -> Result<(), SavingError> {
-        self.write_plot_script(serie)?;
-
-        // Files creation
-
-        let data_dir = "data";
-        std::fs::create_dir_all(data_dir)?;
-
-        let data_name = &format!("{}.txt", serie);
-        let path = &format!("{}\\{}", data_dir, data_name);
-
-        // Create the data structure for gnuplot
-
-        let mut data_gnuplot = String::new();
-        data_gnuplot.push_str("# time value\n");
-        for (time, value) in self.domain.into_iter().zip(self.image.into_iter()) { 
-        	data_gnuplot.push_str(&format!("{}\t{}\n", time, value));
+    fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
+        for i in (0..self.data_set.len()).rev() {
+            match self.data_set.pop() {
+                Some(process) => {
+                    crate::process::Process::save(process, &format!("{}_{}", serie, i))?
+                }
+                None => break,
+            }
         }
-
-        // Write the data
-
-        std::fs::write(path, data_gnuplot)?;
 
         Ok(())
     }
@@ -155,7 +111,7 @@ where
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
         let mut gnuplot_script = String::new();
-        gnuplot_script += "unset key\n";
+        gnuplot_script += "set key\n";
         if let Some(title) = &self.options.title {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
@@ -174,45 +130,22 @@ where
             }
         }
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with lines \n", serie);
+        gnuplot_script += "plot ";
+        for i in 0..self.data_set.len() {
+            let legend = match &self.data_set[i].options.title {
+                Some(leg) => String::from(leg),
+                None => i.to_string(),
+            };
+            gnuplot_script += &format!(
+                "\"data/{}_{}.txt\" using 1:2 with lines title \"{}\", ",
+                serie, i, legend
+            );
+        }
+        gnuplot_script += "\n";
         gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(())
-    }
-}
-
-
-
-
-
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct ProcessOptions
-{
-    title: Option<String>,
-    logx: Option<f64>,
-    logy: Option<f64>,
-}
-
-
-impl ProcessOptions
-{
-    pub(crate) fn default() -> ProcessOptions {
-        let title = None;
-        let logx = None;
-        let logy = None;
-
-        ProcessOptions { title, logx, logy }
-    }
-
-    pub(crate) fn set_title(&mut self, title: String) {
-        self.title = Some(title);
-    }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
-        self.logx = Some(logx);
-    }
-    pub(crate) fn set_logy(&mut self, logy: f64) {
-        self.logy = Some(logy);
     }
 }

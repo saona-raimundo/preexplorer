@@ -1,5 +1,4 @@
 use external_gnuplot::prelude::*;
-use external_gnuplot as ext;
 
 fn main() {
 	let times = vec![1., 10., 100.];

@@ -1,5 +1,0 @@
-# Sequence value
-0	0
-1	1.4
-2	10
-3	4

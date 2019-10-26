@@ -20,22 +20,26 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new(data_set: Vec<crate::sequence::Sequence<I>>) -> Comparison<I> {
+    pub fn new<K>(data_set: K) -> Comparison<I> 
+    where
+        K: IntoIterator<Item = crate::sequence::Sequence<I>>,
+    {
         let options = crate::sequence::SequenceOptions::default();
-
-        Comparison { data_set, options }
+        let data_set = data_set.into_iter()
+            .collect::<Vec<crate::sequence::Sequence<I>>>();
+        Comparison {data_set , options }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
         self.options.set_title(title.to_string());
         self
     }
-    pub fn set_logx(mut self, logx: f64) -> Self {
-        self.options.set_logx(logx);
+    pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
+        self.options.set_logx(logx.into());
         self
     }
-    pub fn set_logy(mut self, logy: f64) -> Self {
-        self.options.set_logy(logy);
+    pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
+        self.options.set_logy(logy.into());
         self
     }
 
@@ -49,7 +53,7 @@ where
     }
 }
 
-impl<'a, I> crate::traits::PlotableStructure for Comparison<I>
+impl<I> crate::traits::PlotableStructure for Comparison<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
