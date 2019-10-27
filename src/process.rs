@@ -1,16 +1,15 @@
-//! 
+//!
 //! ```math
 //! X: A \subseteq{\mathbb{R}} \to \mathbb{R} \,.
-//! ``` 
-//! 
-
+//! ```
+//!
 
 use crate::errors::SavingError;
 pub use comparison::Comparison;
 
 /// Compare various ``Process`` types together.
 pub mod comparison;
-/// Time-series with values in R^n. 
+/// Time-series with values in R^n.
 pub mod ndprocess;
 
 pub use crate::traits::PlotableStructure;
@@ -30,7 +29,7 @@ use core::fmt::Display;
 ///	let values = vec![1, 2, 4];
 /// let plotting = ext::Process::new(times, values)
 ///     .set_title("My Title")
-///     .set_logx(-2); 
+///     .set_logx(-2);
 /// plotting.plot(&"my_serie_name").unwrap();
 /// ```
 ///
@@ -61,7 +60,11 @@ where
     pub fn new(domain: I, image: J) -> Process<I, J> {
         let options = ProcessOptions::default();
 
-        Process { domain, image, options }
+        Process {
+            domain,
+            image,
+            options,
+        }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
@@ -77,17 +80,16 @@ where
         self
     }
 
-    /// Pending documentation. 
+    /// Pending documentation.
     pub fn compare_with<K>(self, anothers: K) -> crate::process::comparison::Comparison<I, J>
     where
         K: IntoIterator<Item = crate::process::Process<I, J>>,
     {
         let mut comp = crate::process::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter()); 
-        comp    	
+        comp.add(anothers.into_iter());
+        comp
     }
 }
-
 
 impl<I, J> crate::traits::PlotableStructure for Process<I, J>
 where
@@ -118,8 +120,8 @@ where
 
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# time value\n");
-        for (time, value) in self.domain.into_iter().zip(self.image.into_iter()) { 
-        	data_gnuplot.push_str(&format!("{}\t{}\n", time, value));
+        for (time, value) in self.domain.into_iter().zip(self.image.into_iter()) {
+            data_gnuplot.push_str(&format!("{}\t{}\n", time, value));
         }
 
         // Write the data
@@ -183,21 +185,14 @@ where
     }
 }
 
-
-
-
-
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct ProcessOptions
-{
+pub(crate) struct ProcessOptions {
     title: Option<String>,
     logx: Option<f64>,
     logy: Option<f64>,
 }
 
-
-impl ProcessOptions
-{
+impl ProcessOptions {
     pub(crate) fn default() -> ProcessOptions {
         let title = None;
         let logx = None;

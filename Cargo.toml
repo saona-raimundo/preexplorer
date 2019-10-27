@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 failure = "0.1"
+num-traits = "0.2"

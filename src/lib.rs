@@ -17,26 +17,25 @@
 //! All data will be saved under the "data" folder in the main directory.
 //! Plots (images or scripts) are saved under the "plots" directory.
 
-/// Histograms or realizations of the same event that should be compare against each other.
+/// Histograms or realizations of the same variable.
 pub mod distribution;
-/// Process indexed by 1, 2, 3, ...
-pub mod sequence;
 /// Time-series, indexed by a subset of R.
 pub mod process;
+/// Process indexed by 1, 2, 3, ...
+pub mod sequence;
 
-/// Common traits.
-pub mod traits;
 /// Errors wrapper from writting data
 pub mod errors;
+/// Common traits.
+pub mod traits;
 
-pub use sequence::Sequence;
+pub use distribution::Distribution;
 pub use process::Process;
-// pub use distribution::Distribution;
+pub use sequence::Sequence;
 
 /// All you ussually need
 pub mod prelude {
 
-	pub use crate as ext;
+    pub use crate as ext;
     pub use crate::traits::PlotableStructure;
-    // pub use crate::distribution::Distribution;
 }

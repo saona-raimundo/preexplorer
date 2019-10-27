@@ -3,7 +3,7 @@ pub use comparison::Comparison;
 
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
-/// Sequence with values with n-dimensions. 
+/// Sequence with values with n-dimensions.
 pub mod ndsequence;
 
 pub use crate::traits::PlotableStructure;
@@ -140,7 +140,7 @@ where
         J: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
         let mut comp = crate::sequence::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter()); 
+        comp.add(anothers.into_iter());
         comp
     }
 }
@@ -173,7 +173,7 @@ where
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# index value\n");
         for (counter, value) in self.data.into_iter().enumerate() {
-        	data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
+            data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }
 
         // Write the data

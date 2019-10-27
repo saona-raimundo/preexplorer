@@ -20,14 +20,15 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new<K>(data_set: K) -> Comparison<I> 
+    pub fn new<K>(data_set: K) -> Comparison<I>
     where
         K: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
         let options = crate::sequence::SequenceOptions::default();
-        let data_set = data_set.into_iter()
+        let data_set = data_set
+            .into_iter()
             .collect::<Vec<crate::sequence::Sequence<I>>>();
-        Comparison {data_set , options }
+        Comparison { data_set, options }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
@@ -65,14 +66,9 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(mut self, serie: &S) -> Result<(), SavingError> {
-        for i in (0..self.data_set.len()).rev() {
-            match self.data_set.pop() {
-                Some(sequence) => {
-                    crate::sequence::Sequence::save(sequence, &format!("{}_{}", serie, i))?
-                }
-                None => break,
-            }
+    fn save<S: Display>(self, serie: &S) -> Result<(), SavingError> {
+        for (counter, sequence) in self.data_set.into_iter().enumerate() {
+            crate::sequence::Sequence::save(sequence, &format!("{}_{}", serie, counter))?
         }
 
         Ok(())

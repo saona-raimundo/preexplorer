@@ -4,11 +4,8 @@ fn main() {
     // Data is an iterator already
 
     let data = 0..10;
-    let plotting = ext::Sequence::new(data)
-        .set_title("My Title")
-        .set_logx(-1.);
+    let plotting = ext::Sequence::new(data).set_title("My Title").set_logx(-1.);
     plotting.plot(&1).unwrap();
-
 
     // Data is a full array
 
@@ -20,5 +17,3 @@ fn main() {
 
     println!("{:?}", data);
 }
-
-
