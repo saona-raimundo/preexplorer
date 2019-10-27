@@ -16,6 +16,9 @@
 //!
 //! All data will be saved under the "data" folder in the main directory.
 //! Plots (images or scripts) are saved under the "plots" directory.
+//! 
+//! Recall that you will need to [install gnuplot](http://www.gnuplot.info/download.html)
+//! to use the crate at its full potential. 
 
 /// Histograms or realizations of the same variable.
 pub mod distribution;
