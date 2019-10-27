@@ -3,10 +3,8 @@ Externalize easily the plotting process to gnuplot from Rust
 
 # To do
 
-- ndsequences
-- Time processes
-  - ndprocess
-- Distributions / Histograms
+- ndimensional variants
+- Generic data to save
 - Write proper presentation of the crate:
   - Purpose
   - Installation
