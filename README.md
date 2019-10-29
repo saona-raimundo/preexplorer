@@ -10,7 +10,7 @@ Rust is meant for computations and plotting is usually an iterative process, don
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
-- Add ``external-gnuplot = "0.0"`` to your ``Cargo.toml`` file under ``[dependencies]``.
+- Add ``external-gnuplot = "0.1"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use external_gnuplot::prelude::*;`` in your binary.
 
 
