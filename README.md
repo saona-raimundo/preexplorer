@@ -1,5 +1,6 @@
 # external_gnuplot
 Handy way to save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
+if you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
 
 
 
