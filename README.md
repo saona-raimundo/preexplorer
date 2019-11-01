@@ -18,6 +18,11 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Add to options
+  - dashtype for each plot
+  - dashtype configuration for each comparisons
+    - on / off automatic change
+    - respect inner options
 - ndimensional variants
 - Generic data to save
 - Write proper presentation of the crate:
