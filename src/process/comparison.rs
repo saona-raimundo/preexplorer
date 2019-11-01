@@ -132,9 +132,12 @@ where
                 None => i.to_string(),
             };
             gnuplot_script += &format!(
-                "\"data/{}_{}.txt\" using 1:2 with lines title \"{}\", ",
-                serie, i, legend
+                "\"data/{}_{}.txt\" using 1:2 with lines title \"{}\" dashtype {}, ",
+                serie, i, legend, i+1
             );
+            if i < self.data_set.len()-1 {
+                gnuplot_script += "\\\n";
+            }
         }
         gnuplot_script += "\n";
         gnuplot_script += "pause -1\n";

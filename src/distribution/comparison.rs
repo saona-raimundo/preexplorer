@@ -159,9 +159,12 @@ where
                 None => i.to_string(),
             };
             gnuplot_script += &format!(
-                "\"data/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with steps title \"{}\", ",
-                serie, i, i, i, i, legend
+                "\"data/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with steps title \"{}\" dashtype {}, ",
+                serie, i, i, i, i, legend, i+1
             );
+            if i < self.data_set.len()-1 {
+                gnuplot_script += "\\\n";
+            }
         }
         gnuplot_script += "\n";
         gnuplot_script += "pause -1\n";
