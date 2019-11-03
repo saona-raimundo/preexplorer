@@ -18,6 +18,13 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Change name to "preexplorer": 
+  - Pre-explore your data, before a proper post-analysis
+- More customization
+  - plot_with_script(&str)
+  - plot_using_script(file)
+  - audify()
+  - sonify()
 - Add to options
   - dashtype for each plot
   - dashtype configuration for each comparisons
