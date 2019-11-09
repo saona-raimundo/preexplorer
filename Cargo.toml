@@ -1,5 +1,5 @@
 [package]
-name = "external_gnuplot"
+name = "preexplorer"
 version = "0.1.0"
 authors = ["Raimundo Saona <rasa200@gmail.com>"]
 edition = "2018"
