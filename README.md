@@ -40,7 +40,6 @@ Rust is meant for computations and plotting is usually an iterative process, don
     - on / off automatic change
     - respect inner options
 - ndimensional variants
-- Generic data to save
 - Write proper presentation of the crate:
   - Purpose
   - Installation
