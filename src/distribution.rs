@@ -6,7 +6,7 @@ pub mod comparison;
 /// Distribution with values with n-dimensions.
 pub mod nddistribution;
 
-pub use crate::traits::PlotableStructure;
+pub use crate::traits::Preexplorable;
 
 // Trait bounds
 use core::fmt::Display;
@@ -18,10 +18,10 @@ use core::fmt::Display;
 ///
 /// ```no_run
 ///
-/// use external_gnuplot::prelude::*;
+/// use preexplorer::prelude::*;
 ///
 /// let values = (0..200).chain(0..50);
-/// ext::Distribution::new(values)
+/// pre::Distribution::new(values)
 /// 	.set_title("My Title")
 /// 	.set_logx(2)
 /// 	.plot(&"my_serie_name").unwrap();
@@ -38,7 +38,7 @@ where
     I::Item: Into<f64> + Display + Copy,
 {
     pub(crate) realizations: I,
-    pub(crate) options: DistributionOptions,
+    pub(crate) config: crate::configuration::Configuration,
 }
 
 impl<I> Distribution<I>
@@ -47,20 +47,20 @@ where
     I::Item: Into<f64> + Display + Copy,
 {
     pub fn new(realizations: I) -> Distribution<I> {
-        let options = DistributionOptions::default();
+        let config = crate::configuration::Configuration::default();
 
         Distribution {
             realizations,
-            options,
+            config,
         }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
-        self.options.set_title(title.to_string());
+        self.config.set_title(title.to_string());
         self
     }
     pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
-        self.options.set_logx(logx.into());
+        self.config.set_logx(logx.into());
         self
     }
 
@@ -76,14 +76,14 @@ where
     ///
     /// ```no_run
     ///
-    /// use external_gnuplot::prelude::*;
+    /// use preexplorer::prelude::*;
     /// let values_1 = (0..200).chain(0..50).chain(0..50);
     /// let values_2 = (100..300).chain(100..220).chain(150..250);
     ///
-    /// ext::Distribution::new(values_1)
+    /// pre::Distribution::new(values_1)
     /// 	.set_title("My legend")
     /// 	.compare_with( vec![
-    /// 		ext::Distribution::new(values_2),
+    /// 		pre::Distribution::new(values_2),
     /// 		])
     /// 	.set_title("My title")
     /// 	.plot(&1).unwrap();
@@ -99,7 +99,7 @@ where
     }
 }
 
-impl<I> crate::traits::PlotableStructure for Distribution<I>
+impl<I> crate::traits::Preexplorable for Distribution<I>
 where
     I: IntoIterator + Clone,
     I::Item: Into<f64> + Display + Copy,
@@ -181,10 +181,10 @@ where
 
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
-        if let Some(title) = &self.options.title {
+        if let Some(title) = &self.config.title() {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
-        if let Some(logx) = &self.options.logx {
+        if let Some(logx) = &self.config.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
@@ -208,27 +208,5 @@ where
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(())
-    }
-}
-
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct DistributionOptions {
-    title: Option<String>,
-    logx: Option<f64>,
-}
-
-impl DistributionOptions {
-    pub(crate) fn default() -> DistributionOptions {
-        let title = None;
-        let logx = None;
-
-        DistributionOptions { title, logx }
-    }
-
-    pub(crate) fn set_title(&mut self, title: String) {
-        self.title = Some(title);
-    }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
-        self.logx = Some(logx);
     }
 }

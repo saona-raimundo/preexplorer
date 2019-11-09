@@ -18,13 +18,22 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Change name to "preexplorer": 
-  - Pre-explore your data, before a proper post-analysis
+- 
 - More customization
-  - plot_with_script(&str)
-  - plot_using_script(file)
-  - audify()
-  - sonify()
+  - Save
+    - header
+      - set_header(false)
+    - use titles when saving the file
+    - extension
+      - use it when saving
+      - calling for it
+      - setting it
+  - Plot
+    - plot_with_script(&str)
+    - plot_using_script(file)
+  - Audio
+    - audify()
+    - sonify()
 - Add to options
   - dashtype for each plot
   - dashtype configuration for each comparisons
@@ -44,4 +53,4 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # Disclaimer
 
-I have no connection with gnuplot and nothing against crates like [gnuplot](https://docs.rs/gnuplot/0.0.32/gnuplot/). 
+I have no connection with the gnuplot project.

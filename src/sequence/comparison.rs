@@ -1,5 +1,5 @@
 use crate::errors::SavingError;
-pub use crate::traits::PlotableStructure;
+pub use crate::traits::Preexplorable;
 
 // Trait bounds
 use core::fmt::Display;
@@ -13,7 +13,7 @@ where
     I::Item: Display,
 {
     pub(crate) data_set: Vec<crate::sequence::Sequence<I>>,
-    pub(crate) options: crate::sequence::SequenceOptions,
+    pub(crate) config: crate::configuration::Configuration,
 }
 impl<I> Comparison<I>
 where
@@ -24,23 +24,23 @@ where
     where
         K: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
-        let options = crate::sequence::SequenceOptions::default();
+        let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
             .collect::<Vec<crate::sequence::Sequence<I>>>();
-        Comparison { data_set, options }
+        Comparison { data_set, config }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
-        self.options.set_title(title.to_string());
+        self.config.set_title(title.to_string());
         self
     }
     pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
-        self.options.set_logx(logx.into());
+        self.config.set_logx(logx.into());
         self
     }
     pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
-        self.options.set_logy(logy.into());
+        self.config.set_logy(logy.into());
         self
     }
 
@@ -54,7 +54,7 @@ where
     }
 }
 
-impl<I> crate::traits::PlotableStructure for Comparison<I>
+impl<I> crate::traits::Preexplorable for Comparison<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -101,17 +101,17 @@ where
 
         let mut gnuplot_script = String::new();
         gnuplot_script += "set key\n";
-        if let Some(title) = &self.options.title {
+        if let Some(title) = &self.config.title() {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
-        if let Some(logx) = &self.options.logx {
+        if let Some(logx) = &self.config.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
-        if let Some(logy) = &self.options.logy {
+        if let Some(logy) = &self.config.logy() {
             if *logy <= 0.0 {
                 gnuplot_script += "set logscale y\n";
             } else {
@@ -121,15 +121,18 @@ where
 
         gnuplot_script += "plot ";
         for i in 0..self.data_set.len() {
-            let legend = match &self.data_set[i].options.title {
+            let legend = match &self.data_set[i].config.title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
             gnuplot_script += &format!(
                 "\"data/{}_{}.txt\" using 1:2 with lines title \"{}\" dashtype {}, ",
-                serie, i, legend, i+1
+                serie,
+                i,
+                legend,
+                i + 1
             );
-            if i < self.data_set.len()-1 {
+            if i < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
             }
         }

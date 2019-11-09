@@ -12,7 +12,7 @@ pub mod comparison;
 /// Time-series with values in R^n.
 pub mod ndprocess;
 
-pub use crate::traits::PlotableStructure;
+pub use crate::traits::Preexplorable;
 
 // Trait bounds
 use core::fmt::Display;
@@ -23,11 +23,11 @@ use core::fmt::Display;
 ///
 /// ```no_run
 ///
-/// use external_gnuplot::prelude::*;
+/// use preexplorer::prelude::*;
 ///
 ///	let times = vec![1., 10., 100.];
 ///	let values = vec![1, 2, 4];
-/// let plotting = ext::Process::new(times, values)
+/// let plotting = pre::Process::new(times, values)
 ///     .set_title("My Title")
 ///     .set_logx(-2);
 /// plotting.plot(&"my_serie_name").unwrap();
@@ -47,7 +47,7 @@ where
 {
     pub(crate) domain: I,
     pub(crate) image: J,
-    pub(crate) options: ProcessOptions,
+    pub(crate) config: crate::configuration::Configuration,
 }
 
 impl<I, J> Process<I, J>
@@ -58,25 +58,37 @@ where
     J::Item: Display,
 {
     pub fn new(domain: I, image: J) -> Process<I, J> {
-        let options = ProcessOptions::default();
+        let config = crate::configuration::Configuration::default();
 
         Process {
             domain,
             image,
-            options,
+            config,
+        }
+    }
+
+    pub(crate) fn from_raw(
+        domain: I,
+        image: J,
+        config: crate::configuration::Configuration,
+    ) -> Process<I, J> {
+        Process {
+            domain,
+            image,
+            config,
         }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
-        self.options.set_title(title.to_string());
+        self.config.set_title(title.to_string());
         self
     }
     pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
-        self.options.set_logx(logx.into());
+        self.config.set_logx(logx.into());
         self
     }
     pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
-        self.options.set_logy(logy.into());
+        self.config.set_logy(logy.into());
         self
     }
 
@@ -91,7 +103,7 @@ where
     }
 }
 
-impl<I, J> crate::traits::PlotableStructure for Process<I, J>
+impl<I, J> crate::traits::Preexplorable for Process<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -158,17 +170,17 @@ where
 
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
-        if let Some(title) = &self.options.title {
+        if let Some(title) = &self.config.title() {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
-        if let Some(logx) = &self.options.logx {
+        if let Some(logx) = &self.config.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
-        if let Some(logy) = &self.options.logy {
+        if let Some(logy) = &self.config.logy() {
             if *logy <= 0.0 {
                 gnuplot_script += "set logscale y\n";
             } else {
@@ -182,32 +194,5 @@ where
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(())
-    }
-}
-
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct ProcessOptions {
-    title: Option<String>,
-    logx: Option<f64>,
-    logy: Option<f64>,
-}
-
-impl ProcessOptions {
-    pub(crate) fn default() -> ProcessOptions {
-        let title = None;
-        let logx = None;
-        let logy = None;
-
-        ProcessOptions { title, logx, logy }
-    }
-
-    pub(crate) fn set_title(&mut self, title: String) {
-        self.title = Some(title);
-    }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
-        self.logx = Some(logx);
-    }
-    pub(crate) fn set_logy(&mut self, logy: f64) {
-        self.logy = Some(logy);
     }
 }

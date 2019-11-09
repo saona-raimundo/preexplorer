@@ -6,7 +6,7 @@ pub mod comparison;
 /// Sequence with values with n-dimensions.
 pub mod ndsequence;
 
-pub use crate::traits::PlotableStructure;
+pub use crate::traits::Preexplorable;
 
 // Trait bounds
 use core::fmt::Display;
@@ -17,10 +17,10 @@ use core::fmt::Display;
 ///
 /// ```no_run
 ///
-/// use external_gnuplot::prelude::*;
+/// use preexplorer::prelude::*;
 ///
 /// let data = vec![0, 1, 2, 3, 4];
-/// let plotting = ext::Sequence::new(&data)
+/// let plotting = pre::Sequence::new(&data)
 ///     .set_title("My Title")
 ///     .set_logx(-1.); // Default for gnuplot
 /// plotting.plot(&"my_serie_name").unwrap();
@@ -38,7 +38,7 @@ where
     I::Item: Display,
 {
     pub(crate) data: I,
-    pub(crate) options: SequenceOptions,
+    pub(crate) config: crate::configuration::Configuration,
 }
 
 impl<I> Sequence<I>
@@ -47,21 +47,25 @@ where
     I::Item: Display,
 {
     pub fn new(data: I) -> Sequence<I> {
-        let options = SequenceOptions::default();
+        let config = crate::configuration::Configuration::default();
 
-        Sequence { data, options }
+        Sequence { data, config }
+    }
+
+    pub(crate) fn from_raw(data: I, config: crate::configuration::Configuration) -> Sequence<I> {
+        Sequence { data, config }
     }
 
     pub fn set_title<S: Display>(mut self, title: S) -> Self {
-        self.options.set_title(title.to_string());
+        self.config.set_title(title.to_string());
         self
     }
     pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
-        self.options.set_logx(logx.into());
+        self.config.set_logx(logx.into());
         self
     }
     pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
-        self.options.set_logy(logy.into());
+        self.config.set_logy(logy.into());
         self
     }
 
@@ -78,7 +82,7 @@ where
     /// Compare many ``Sequence`` types by gathering all first.
     ///
     /// ```no_run
-    /// use external_gnuplot::prelude::*;
+    /// use preexplorer::prelude::*;
     ///
     /// // Computing the data
     ///
@@ -88,13 +92,13 @@ where
     /// // Arrange everything in a vector
     ///
     /// let mut group_of_plottings = vec![
-    ///     external_gnuplot::Sequence::new(&data_1),
-    ///     external_gnuplot::Sequence::new(&data_2)
+    ///     pre::Sequence::new(&data_1),
+    ///     pre::Sequence::new(&data_2)
     /// ];
     ///
     /// // Create comparison and plot
     ///
-    /// external_gnuplot::sequence::Comparison::new(group_of_plottings)
+    /// pre::sequence::Comparison::new(group_of_plottings)
     ///     .set_title("All together")
     ///     .plot(&"my_serie_name")
     ///     .unwrap();
@@ -103,18 +107,18 @@ where
     /// Compare some, keep computing, add to the comparison and then save/plot all together.
     ///
     /// ```no_run
-    /// use external_gnuplot::prelude::*;
+    /// use preexplorer::prelude::*;
     ///
     /// // First Sequence
     ///
     /// let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    /// let plotting_1 = external_gnuplot::Sequence::new(&data_1).set_title("First");
+    /// let plotting_1 = pre::Sequence::new(&data_1).set_title("First");
     ///
     /// // Add another data
     ///
     /// let data_2 = vec![0., 1.4, 10., 4.];
     /// let group_of_plottings = vec![
-    ///     external_gnuplot::Sequence::new(&data_2)
+    ///     pre::Sequence::new(&data_2)
     ///         .set_title("Second")
     /// ];
     /// let mut comparison_plotting = plotting_1
@@ -125,7 +129,7 @@ where
     ///
     /// let data_3 = vec![0.1, 1.5, 7., 5.];
     /// let group_of_plottings = vec![
-    ///     external_gnuplot::Sequence::new(&data_3)
+    ///     pre::Sequence::new(&data_3)
     ///         .set_title("Third")
     /// ];
     /// comparison_plotting.add(group_of_plottings);
@@ -145,7 +149,7 @@ where
     }
 }
 
-impl<I> crate::traits::PlotableStructure for Sequence<I>
+impl<I> crate::traits::Preexplorable for Sequence<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -210,17 +214,17 @@ where
 
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
-        if let Some(title) = &self.options.title {
+        if let Some(title) = &self.config.title() {
             gnuplot_script += &format!("set title \"{}\"\n", title);
         }
-        if let Some(logx) = &self.options.logx {
+        if let Some(logx) = &self.config.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
-        if let Some(logy) = &self.options.logy {
+        if let Some(logy) = &self.config.logy() {
             if *logy <= 0.0 {
                 gnuplot_script += "set logscale y\n";
             } else {
@@ -228,38 +232,11 @@ where
             }
         }
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with lines \n", serie);
+        gnuplot_script += &format!("plot \"data/{}.txt\" with lines \n", serie);
         gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(())
-    }
-}
-
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub(crate) struct SequenceOptions {
-    title: Option<String>,
-    logx: Option<f64>,
-    logy: Option<f64>,
-}
-
-impl SequenceOptions {
-    pub(crate) fn default() -> SequenceOptions {
-        let title = None;
-        let logx = None;
-        let logy = None;
-
-        SequenceOptions { title, logx, logy }
-    }
-
-    pub(crate) fn set_title(&mut self, title: String) {
-        self.title = Some(title);
-    }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
-        self.logx = Some(logx);
-    }
-    pub(crate) fn set_logy(&mut self, logy: f64) {
-        self.logy = Some(logy);
     }
 }

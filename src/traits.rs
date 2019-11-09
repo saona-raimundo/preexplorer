@@ -2,7 +2,7 @@
 use crate::errors::SavingError;
 use core::fmt::Display;
 
-pub trait PlotableStructure {
+pub trait Preexplorable {
     fn save<S: Display>(self, serie: &S) -> Result<(), SavingError>;
 
     fn plot<S: Display>(self, serie: &S) -> Result<(), SavingError>;
