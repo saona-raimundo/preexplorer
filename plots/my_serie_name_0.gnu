@@ -1,4 +1,3 @@
 unset key
-set title "First"
-plot "data/my_serie_name_0.txt" using 1:2 with lines 
+plot "data/my_serie_name_0.txt" with lines 
 pause -1

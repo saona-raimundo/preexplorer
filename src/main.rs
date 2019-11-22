@@ -1,10 +1,20 @@
 use preexplorer::prelude::*;
 
-fn main() -> failure::Fallible<()> {
-    let data = 0..7;
-    let dim = 2;
+fn main() {
+	// Computing the data
 
-    pre::Data::new(data, dim).set_title("My legend").plot(&1)?;
+	let data_1 = vec![0., 1., 2., 3., 4., 5.];
+	let data_2 = vec![0., 1.4, 10., 4.];
 
-    Ok(())
+	// Arrange everything in a vector
+
+	let group_of_plottings = vec![
+	    pre::Sequence::new(data_1.iter()),
+	    pre::Sequence::new(data_2.iter())
+	];
+	
+	pre::sequence::Comparison::new(group_of_plottings)
+        .set_title("All together")
+        .plot(&"my_serie_name")
+        .unwrap();
 }
