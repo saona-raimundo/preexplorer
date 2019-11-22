@@ -10,9 +10,8 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Data<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    I::IntoIter: Clone,
 {
     pub(crate) data: I,
     pub(crate) config: crate::configuration::Configuration,
@@ -21,9 +20,8 @@ where
 
 impl<I> Data<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    I::IntoIter: Clone,
 {
     pub fn new(data: I, dim: u8) -> Self {
         let config = crate::configuration::Configuration::default();
@@ -46,9 +44,8 @@ where
 
 impl<I> crate::traits::Preexplorable for Data<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    I::IntoIter: Clone,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///

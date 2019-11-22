@@ -18,7 +18,8 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- 
+- Implement
+  - new! macro to simplify the transformation to .into_iter().
 - More customization
   - Save
     - header

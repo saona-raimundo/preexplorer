@@ -34,7 +34,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Sequence<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data: I,
@@ -43,11 +43,12 @@ where
 
 impl<I> Sequence<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     pub fn new(data: I) -> Sequence<I> {
         let config = crate::configuration::Configuration::default();
+        let data: I = data.into_iter().into();
 
         Sequence { data, config }
     }
@@ -151,7 +152,7 @@ where
 
 impl<I> crate::traits::Preexplorable for Sequence<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -176,7 +177,7 @@ where
 
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# index value\n");
-        for (counter, value) in self.data.into_iter().enumerate() {
+        for (counter, value) in self.data.enumerate() {
             data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }
 

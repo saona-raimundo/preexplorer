@@ -9,7 +9,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data_set: Vec<crate::sequence::Sequence<I>>,
@@ -17,7 +17,7 @@ where
 }
 impl<I> Comparison<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     pub fn new<K>(data_set: K) -> Comparison<I>
@@ -56,7 +56,7 @@ where
 
 impl<I> crate::traits::Preexplorable for Comparison<I>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
