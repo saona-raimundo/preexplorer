@@ -1,7 +1,7 @@
 use preexplorer::prelude::*;
 
 fn main() -> failure::Fallible<()> {
-    let data = 0..200;
+    let data = 0..;
     let dim = 2;
 
     pre::Data::new(data, dim).set_title("My legend").plot(&1)?;
