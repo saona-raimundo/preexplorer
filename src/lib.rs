@@ -20,6 +20,7 @@
 //! Recall that you will need to [install gnuplot](http://www.gnuplot.info/download.html)
 //! to use the crate at its full potential.
 
+/// Generic multi-dimensional data. 
 pub mod data;
 /// Histograms or realizations of the same variable.
 pub mod distribution;

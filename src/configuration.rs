@@ -15,14 +15,17 @@ impl Configuration {
         }
     }
 
-    pub(crate) fn set_title(&mut self, title: String) {
+    pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
         self.plot_config.set_title(title);
+        self
     }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
+    pub(crate) fn set_logx(&mut self, logx: f64) -> &mut Self {
         self.plot_config.set_logx(logx);
+        self
     }
-    pub(crate) fn set_logy(&mut self, logy: f64) {
-        self.plot_config.set_logy(logy)
+    pub(crate) fn set_logy(&mut self, logy: f64) -> &mut Self {
+        self.plot_config.set_logy(logy);
+        self
     }
 
     pub(crate) fn title(&self) -> Option<String> {
@@ -65,14 +68,17 @@ impl PlotConfiguration {
         PlotConfiguration { title, logx, logy }
     }
 
-    pub(crate) fn set_title(&mut self, title: String) {
+    pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
         self.title = Some(title);
+        self
     }
-    pub(crate) fn set_logx(&mut self, logx: f64) {
+    pub(crate) fn set_logx(&mut self, logx: f64) -> &mut Self {
         self.logx = Some(logx);
+        self
     }
-    pub(crate) fn set_logy(&mut self, logy: f64) {
+    pub(crate) fn set_logy(&mut self, logy: f64) -> &mut Self {
         self.logy = Some(logy);
+        self
     }
 
     pub(crate) fn title(&self) -> Option<String> {

@@ -32,11 +32,11 @@ where
         Comparison { data_set, config }
     }
 
-    pub fn set_title<S: Display>(mut self, title: S) -> Self {
+    pub fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
         self.config.set_title(title.to_string());
         self
     }
-    pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
+    pub fn set_logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
         self.config.set_logx(logx.into());
         self
     }
@@ -63,15 +63,15 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(self, serie: &S) -> Result<(), SavingError> {
-        for (counter, distribution) in self.data_set.into_iter().enumerate() {
+    fn save<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
+        for (counter, distribution) in self.data_set.iter().enumerate() {
             crate::distribution::Distribution::save(
-                distribution,
+                &distribution,
                 &format!("{}_{}", serie, counter),
-            )?
+            )?;
         }
 
-        Ok(())
+        Ok(self)
     }
 
     /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
@@ -80,7 +80,7 @@ where
     ///
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
-    fn plot<S: Display>(self, serie: &S) -> Result<(), SavingError> {
+    fn plot<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
@@ -90,12 +90,12 @@ where
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
             .spawn()?;
-        Ok(())
+        Ok(self)
     }
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<(), SavingError> {
+    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
@@ -171,6 +171,6 @@ where
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
-        Ok(())
+        Ok(self)
     }
 }

@@ -6,6 +6,7 @@ fn main() {
 
     pre::Distribution::new(values_1)
         .set_title("My legend")
+        .to_owned()
         .compare_with(vec![pre::Distribution::new(values_2)])
         .set_title("My title")
         .plot(&1)

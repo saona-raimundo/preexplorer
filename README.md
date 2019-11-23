@@ -18,8 +18,12 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Implement
-  - new! macro to simplify the transformation to .into_iter().
+- Use references
+  - Verify that plot/save do not consume the iterators
+- Change to ExactSizeIterator
+  - process
+  - data
+  - distribution
 - More customization
   - Save
     - header

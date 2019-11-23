@@ -28,15 +28,15 @@ where
         Data { data, config, dim }
     }
 
-    pub fn set_title<S: Display>(mut self, title: S) -> Self {
+    pub fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
         self.config.set_title(title.to_string());
         self
     }
-    pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
+    pub fn set_logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
         self.config.set_logx(logx.into());
         self
     }
-    pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
+    pub fn set_logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
         self.config.set_logy(logy.into());
         self
     }
@@ -54,7 +54,7 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(self, serie: &S) -> Result<(), SavingError> {
+    fn save<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
         self.write_plot_script(serie)?;
 
         // Files creation
@@ -69,7 +69,7 @@ where
 
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# index value\n");
-        for value in self.data.into_iter() {
+        for value in self.data.clone().into_iter() {
             for _ in 0..self.dim {
                 data_gnuplot.push_str(&format!("{}\t", value));
             }
@@ -80,7 +80,7 @@ where
 
         std::fs::write(path, data_gnuplot)?;
 
-        Ok(())
+        Ok(self)
     }
 
     /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
@@ -89,11 +89,12 @@ where
     ///
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
-    fn plot<S: Display>(self, serie: &S) -> Result<(), SavingError> {
+    fn plot<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
         match self.dim {
     		1 => {
-    			let sequence = crate::sequence::Sequence::from_raw(self.data, self.config);
-    			sequence.plot(serie)
+    			let sequence = crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
+    			sequence.plot(serie)?;
+                Ok(self)
     		},
     		2 => {
     			// separate iterators
@@ -101,10 +102,11 @@ where
     			let mut second_filter = vec![false, true].into_iter().cycle();
 
     			let first_data = self.data.clone().into_iter().filter(move |_| first_filter.next().unwrap());
-    			let second_data = self.data.into_iter().filter(move |_| second_filter.next().unwrap());
+    			let second_data = self.data.clone().into_iter().filter(move |_| second_filter.next().unwrap());
 
-    			let process = crate::process::Process::from_raw(first_data, second_data, self.config);
-    			process.plot(serie)
+    			let process = crate::process::Process::from_raw(first_data, second_data, self.config.clone());
+    			process.plot(serie)?;
+                Ok(self)
     		},
     		_ => return Err(
                 std::io::Error::new(
@@ -116,11 +118,12 @@ where
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<(), SavingError> {
+    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
         match self.dim {
     		1 => {
     			let sequence = crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
-    			sequence.write_plot_script(serie)
+    			sequence.write_plot_script(serie)?;
+                Ok(self)
     		},
     		2 => {
     			// separate iterators
@@ -131,7 +134,8 @@ where
     			let second_data = self.data.clone().into_iter().filter(move |_| second_filter.next().unwrap());
 
     			let process = crate::process::Process::from_raw(first_data, second_data, self.config.clone());
-    			process.write_plot_script(serie)
+    			process.write_plot_script(serie)?;
+                Ok(self)
     		},
     		_ => return Err(
                 std::io::Error::new(
