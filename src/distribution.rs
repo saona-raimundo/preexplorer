@@ -63,6 +63,10 @@ where
         self.config.set_logx(logx.into());
         self
     }
+    pub fn set_logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
+        self.config.set_logy(logy.into());
+        self
+    }
 
     /// Compare various ``Distribution`` types together.
     ///
@@ -189,6 +193,13 @@ where
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
+            }
+        }
+        if let Some(logy) = &self.config.logy() {
+            if *logy <= 0.0 {
+                gnuplot_script += "set logscale y\n";
+            } else {
+                gnuplot_script += &format!("set logscale y {}\n", logy);
             }
         }
 
