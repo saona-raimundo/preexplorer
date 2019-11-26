@@ -18,6 +18,10 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Add easy lines to complete in gnuplot scripts
+  - set title ""
+  - set xlabel ""
+  - set ylabel ""
 - Use references
   - Verify that plot/save do not consume the iterators
 - Change to ExactSizeIterator
