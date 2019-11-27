@@ -38,6 +38,7 @@ Rust is meant for computations and plotting is usually an iterative process, don
       - calling for it
       - setting it
   - Plot
+    - possibility to plot as point cloud
     - plot_with_script(&str)
     - plot_using_script(file)
   - Audio
