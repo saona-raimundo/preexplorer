@@ -11,8 +11,8 @@ Rust is meant for computations and plotting is usually an iterative process, don
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
-- Add ``external-gnuplot = "0.1"`` to your ``Cargo.toml`` file under ``[dependencies]``.
-- I suggest to simply go with ``use external_gnuplot::prelude::*;`` in your binary.
+- Add ``preexplorer = "0.1"`` to your ``Cargo.toml`` file under ``[dependencies]``.
+- I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` .
 
 
 
@@ -38,8 +38,8 @@ Rust is meant for computations and plotting is usually an iterative process, don
       - calling for it
       - setting it
   - Plot
-    - possibility to plot as point cloud
-    - plot_with_script(&str)
+    - set_style()
+      - lines, points, linespoints, impulses, dots, steps, fsteps, histeps,
     - plot_using_script(file)
   - Audio
     - audify()
