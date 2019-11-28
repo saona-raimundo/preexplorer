@@ -26,6 +26,13 @@ impl PlotConfiguration {
     pub(crate) fn base_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
+        gnuplot_script += &self.base_plot_script_comparison();
+
+        gnuplot_script
+    }
+
+    pub(crate) fn base_plot_script_comparison(&self) -> String {
+        let mut gnuplot_script = String::new();
 
         match self.title() {
             Some(title) => {

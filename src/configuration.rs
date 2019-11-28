@@ -24,6 +24,10 @@ impl Configuration {
         self.plot_config.base_plot_script()
     }
 
+    pub(crate) fn base_plot_script_comparison(&self) -> String {
+        self.plot_config.base_plot_script_comparison()
+    }
+
     pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
         self.plot_config.set_title(title);
         self
