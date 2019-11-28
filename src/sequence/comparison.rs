@@ -31,19 +31,6 @@ where
         Comparison { data_set, config }
     }
 
-    pub fn set_title<S: Display>(mut self, title: S) -> Self {
-        self.config.set_title(title.to_string());
-        self
-    }
-    pub fn set_logx<N: Into<f64>>(mut self, logx: N) -> Self {
-        self.config.set_logx(logx.into());
-        self
-    }
-    pub fn set_logy<N: Into<f64>>(mut self, logy: N) -> Self {
-        self.config.set_logy(logy.into());
-        self
-    }
-
     pub fn add<J>(&mut self, anothers: J)
     where
         J: IntoIterator<Item = crate::sequence::Sequence<I>>,
@@ -99,25 +86,7 @@ where
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
-        let mut gnuplot_script = String::new();
-        gnuplot_script += "set key\n";
-        if let Some(title) = &self.config.title() {
-            gnuplot_script += &format!("set title \"{}\"\n", title);
-        }
-        if let Some(logx) = &self.config.logx() {
-            if *logx <= 0.0 {
-                gnuplot_script += "set logscale x\n";
-            } else {
-                gnuplot_script += &format!("set logscale x {}\n", logx);
-            }
-        }
-        if let Some(logy) = &self.config.logy() {
-            if *logy <= 0.0 {
-                gnuplot_script += "set logscale y\n";
-            } else {
-                gnuplot_script += &format!("set logscale y {}\n", logy);
-            }
-        }
+        let mut gnuplot_script = self.config.base_plot_script();
 
         gnuplot_script += "plot ";
         for i in 0..self.data_set.len() {
@@ -142,5 +111,9 @@ where
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(self)
+    }
+
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
     }
 }

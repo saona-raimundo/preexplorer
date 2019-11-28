@@ -27,19 +27,6 @@ where
         let config = crate::configuration::Configuration::default();
         Data { data, config, dim }
     }
-
-    pub fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
-        self.config.set_title(title.to_string());
-        self
-    }
-    pub fn set_logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
-        self.config.set_logx(logx.into());
-        self
-    }
-    pub fn set_logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
-        self.config.set_logy(logy.into());
-        self
-    }
 }
 
 impl<I> crate::traits::Preexplorable for Data<I>
@@ -143,5 +130,9 @@ where
                 ).into()
             ),
     	}
+    }
+
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
     }
 }

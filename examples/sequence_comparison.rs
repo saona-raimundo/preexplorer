@@ -36,8 +36,8 @@ fn increasing_comparisons() {
     let data_2 = vec![0., 1.4, 10., 4.];
     let group_of_plottings = vec![pre::Sequence::new(data_2.iter()).set_title("Second").to_owned()];
     let mut comparison_plotting = plotting_1
-        .compare_with(group_of_plottings)
-        .set_title("More comparisons");
+        .compare_with(group_of_plottings);
+    comparison_plotting.set_title("More comparisons");
 
     // Keep adding more
 

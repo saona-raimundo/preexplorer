@@ -56,19 +56,6 @@ where
         Sequence { data, config }
     }
 
-    pub fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
-        self.config.set_title(title.to_string());
-        self
-    }
-    pub fn set_logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
-        self.config.set_logx(logx.into());
-        self
-    }
-    pub fn set_logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
-        self.config.set_logy(logy.into());
-        self
-    }
-
     /// Compare various ``Sequence`` types together.
     ///
     /// You can either put all together in a vector, or add them to a ``Comparison``
@@ -212,25 +199,7 @@ where
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
-        let mut gnuplot_script = String::new();
-        gnuplot_script += "unset key\n";
-        if let Some(title) = &self.config.title() {
-            gnuplot_script += &format!("set title \"{}\"\n", title);
-        }
-        if let Some(logx) = &self.config.logx() {
-            if *logx <= 0.0 {
-                gnuplot_script += "set logscale x\n";
-            } else {
-                gnuplot_script += &format!("set logscale x {}\n", logx);
-            }
-        }
-        if let Some(logy) = &self.config.logy() {
-            if *logy <= 0.0 {
-                gnuplot_script += "set logscale y\n";
-            } else {
-                gnuplot_script += &format!("set logscale y {}\n", logy);
-            }
-        }
+        let mut gnuplot_script = self.config.base_plot_script();
 
         gnuplot_script += &format!("plot \"data/{}.txt\" with lines \n", serie);
         gnuplot_script += "pause -1\n";
@@ -238,5 +207,9 @@ where
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
 
         Ok(self)
+    }
+
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
     }
 }
