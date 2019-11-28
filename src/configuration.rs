@@ -45,6 +45,15 @@ impl Configuration {
         self
     }
 
+    pub(crate) fn set_extension(&mut self, extension: String) -> &mut Self {
+        self.save_config.set_extension(extension);
+        self
+    }
+    pub(crate) fn set_header(&mut self, header: bool) -> &mut Self {
+        self.save_config.set_header(header);
+        self
+    }
+
     pub(crate) fn title(&self) -> Option<String> {
         self.plot_config.title()
     }
@@ -54,11 +63,17 @@ impl Configuration {
     pub(crate) fn logy(&self) -> Option<f64> {
         self.plot_config.logy()
     }
-    pub(crate) fn labelx(&self) -> Option<String> {
+    pub(crate) fn labelx(&self) -> Option<&str> {
         self.plot_config.labelx()
     }
-    pub(crate) fn labely(&self) -> Option<String> {
+    pub(crate) fn labely(&self) -> Option<&str> {
         self.plot_config.labely()
+    }
+    pub(crate) fn extension(&self) -> &str {
+        self.save_config.extension()
+    }
+    pub(crate) fn header(&self) -> bool {
+        self.save_config.header()
     }
 }
 
@@ -97,7 +112,7 @@ mod tests {
         
         config.set_labelx(String::from("try"));
 
-        assert_eq!(config.labelx(), Some(String::from("try")));
+        assert_eq!(config.labelx(), Some("try"));
     }
 
     #[test]
@@ -108,6 +123,6 @@ mod tests {
         
         config.set_labely(String::from("try"));
 
-        assert_eq!(config.labely(), Some(String::from("try")));
+        assert_eq!(config.labely(), Some("try"));
     }
 }

@@ -156,13 +156,20 @@ where
         let data_dir = "data";
         std::fs::create_dir_all(data_dir)?;
 
-        let data_name = &format!("{}.txt", serie);
+        let data_name = &format!("{}.{}", serie, self.extension());
         let path = &format!("{}\\{}", data_dir, data_name);
 
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        data_gnuplot.push_str("# index value\n");
+        if self.header() {
+            data_gnuplot.push_str(&format!("# {}", serie));
+            match self.title() {
+                Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
+                None => data_gnuplot.push_str("\n"),
+            }
+            data_gnuplot.push_str("# index value\n");
+        }
         for (counter, value) in self.data.clone().enumerate() {
             data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
         }
@@ -211,5 +218,8 @@ where
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
+    }
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
     }
 }

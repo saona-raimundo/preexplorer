@@ -116,4 +116,7 @@ where
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
 }

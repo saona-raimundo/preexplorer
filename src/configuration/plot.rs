@@ -102,15 +102,15 @@ impl PlotConfiguration {
     pub(crate) fn logy(&self) -> Option<f64> {
         self.logy
     }
-    pub(crate) fn labelx(&self) -> Option<String> {
+    pub(crate) fn labelx(&self) -> Option<&str> {
         match &self.labelx {
-            Some(labelx) => Some(labelx.to_string()),
+            Some(labelx) => Some(labelx),
             None => None,
         }
     }
-    pub(crate) fn labely(&self) -> Option<String> {
+    pub(crate) fn labely(&self) -> Option<&str> {
         match &self.labely {
-            Some(labely) => Some(labely.to_string()),
+            Some(labely) => Some(labely),
             None => None,
         }
     }
