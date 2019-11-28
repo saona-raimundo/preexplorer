@@ -24,8 +24,4 @@ fn main() {
 
     println!("{:?}", data);
 
-    // We can replot the data using our automatically generated script
-
-    // plotting.plot_using_script(&"holas!", "plots\\my_plot_serie_name.gnu").unwrap();
-
 }
