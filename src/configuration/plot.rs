@@ -1,4 +1,6 @@
 
+pub(crate) mod style;
+
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct PlotConfiguration {
     title: Option<String>,
@@ -6,6 +8,7 @@ pub(crate) struct PlotConfiguration {
     logy: Option<f64>,
     labelx: Option<String>,
     labely: Option<String>,
+    style: crate::configuration::plot::style::Style,
 }
 
 impl PlotConfiguration {
@@ -15,8 +18,9 @@ impl PlotConfiguration {
         let logy = None;
         let labelx = None;
         let labely = None;
+        let style = crate::configuration::plot::style::Style::Default;
 
-        PlotConfiguration { title, logx, logy, labelx, labely }
+        PlotConfiguration { title, logx, logy, labelx, labely, style }
     }
 
     pub(crate) fn base_plot_script(&self) -> String {
@@ -88,6 +92,10 @@ impl PlotConfiguration {
         self.labely = Some(labely);
         self
     }
+    pub(crate) fn set_style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
+        self.style = style;
+        self
+    }
 
 
     pub(crate) fn title(&self) -> Option<String> {
@@ -113,5 +121,8 @@ impl PlotConfiguration {
             Some(labely) => Some(labely),
             None => None,
         }
+    }
+    pub(crate) fn style(&self) -> &crate::configuration::plot::style::Style {
+        &self.style
     }
 }

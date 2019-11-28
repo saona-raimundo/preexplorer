@@ -38,13 +38,19 @@ pub trait Preexplorable {
         self.configuration().set_labely(labely.to_string());
         self
     }
-
     fn set_extension<S: Display>(&mut self, extension: S) -> &mut Self {
         self.configuration().set_extension(extension.to_string());
         self
     }
     fn set_header(&mut self, header: bool) -> &mut Self {
         self.configuration().set_header(header);
+        self
+    }
+    fn set_style<S>(&mut self, style: S) -> &mut Self 
+    where
+        crate::configuration::plot::style::Style: From<S>,
+    {
+        self.configuration().set_style(crate::configuration::plot::style::Style::from(style));
         self
     }
 
@@ -69,5 +75,8 @@ pub trait Preexplorable {
     }
     fn header(&self) -> bool {
         self.configuration_as_ref().header()
+    }
+    fn style(&self) -> &crate::configuration::plot::style::Style {
+        self.configuration_as_ref().style()
     }
 }

@@ -1,7 +1,7 @@
 
 
-mod save;
-mod plot;
+pub mod save;
+pub mod plot;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Configuration {
@@ -53,6 +53,10 @@ impl Configuration {
         self.save_config.set_header(header);
         self
     }
+    pub(crate) fn set_style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
+        self.plot_config.set_style(style);
+        self
+    }
 
     pub(crate) fn title(&self) -> Option<String> {
         self.plot_config.title()
@@ -74,6 +78,9 @@ impl Configuration {
     }
     pub(crate) fn header(&self) -> bool {
         self.save_config.header()
+    }
+    pub(crate) fn style(&self) -> &crate::configuration::plot::style::Style {
+        self.plot_config.style()
     }
 }
 

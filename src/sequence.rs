@@ -152,7 +152,10 @@ where
 
         let mut gnuplot_script = self.config.base_plot_script();
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" with lines \n", serie);
+        gnuplot_script += &format!("plot \"data/{}.txt\" with {} \n", 
+            serie,
+            self.style(),
+        );
         gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;
@@ -165,5 +168,21 @@ where
     }
     fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
         &self.config
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn set_style() {
+        let data = 0..2;
+        let mut seq = Sequence::new(data);
+        seq.set_style("points");
+
+        assert_eq!(&crate::configuration::plot::style::Style::Points, seq.style());
     }
 }

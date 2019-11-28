@@ -157,7 +157,10 @@ where
 
         let mut gnuplot_script = self.config.base_plot_script();
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with lines \n", serie);
+        gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with {} \n", 
+            serie, 
+            self.style(),
+        );
         gnuplot_script += "pause -1\n";
 
         std::fs::write(&gnuplot_file, &gnuplot_script)?;

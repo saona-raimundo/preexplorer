@@ -96,15 +96,22 @@ where
         let mut gnuplot_script = self.config.base_plot_script();
 
         gnuplot_script += "plot ";
+        let style = self.style();
         for i in 0..self.data_set.len() {
-            let legend = match &self.data_set[i].config.title() {
+            let process = &self.data_set[i];
+            let legend = match process.config.title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
+            let process_style = match style {
+                crate::configuration::plot::style::Style::Default => process.style(),
+                _ => style,
+            };
             gnuplot_script += &format!(
-                "\"data/{}_{}.txt\" using 1:2 with lines title \"{}\" dashtype {}, ",
+                "\"data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
                 serie,
                 i,
+                process_style,
                 legend,
                 i + 1
             );

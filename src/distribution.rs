@@ -39,7 +39,8 @@ where
     I::Item: PartialOrd + Display + Copy,
 {
     pub fn new(realizations: I) -> Distribution<I> {
-        let config = crate::configuration::Configuration::default();
+        let mut config = crate::configuration::Configuration::default();
+        config.set_style(crate::configuration::plot::style::Style::Steps);
 
         Distribution {
             realizations,
@@ -180,8 +181,9 @@ where
                 gnuplot_script += "# function used to map a value to the intervals\n";
                 gnuplot_script += "hist(x,width) = width * floor(x/width) + width / 2.0\n\n";
                 gnuplot_script += &format!(
-                    "plot \"data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with steps\n",
-                    serie
+                    "plot \"data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with {}\n",
+                    serie, 
+                    self.style(),
                 );
             },
             None => (),
