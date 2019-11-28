@@ -18,20 +18,16 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Take out the reference from methods that use <S: Display> (&S)
-  - Investigate <S: AsRef<dyn Display>> 
 - More customization
-  - Plot
-    - set_style()
-      - lines, points, linespoints, impulses, dots, steps, fsteps, histeps,
   - Audio
     - audify()
     - sonify()
 - Add to options
-  - dashtype for each plot
-  - dashtype configuration for each comparisons
-    - on / off automatic change
-    - respect inner options
+  - dashtype 
+    - for each plot
+    - for comparisons
+      - Default variant to use in comparisons
+      - respect inner options
 - ndimensional variants
 - Write proper presentation of the crate:
   - Purpose

@@ -135,7 +135,12 @@ where
                         i, i, i, i, i
                     );
                 },
-                None => (),
+                None => {
+                    std::io::Error::new(
+                        std::io::ErrorKind::Other, 
+                        "No data to plot: There are no realizations, so no script can be prepared.",
+                    );
+                },
             }    
         }
 
