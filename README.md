@@ -18,15 +18,6 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Correct logic in example\sequence_comparison
-- Update examples in the docs
-- 
-- Use references
-  - Verify that plot/save do not consume the iterators
-- Change to ExactSizeIterator
-  - process
-  - data
-  - distribution
 - More customization
   - Plot
     - set_style()

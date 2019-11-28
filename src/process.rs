@@ -22,15 +22,6 @@ use core::fmt::Display;
 /// # Examples
 ///
 /// ```no_run
-///
-/// use preexplorer::prelude::*;
-///
-///	let times = vec![1., 10., 100.];
-///	let values = vec![1, 2, 4];
-/// let plotting = pre::Process::new(times, values)
-///     .set_title("My Title")
-///     .set_logx(-2);
-/// plotting.plot(&"my_serie_name").unwrap();
 /// ```
 ///
 /// # Remarks
@@ -40,9 +31,9 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Process<I, J>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    J: IntoIterator + Clone,
+    J: ExactSizeIterator + Clone,
     J::Item: Display,
 {
     pub(crate) domain: I,
@@ -52,9 +43,9 @@ where
 
 impl<I, J> Process<I, J>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    J: IntoIterator + Clone,
+    J: ExactSizeIterator + Clone,
     J::Item: Display,
 {
     pub fn new(domain: I, image: J) -> Process<I, J> {
@@ -92,9 +83,9 @@ where
 
 impl<I, J> crate::traits::Preexplorable for Process<I, J>
 where
-    I: IntoIterator + Clone,
+    I: ExactSizeIterator + Clone,
     I::Item: Display,
-    J: IntoIterator + Clone,
+    J: ExactSizeIterator + Clone,
     J::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -126,7 +117,7 @@ where
             }
             data_gnuplot.push_str("# time value\n");
         }
-        for (time, value) in self.domain.clone().into_iter().zip(self.image.clone().into_iter()) {
+        for (time, value) in self.domain.clone().zip(self.image.clone()) {
             data_gnuplot.push_str(&format!("{}\t{}\n", time, value));
         }
 

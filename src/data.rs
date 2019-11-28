@@ -68,7 +68,7 @@ where
             }
             data_gnuplot.push_str("\n");
         }
-        for value in self.data.clone().into_iter() {
+        for value in self.data.clone() {
             for _ in 0..self.dim {
                 data_gnuplot.push_str(&format!("{}\t", value));
             }
@@ -100,10 +100,20 @@ where
     			let mut first_filter = vec![true, false].into_iter().cycle();
     			let mut second_filter = vec![false, true].into_iter().cycle();
 
-    			let first_data = self.data.clone().into_iter().filter(move |_| first_filter.next().unwrap());
-    			let second_data = self.data.clone().into_iter().filter(move |_| second_filter.next().unwrap());
+    			let first_data = self.data.clone()
+                    .into_iter()
+                    .filter(move |_| first_filter.next().unwrap())
+                    .collect::<Vec<_>>();
+    			let second_data = self.data.clone()
+                    .into_iter()
+                    .filter(move |_| second_filter.next().unwrap())
+                    .collect::<Vec<_>>();
 
-    			let process = crate::process::Process::from_raw(first_data, second_data, self.config.clone());
+    			let process = crate::process::Process::from_raw(
+                    first_data.iter(), 
+                    second_data.iter(), 
+                    self.config.clone());
+
     			process.plot(serie)?;
                 Ok(self)
     		},
@@ -129,10 +139,20 @@ where
     			let mut first_filter = vec![true, false].into_iter().cycle();
     			let mut second_filter = vec![false, true].into_iter().cycle();
 
-    			let first_data = self.data.clone().into_iter().filter(move |_| first_filter.next().unwrap());
-    			let second_data = self.data.clone().into_iter().filter(move |_| second_filter.next().unwrap());
+    			let first_data = self.data.clone()
+                    .into_iter()
+                    .filter(move |_| first_filter.next().unwrap())
+                    .collect::<Vec<_>>();
+                let second_data = self.data.clone()
+                    .into_iter()
+                    .filter(move |_| second_filter.next().unwrap())
+                    .collect::<Vec<_>>();
 
-    			let process = crate::process::Process::from_raw(first_data, second_data, self.config.clone());
+                let process = crate::process::Process::from_raw(
+                    first_data.iter(), 
+                    second_data.iter(), 
+                    self.config.clone());
+                
     			process.write_plot_script(serie)?;
                 Ok(self)
     		},

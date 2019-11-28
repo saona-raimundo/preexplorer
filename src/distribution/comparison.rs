@@ -9,8 +9,8 @@ use core::fmt::Display;
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
 where
-    I: IntoIterator + Clone,
-    I::Item: Into<f64> + Display + Copy,
+    I: ExactSizeIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
 {
     pub(crate) data_set: Vec<crate::distribution::Distribution<I>>,
     pub(crate) config: crate::configuration::Configuration,
@@ -18,8 +18,8 @@ where
 
 impl<I> Comparison<I>
 where
-    I: IntoIterator + Clone,
-    I::Item: Into<f64> + Display + Copy,
+    I: ExactSizeIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
 {
     pub fn new<K>(data_set: K) -> Comparison<I>
     where
@@ -44,8 +44,8 @@ where
 
 impl<I> crate::traits::Preexplorable for Comparison<I>
 where
-    I: IntoIterator + Clone,
-    I::Item: Into<f64> + Display + Copy,
+    I: ExactSizeIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
@@ -100,36 +100,42 @@ where
             // Values for the histogram
 
             let n = 20;
-            let (mut min, mut max, mut length): (f64, f64, usize) =
-                (std::f64::MAX, std::f64::MIN, 0);
-            for val in distribution.realizations.clone() {
-                let val = val.into();
-                if val < min {
-                    min = val;
-                }
-                if val > max {
-                    max = val;
-                }
-                length += 1;
-            }
+            let (mut min, mut max, mut length);
+            length = 0;
+            
+            let mut realizations = distribution.realizations.clone();
+            match realizations.next() {
+                Some(value) => {
+                    min = value;
+                    max = value;
+                    length += 1;
+                    for val in realizations {
+                        // let val = val.into();
+                        if val < min { min = val; }
+                        if val > max { max = val; }
+                        length += 1;
+                    }
 
-            // Gnuplot section
+                    // Gnuplot section
 
-            gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", i, n);
-            gnuplot_script += &format!("max_{} = {} #max value\n", i, max);
-            gnuplot_script += &format!("min_{} = {} #min value\n", i, min);
-            gnuplot_script += &format!("len_{} = {}.0 #number of values\n", i, length);
-            gnuplot_script += &format!(
-                "width_{} = {} / nbins_{} #width\n\n",
-                i,
-                (max - min).abs(),
-                i
-            );
-            gnuplot_script += "#function used to map a value to the intervals\n";
-            gnuplot_script += &format!(
-                "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",
-                i, i, i, i, i
-            );
+                    gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", i, n);
+                    gnuplot_script += &format!("max_{} = {} #max value\n", i, max);
+                    gnuplot_script += &format!("min_{} = {} #min value\n", i, min);
+                    gnuplot_script += &format!("len_{} = {}.0 #number of values\n", i, length);
+                    gnuplot_script += &format!(
+                        "width_{} = ({} - {}) / nbins_{} #width\n\n",
+                        i,
+                        max, min,
+                        i
+                    );
+                    gnuplot_script += "# function used to map a value to the intervals\n";
+                    gnuplot_script += &format!(
+                        "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",
+                        i, i, i, i, i
+                    );
+                },
+                None => (),
+            }    
         }
 
         gnuplot_script += "plot ";
