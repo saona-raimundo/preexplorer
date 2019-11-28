@@ -34,19 +34,19 @@ impl PlotConfiguration {
 
         match self.labelx() {
             Some(labelx) => {
-                gnuplot_script += &format!("set labelx \"{}\"\n", labelx);
+                gnuplot_script += &format!("set xlabel \"{}\"\n", labelx);
             },
             None => {
-                gnuplot_script += &format!("set labelx \"\"\n");
+                gnuplot_script += &format!("set xlabel \"\"\n");
             },
         }
 
         match self.labely() {
             Some(labely) => {
-                gnuplot_script += &format!("set labely \"{}\"\n", labely);
+                gnuplot_script += &format!("set ylabel \"{}\"\n", labely);
             },
             None => {
-                gnuplot_script += &format!("set labely \"\"\n");
+                gnuplot_script += &format!("set ylabel \"\"\n");
             },
         }
 

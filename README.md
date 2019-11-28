@@ -18,11 +18,12 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Take out the reference from methods that use <S: Display> (&S)
+  - Investigate <S: AsRef<dyn Display>> 
 - More customization
   - Plot
     - set_style()
       - lines, points, linespoints, impulses, dots, steps, fsteps, histeps,
-    - plot_using_script(file)
   - Audio
     - audify()
     - sonify()

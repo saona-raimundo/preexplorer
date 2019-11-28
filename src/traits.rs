@@ -3,6 +3,8 @@ use crate::errors::SavingError;
 use core::fmt::Display;
 
 pub trait Preexplorable {
+    // Needed methods
+
     fn save<S: Display>(&self, serie: &S) -> Result<&Self, SavingError>;
 
     fn plot<S: Display>(&self, serie: &S) -> Result<&Self, SavingError>;
@@ -12,6 +14,9 @@ pub trait Preexplorable {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 
     fn configuration_as_ref(&self) -> &crate::configuration::Configuration;
+
+
+    // Implemented methods
 
     fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
         self.configuration().set_title(title.to_string());
