@@ -90,7 +90,8 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
+    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+        let serie = &serie.to_string();
         self.write_plot_script(serie)?;
 
         // Files creation
@@ -129,7 +130,8 @@ where
     ///
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
-    fn plot<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
+    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+        let serie = &serie.to_string();
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
@@ -144,7 +146,7 @@ where
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<&Self, SavingError> {
+    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 

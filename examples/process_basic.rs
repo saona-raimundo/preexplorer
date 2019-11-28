@@ -6,6 +6,6 @@ fn main() {
     pre::Process::new(times.iter(), values.iter())
         .set_title("My Title")
         .set_logx(-2)
-        .plot(&"my_serie_name")
+        .plot("my_serie_name")
         .unwrap();
 }

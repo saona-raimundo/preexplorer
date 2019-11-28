@@ -12,5 +12,5 @@ fn main() {
     let values = vec![1, 4, 8];
 
     let comp = plotting.compare_with(vec![pre::Process::new(times.iter(), values.iter())]);
-    comp.plot(&"my_serie_name").unwrap();
+    comp.plot("my_serie_name").unwrap();
 }

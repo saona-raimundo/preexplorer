@@ -5,11 +5,11 @@ use core::fmt::Display;
 pub trait Preexplorable {
     // Needed methods
 
-    fn save<S: Display>(&self, serie: &S) -> Result<&Self, SavingError>;
+    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
 
-    fn plot<S: Display>(&self, serie: &S) -> Result<&Self, SavingError>;
+    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
 
-    fn write_plot_script<S: Display>(&self, serie: &S) -> Result<&Self, SavingError>;
+    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 

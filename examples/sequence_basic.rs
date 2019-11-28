@@ -12,7 +12,7 @@ fn main() {
     let mut plotting = pre::Sequence::new(data);
     plotting.set_title("My Title")
         .set_logx(-1.)
-        .plot(&1).unwrap();
+        .plot(1).unwrap();
 
     // Data is a full array
 
@@ -20,7 +20,7 @@ fn main() {
     let mut plotting = pre::Sequence::new(data.iter());
     plotting.set_title("My Title 2")
         .set_logx(-1.)
-        .plot(&"my_plot_serie_name").unwrap();
+        .plot("my_plot_serie_name").unwrap();
 
     println!("{:?}", data);
 

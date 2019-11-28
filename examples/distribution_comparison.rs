@@ -9,6 +9,6 @@ fn main() {
         .to_owned()
         .compare_with(vec![pre::Distribution::new(values_2.iter())])
         .set_title("My title")
-        .plot(&1)
+        .plot(1)
         .unwrap();
 }

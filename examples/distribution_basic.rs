@@ -6,6 +6,6 @@ fn main() {
     pre::Distribution::new(values.iter())
         .set_title("My Title")
         .set_logx(2)
-        .plot(&1)
+        .plot(1)
         .unwrap();
 }
