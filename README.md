@@ -18,6 +18,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Go back to
+  - I: IntoIterator,
+  - and use I::IntoIter: ExactSizeIterator, in new method. 
 - More customization
   - Audio
     - audify()
