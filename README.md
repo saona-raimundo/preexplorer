@@ -18,16 +18,17 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- More customization
-  - Audio
-    - audify()
-    - sonify()
-- ndimensional variants
+- Change to preexplorer folder when creating data, plots, etc...
 - Write proper presentation of the crate:
   - Purpose
   - Installation
     - Recall gnuplot
   - Use with Rust
+- More customization
+  - Audio
+    - audify()
+    - sonify()
+- ndimensional variants
 - Document project
 - Publish it in crates.io
 
