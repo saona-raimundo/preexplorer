@@ -10,7 +10,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Data<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub(crate) data: I,
@@ -20,7 +20,7 @@ where
 
 impl<I> Data<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     pub fn new(data: I, dim: u8) -> Self {
@@ -31,7 +31,7 @@ where
 
 impl<I> crate::traits::Preexplorable for Data<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.

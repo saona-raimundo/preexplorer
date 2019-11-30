@@ -17,7 +17,7 @@ fn main() {
     // Data is a full array
 
     let data = vec![0, 1, 2, 3, 4];
-    let mut plotting = pre::Sequence::new(data.iter());
+    let mut plotting = pre::Sequence::new(&data);
     plotting.set_title("My Title 2")
         .set_logx(-1.)
         .plot("my_plot_serie_name").unwrap();

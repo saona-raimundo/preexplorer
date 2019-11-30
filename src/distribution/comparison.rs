@@ -9,7 +9,7 @@ use core::fmt::Display;
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
     pub(crate) data_set: Vec<crate::distribution::Distribution<I>>,
@@ -18,7 +18,7 @@ where
 
 impl<I> Comparison<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
     pub fn new<K>(data_set: K) -> Comparison<I>
@@ -44,7 +44,7 @@ where
 
 impl<I> crate::traits::Preexplorable for Comparison<I>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -104,7 +104,7 @@ where
             let (mut min, mut max, mut length);
             length = 0;
             
-            let mut realizations = distribution.realizations.clone();
+            let mut realizations = distribution.realizations.clone().into_iter();
             match realizations.next() {
                 Some(value) => {
                     min = value;

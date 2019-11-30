@@ -9,9 +9,9 @@ use core::fmt::Display;
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     pub(crate) data_set: Vec<crate::process::Process<I, J>>,
@@ -20,9 +20,9 @@ where
 
 impl<I, J> Comparison<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     pub fn new<K>(data_set: K) -> Comparison<I, J>
@@ -48,9 +48,9 @@ where
 
 impl<I, J> crate::traits::Preexplorable for Comparison<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.

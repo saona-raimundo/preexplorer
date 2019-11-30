@@ -31,9 +31,9 @@ use core::fmt::Display;
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Process<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     pub(crate) domain: I,
@@ -43,9 +43,9 @@ where
 
 impl<I, J> Process<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     pub fn new(domain: I, image: J) -> Process<I, J> {
@@ -83,9 +83,9 @@ where
 
 impl<I, J> crate::traits::Preexplorable for Process<I, J>
 where
-    I: ExactSizeIterator + Clone,
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: ExactSizeIterator + Clone,
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -118,7 +118,7 @@ where
             }
             data_gnuplot.push_str("# time value\n");
         }
-        for (time, value) in self.domain.clone().zip(self.image.clone()) {
+        for (time, value) in self.domain.clone().into_iter().zip(self.image.clone()) {
             data_gnuplot.push_str(&format!("{}\t{}\n", time, value));
         }
 
