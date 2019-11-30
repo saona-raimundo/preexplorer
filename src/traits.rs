@@ -58,6 +58,9 @@ pub trait Preexplorable {
         self
     }
 
+    fn base_plot_script(&self) -> String {
+        self.configuration_as_ref().base_plot_script()
+    }
 
     fn get_title(&self) -> Option<&String> {
         self.configuration_as_ref().get_title()

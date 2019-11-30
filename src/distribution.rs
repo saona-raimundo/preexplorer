@@ -148,7 +148,7 @@ where
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
-        let mut gnuplot_script = self.config.base_plot_script();
+        let mut gnuplot_script = self.base_plot_script();
 
         // Values for the histogram
 

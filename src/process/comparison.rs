@@ -101,7 +101,7 @@ where
 
         for i in 0..self.data_set.len() {
             let process = &self.data_set[i];
-            let legend = match process.config.get_title() {
+            let legend = match process.get_title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };

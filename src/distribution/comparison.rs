@@ -91,7 +91,7 @@ where
         std::fs::create_dir_all("plots")?;
         let gnuplot_file = &format!("plots\\{}.gnu", serie);
 
-        let mut gnuplot_script = self.config.base_plot_script();
+        let mut gnuplot_script = self.config.base_plot_script_comparison();
 
         // Treat each data to a prob distr funct
 
@@ -150,7 +150,7 @@ where
 
         for i in 0..self.data_set.len() {
             let distribution = &self.data_set[i];
-            let legend = match distribution.config.get_title() {
+            let legend = match distribution.get_title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
