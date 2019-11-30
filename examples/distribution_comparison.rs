@@ -5,10 +5,10 @@ fn main() {
     let values_2: Vec<u32> = (100..300).chain(100..220).chain(150..250).collect();
 
     pre::Distribution::new(values_1)
-        .set_title("My legend")
+        .title("My legend")
         .to_owned()
         .compare_with(vec![pre::Distribution::new(values_2)])
-        .set_title("My title")
+        .title("My title")
         .plot(1)
         .unwrap();
 }

@@ -145,17 +145,27 @@ where
         }
 
         gnuplot_script += "plot ";
-        let style = self.style();
+        let style = self.get_style();
+        let mut dashtype_counter = 0;
+
         for i in 0..self.data_set.len() {
             let distribution = &self.data_set[i];
-            let legend = match distribution.config.title() {
+            let legend = match distribution.config.get_title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
             let distribution_style = match style {
-                crate::configuration::plot::style::Style::Default => distribution.style(),
+                crate::configuration::plot::style::Style::Default => distribution.get_style(),
                 _ => style,
             };
+            let dashtype = match self.get_dashtype() {
+                Some(dashtype) => dashtype,
+                None => {
+                    dashtype_counter += 1;
+                    dashtype_counter
+                },
+            };
+
             gnuplot_script += &format!(
                 "\"data/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with {} title \"{}\" dashtype {}, ",
                 serie, 
@@ -165,7 +175,7 @@ where
                 i, 
                 distribution_style,
                 legend, 
-                i+1,
+                dashtype,
             );
             if i < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";

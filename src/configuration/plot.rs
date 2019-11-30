@@ -9,6 +9,7 @@ pub(crate) struct PlotConfiguration {
     labelx: Option<String>,
     labely: Option<String>,
     style: crate::configuration::plot::style::Style,
+    dashtype: Option<usize>,
 }
 
 impl PlotConfiguration {
@@ -19,8 +20,9 @@ impl PlotConfiguration {
         let labelx = None;
         let labely = None;
         let style = crate::configuration::plot::style::Style::Default;
+        let dashtype = None;
 
-        PlotConfiguration { title, logx, logy, labelx, labely, style }
+        PlotConfiguration { title, logx, logy, labelx, labely, style, dashtype}
     }
 
     pub(crate) fn base_plot_script(&self) -> String {
@@ -34,7 +36,7 @@ impl PlotConfiguration {
     pub(crate) fn base_plot_script_comparison(&self) -> String {
         let mut gnuplot_script = String::new();
 
-        match self.title() {
+        match self.get_title() {
             Some(title) => {
                 gnuplot_script += &format!("set title \"{}\"\n", title);
             },
@@ -43,7 +45,7 @@ impl PlotConfiguration {
             },
         }
 
-        match self.labelx() {
+        match self.get_labelx() {
             Some(labelx) => {
                 gnuplot_script += &format!("set xlabel \"{}\"\n", labelx);
             },
@@ -52,7 +54,7 @@ impl PlotConfiguration {
             },
         }
 
-        match self.labely() {
+        match self.get_labely() {
             Some(labely) => {
                 gnuplot_script += &format!("set ylabel \"{}\"\n", labely);
             },
@@ -61,14 +63,14 @@ impl PlotConfiguration {
             },
         }
 
-        if let Some(logx) = &self.logx() {
+        if let Some(logx) = &self.get_logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
-        if let Some(logy) = &self.logy() {
+        if let Some(logy) = &self.get_logy() {
             if *logy <= 0.0 {
                 gnuplot_script += "set logscale y\n";
             } else {
@@ -79,57 +81,55 @@ impl PlotConfiguration {
         gnuplot_script
     }
 
-    pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
+    pub(crate) fn title(&mut self, title: String) -> &mut Self {
         self.title = Some(title);
         self
     }
-    pub(crate) fn set_logx(&mut self, logx: f64) -> &mut Self {
+    pub(crate) fn logx(&mut self, logx: f64) -> &mut Self {
         self.logx = Some(logx);
         self
     }
-    pub(crate) fn set_logy(&mut self, logy: f64) -> &mut Self {
+    pub(crate) fn logy(&mut self, logy: f64) -> &mut Self {
         self.logy = Some(logy);
         self
     }
-    pub(crate) fn set_labelx(&mut self, labelx: String) -> &mut Self {
+    pub(crate) fn labelx(&mut self, labelx: String) -> &mut Self {
         self.labelx = Some(labelx);
         self
     }
-    pub(crate) fn set_labely(&mut self, labely: String) -> &mut Self {
+    pub(crate) fn labely(&mut self, labely: String) -> &mut Self {
         self.labely = Some(labely);
         self
     }
-    pub(crate) fn set_style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
+    pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
         self.style = style;
+        self
+    }
+    pub(crate) fn dashtype(&mut self, dashtype: usize) -> &mut Self {
+        self.dashtype = Some(dashtype);
         self
     }
 
 
-    pub(crate) fn title(&self) -> Option<String> {
-        match &self.title {
-            Some(title) => Some(title.to_string()),
-            None => None,
-        }
+    pub(crate) fn get_title(&self) -> Option<&String> {
+        self.title.as_ref()
     }
-    pub(crate) fn logx(&self) -> Option<f64> {
+    pub(crate) fn get_logx(&self) -> Option<f64> {
         self.logx
     }
-    pub(crate) fn logy(&self) -> Option<f64> {
+    pub(crate) fn get_logy(&self) -> Option<f64> {
         self.logy
     }
-    pub(crate) fn labelx(&self) -> Option<&str> {
-        match &self.labelx {
-            Some(labelx) => Some(labelx),
-            None => None,
-        }
+    pub(crate) fn get_labelx(&self) -> Option<&String> {
+        self.labelx.as_ref()
     }
-    pub(crate) fn labely(&self) -> Option<&str> {
-        match &self.labely {
-            Some(labely) => Some(labely),
-            None => None,
-        }
+    pub(crate) fn get_labely(&self) -> Option<&String> {
+        self.labely.as_ref()
     }
-    pub(crate) fn style(&self) -> &crate::configuration::plot::style::Style {
+    pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
         &self.style
+    }
+    pub(crate) fn get_dashtype(&self) -> Option<usize> {
+        self.dashtype
     }
 }

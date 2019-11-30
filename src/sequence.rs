@@ -99,15 +99,15 @@ where
         let data_dir = "data";
         std::fs::create_dir_all(data_dir)?;
 
-        let data_name = &format!("{}.{}", serie, self.extension());
+        let data_name = &format!("{}.{}", serie, self.get_extension());
         let path = &format!("{}\\{}", data_dir, data_name);
 
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        if self.header() {
+        if self.get_header() {
             data_gnuplot.push_str(&format!("# {}", serie));
-            match self.title() {
+            match self.get_title() {
                 Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
                 None => data_gnuplot.push_str("\n"),
             }
@@ -152,9 +152,14 @@ where
 
         let mut gnuplot_script = self.config.base_plot_script();
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" with {} \n", 
+        let dashtype = match self.get_dashtype() {
+            Some(dashtype) => dashtype,
+            None => 1,
+        };
+        gnuplot_script += &format!("plot \"data/{}.txt\" with {} dashtype {} \n", 
             serie,
-            self.style(),
+            self.get_style(),
+            dashtype,
         );
         gnuplot_script += "pause -1\n";
 
@@ -181,8 +186,8 @@ mod tests {
     fn set_style() {
         let data = 0..2;
         let mut seq = Sequence::new(data);
-        seq.set_style("points");
+        seq.style("points");
 
-        assert_eq!(&crate::configuration::plot::style::Style::Points, seq.style());
+        assert_eq!(&crate::configuration::plot::style::Style::Points, seq.get_style());
     }
 }

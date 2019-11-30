@@ -15,20 +15,20 @@ impl SaveConfiguration {
         }
     }
 
-    pub(crate) fn set_extension(&mut self, extension: String) -> &mut Self {
+    pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
         self.extension = extension;
         self
     }
-    pub(crate) fn set_header(&mut self, header: bool) -> &mut Self {
+    pub(crate) fn header(&mut self, header: bool) -> &mut Self {
         self.header = header;
         self
     }
 
 
-    pub(crate) fn extension(&self) -> &str {
+    pub(crate) fn get_extension(&self) -> &str {
         &self.extension
     }
-    pub(crate) fn header(&self) -> bool {
+    pub(crate) fn get_header(&self) -> bool {
         self.header
     }
 }

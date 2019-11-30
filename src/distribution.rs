@@ -40,7 +40,7 @@ where
 {
     pub fn new(realizations: I) -> Distribution<I> {
         let mut config = crate::configuration::Configuration::default();
-        config.set_style(crate::configuration::plot::style::Style::Steps);
+        config.style(crate::configuration::plot::style::Style::Steps);
 
         Distribution {
             realizations,
@@ -92,15 +92,15 @@ where
         let data_dir = "data";
         std::fs::create_dir_all(data_dir)?;
 
-        let data_name = &format!("{}.{}", serie, self.extension());
+        let data_name = &format!("{}.{}", serie, self.get_extension());
         let path = &format!("{}\\{}", data_dir, data_name);
 
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        if self.header() {
+        if self.get_header() {
             data_gnuplot.push_str(&format!("# {}", serie));
-            match self.title() {
+            match self.get_title() {
                 Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
                 None => data_gnuplot.push_str("\n"),
             }
@@ -180,10 +180,15 @@ where
                 gnuplot_script += &format!("width = ({} - {}) / nbins #width\n\n", max, min);
                 gnuplot_script += "# function used to map a value to the intervals\n";
                 gnuplot_script += "hist(x,width) = width * floor(x/width) + width / 2.0\n\n";
+                let dashtype = match self.get_dashtype() {
+                    Some(dashtype) => dashtype,
+                    None => 1,
+                };
                 gnuplot_script += &format!(
-                    "plot \"data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with {}\n",
+                    "plot \"data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with {} dashtype {}\n",
                     serie, 
-                    self.style(),
+                    self.get_style(),
+                    dashtype,
                 );
             },
             None => {

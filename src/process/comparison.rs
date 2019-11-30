@@ -96,24 +96,34 @@ where
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
         gnuplot_script += "plot ";
-        let style = self.style();
+        let style = self.get_style();
+        let mut dashtype_counter = 0;
+
         for i in 0..self.data_set.len() {
             let process = &self.data_set[i];
-            let legend = match process.config.title() {
+            let legend = match process.config.get_title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
             let process_style = match style {
-                crate::configuration::plot::style::Style::Default => process.style(),
+                crate::configuration::plot::style::Style::Default => process.get_style(),
                 _ => style,
             };
+            let dashtype = match self.get_dashtype() {
+                Some(dashtype) => dashtype,
+                None => {
+                    dashtype_counter += 1;
+                    dashtype_counter
+                },
+            };
+            
             gnuplot_script += &format!(
                 "\"data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
                 serie,
                 i,
                 process_style,
                 legend,
-                i + 1
+                dashtype,
             );
             if i < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";

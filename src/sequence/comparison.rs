@@ -91,16 +91,25 @@ where
 
         gnuplot_script += "plot ";
 
-        let style = self.style();
+        let style = self.get_style();
+        let mut dashtype_counter = 0;
+
         for i in 0..self.data_set.len() {
             let sequence = &self.data_set[i];
-            let legend = match sequence.config.title() {
+            let legend = match sequence.get_title() {
                 Some(leg) => String::from(leg),
                 None => i.to_string(),
             };
             let sequence_style = match style {
-                crate::configuration::plot::style::Style::Default => sequence.style(),
+                crate::configuration::plot::style::Style::Default => sequence.get_style(),
                 _ => style,
+            };
+            let dashtype = match self.get_dashtype() {
+                Some(dashtype) => dashtype,
+                None => {
+                    dashtype_counter += 1;
+                    dashtype_counter
+                },
             };
             gnuplot_script += &format!(
                 "\"data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
@@ -108,7 +117,7 @@ where
                 i,
                 sequence_style,
                 legend,
-                i + 1
+                dashtype
             );
             if i < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";

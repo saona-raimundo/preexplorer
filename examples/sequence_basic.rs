@@ -10,16 +10,16 @@ fn main() {
 
     let data = 0..10;
     let mut plotting = pre::Sequence::new(data);
-    plotting.set_title("My Title")
-        .set_logx(-1.)
+    plotting.title("My Title")
+        .logx(-1.)
         .plot(1).unwrap();
 
     // Data is a full array
 
     let data = vec![0, 1, 2, 3, 4];
     let mut plotting = pre::Sequence::new(&data);
-    plotting.set_title("My Title 2")
-        .set_logx(-1.)
+    plotting.title("My Title 2")
+        .logx(-1.)
         .plot("my_plot_serie_name").unwrap();
 
     println!("{:?}", data);

@@ -6,7 +6,7 @@ fn main() -> failure::Fallible<()> {
     let dim = 2;
 
     pre::Data::new(data.iter(), dim)
-        .set_title("My Title")
+        .title("My Title")
         .plot(1)?;
 
     Ok(())

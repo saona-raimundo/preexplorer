@@ -50,16 +50,16 @@ where
         let data_dir = "data";
         std::fs::create_dir_all(data_dir)?;
 
-        let data_name = &format!("{}.{}", serie, self.extension());
+        let data_name = &format!("{}.{}", serie, self.get_extension());
         let path = &format!("{}\\{}", data_dir, data_name);
 
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
         data_gnuplot.push_str("# index value\n");
-        if self.header() {
+        if self.get_header() {
             data_gnuplot.push_str(&format!("# {}", serie));
-            match self.title() {
+            match self.get_title() {
                 Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
                 None => data_gnuplot.push_str("\n"),
             }

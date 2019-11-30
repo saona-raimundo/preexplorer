@@ -18,65 +18,72 @@ pub trait Preexplorable {
 
     // Implemented methods
 
-    fn set_title<S: Display>(&mut self, title: S) -> &mut Self {
-        self.configuration().set_title(title.to_string());
+    fn title<S: Display>(&mut self, title: S) -> &mut Self {
+        self.configuration().title(title.to_string());
         self
     }
-    fn set_logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
-        self.configuration().set_logx(logx.into());
+    fn logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
+        self.configuration().logx(logx.into());
         self
     }
-    fn set_logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
-        self.configuration().set_logy(logy.into());
+    fn logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
+        self.configuration().logy(logy.into());
         self
     }
-    fn set_labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
-        self.configuration().set_labelx(labelx.to_string());
+    fn labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
+        self.configuration().labelx(labelx.to_string());
         self
     }
-    fn set_labely<S: Display>(&mut self, labely: S) -> &mut Self {
-        self.configuration().set_labely(labely.to_string());
+    fn labely<S: Display>(&mut self, labely: S) -> &mut Self {
+        self.configuration().labely(labely.to_string());
         self
     }
-    fn set_extension<S: Display>(&mut self, extension: S) -> &mut Self {
-        self.configuration().set_extension(extension.to_string());
+    fn extension<S: Display>(&mut self, extension: S) -> &mut Self {
+        self.configuration().extension(extension.to_string());
         self
     }
-    fn set_header(&mut self, header: bool) -> &mut Self {
-        self.configuration().set_header(header);
+    fn header(&mut self, header: bool) -> &mut Self {
+        self.configuration().header(header);
         self
     }
-    fn set_style<S>(&mut self, style: S) -> &mut Self 
+    fn style<S>(&mut self, style: S) -> &mut Self 
     where
         crate::configuration::plot::style::Style: From<S>,
     {
-        self.configuration().set_style(crate::configuration::plot::style::Style::from(style));
+        self.configuration().style(crate::configuration::plot::style::Style::from(style));
+        self
+    }
+    fn dashtype(&mut self, dashtype: usize) -> &mut Self {
+        self.configuration().dashtype(dashtype);
         self
     }
 
 
-    fn title(&self) -> Option<String> {
-        self.configuration_as_ref().title()
+    fn get_title(&self) -> Option<&String> {
+        self.configuration_as_ref().get_title()
     }
-    fn logx(&self) -> Option<f64> {
-        self.configuration_as_ref().logx()
+    fn get_logx(&self) -> Option<f64> {
+        self.configuration_as_ref().get_logx()
     }
-    fn logy(&self) -> Option<f64> {
-        self.configuration_as_ref().logy()
+    fn get_logy(&self) -> Option<f64> {
+        self.configuration_as_ref().get_logy()
     }
-    fn labelx(&self) -> Option<&str> {
-        self.configuration_as_ref().labelx()
+    fn get_labelx(&self) -> Option<&String> {
+        self.configuration_as_ref().get_labelx()
     }
-    fn labely(&self) -> Option<&str> {
-        self.configuration_as_ref().labely()
+    fn get_labely(&self) -> Option<&String> {
+        self.configuration_as_ref().get_labely()
     }
-    fn extension(&self) -> &str {
-        self.configuration_as_ref().extension()
+    fn get_extension(&self) -> &str {
+        self.configuration_as_ref().get_extension()
     }
-    fn header(&self) -> bool {
-        self.configuration_as_ref().header()
+    fn get_header(&self) -> bool {
+        self.configuration_as_ref().get_header()
     }
-    fn style(&self) -> &crate::configuration::plot::style::Style {
-        self.configuration_as_ref().style()
+    fn get_style(&self) -> &crate::configuration::plot::style::Style {
+        self.configuration_as_ref().get_style()
+    }
+    fn get_dashtype(&self) -> Option<usize> {
+        self.configuration_as_ref().get_dashtype()
     }
 }

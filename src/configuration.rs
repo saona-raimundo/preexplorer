@@ -28,64 +28,79 @@ impl Configuration {
         self.plot_config.base_plot_script_comparison()
     }
 
-    pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
-        self.plot_config.set_title(title);
+    /////////////////////////// PlotConfiguration
+    // Setting
+    pub(crate) fn title(&mut self, title: String) -> &mut Self {
+        self.plot_config.title(title);
         self
     }
-    pub(crate) fn set_logx(&mut self, logx: f64) -> &mut Self {
-        self.plot_config.set_logx(logx);
+    pub(crate) fn logx(&mut self, logx: f64) -> &mut Self {
+        self.plot_config.logx(logx);
         self
     }
-    pub(crate) fn set_logy(&mut self, logy: f64) -> &mut Self {
-        self.plot_config.set_logy(logy);
+    pub(crate) fn logy(&mut self, logy: f64) -> &mut Self {
+        self.plot_config.logy(logy);
         self
     }
-    pub(crate) fn set_labelx(&mut self, labelx: String) -> &mut Self {
-        self.plot_config.set_labelx(labelx);
+    pub(crate) fn labelx(&mut self, labelx: String) -> &mut Self {
+        self.plot_config.labelx(labelx);
         self
     }
-    pub(crate) fn set_labely(&mut self, labely: String) -> &mut Self {
-        self.plot_config.set_labely(labely);
+    pub(crate) fn labely(&mut self, labely: String) -> &mut Self {
+        self.plot_config.labely(labely);
         self
     }
-
-    pub(crate) fn set_extension(&mut self, extension: String) -> &mut Self {
-        self.save_config.set_extension(extension);
+    pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
+        self.plot_config.style(style);
         self
     }
-    pub(crate) fn set_header(&mut self, header: bool) -> &mut Self {
-        self.save_config.set_header(header);
-        self
-    }
-    pub(crate) fn set_style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
-        self.plot_config.set_style(style);
+    pub(crate) fn dashtype(&mut self, dashtype: usize) -> &mut Self {
+        self.plot_config.dashtype(dashtype);
         self
     }
 
-    pub(crate) fn title(&self) -> Option<String> {
-        self.plot_config.title()
+    // Getting
+    pub(crate) fn get_title(&self) -> Option<&String> {
+        self.plot_config.get_title()
     }
-    pub(crate) fn logx(&self) -> Option<f64> {
-        self.plot_config.logx()
+    pub(crate) fn get_logx(&self) -> Option<f64> {
+        self.plot_config.get_logx()
     }
-    pub(crate) fn logy(&self) -> Option<f64> {
-        self.plot_config.logy()
+    pub(crate) fn get_logy(&self) -> Option<f64> {
+        self.plot_config.get_logy()
     }
-    pub(crate) fn labelx(&self) -> Option<&str> {
-        self.plot_config.labelx()
+    pub(crate) fn get_labelx(&self) -> Option<&String> {
+        self.plot_config.get_labelx()
     }
-    pub(crate) fn labely(&self) -> Option<&str> {
-        self.plot_config.labely()
+    pub(crate) fn get_labely(&self) -> Option<&String> {
+        self.plot_config.get_labely()
     }
-    pub(crate) fn extension(&self) -> &str {
-        self.save_config.extension()
+    pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
+        self.plot_config.get_style()
     }
-    pub(crate) fn header(&self) -> bool {
-        self.save_config.header()
+    pub(crate) fn get_dashtype(&self) -> Option<usize> {
+        self.plot_config.get_dashtype()
     }
-    pub(crate) fn style(&self) -> &crate::configuration::plot::style::Style {
-        self.plot_config.style()
+
+    ////////// SaveConfiguration /////////////////
+    // Setting
+    pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
+        self.save_config.extension(extension);
+        self
     }
+    pub(crate) fn header(&mut self, header: bool) -> &mut Self {
+        self.save_config.header(header);
+        self
+    }
+
+    // Getting
+    pub(crate) fn get_extension(&self) -> &str {
+        self.save_config.get_extension()
+    }
+    pub(crate) fn get_header(&self) -> bool {
+        self.save_config.get_header()
+    }
+
 }
 
 
@@ -94,46 +109,48 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_set_logx() {
+    fn check_logx() {
         let mut config = Configuration::default();
 
-        assert_eq!(config.logx(), None);
+        assert_eq!(config.get_logx(), None);
 
-        config.set_logx(10.);
+        config.logx(10.);
 
-        assert_eq!(config.logx(), Some(10.));
+        assert_eq!(config.get_logx(), Some(10.));
     }
 
     #[test]
     fn check_set_logy() {
         let mut config = Configuration::default();
 
-        assert_eq!(config.logx(), None);
+        assert_eq!(config.get_logx(), None);
 
-        config.set_logy(10.);
+        config.logy(10.);
 
-        assert_eq!(config.logy(), Some(10.));
+        assert_eq!(config.get_logy(), Some(10.));
     }
 
     #[test]
     fn check_set_labelx() {
         let mut config = Configuration::default();
 
-        assert_eq!(config.labelx(), None);
+        assert_eq!(config.get_labelx(), None);
         
-        config.set_labelx(String::from("try"));
+        let labelx = String::from("try");
+        config.labelx(labelx.clone());
 
-        assert_eq!(config.labelx(), Some("try"));
+        assert_eq!(config.get_labelx(), Some(&labelx));
     }
 
     #[test]
     fn check_set_labely() {
         let mut config = Configuration::default();
 
-        assert_eq!(config.labely(), None);
+        assert_eq!(config.get_labely(), None);
         
-        config.set_labely(String::from("try"));
+        let labely = String::from("try");
+        config.labely(labely.clone());
 
-        assert_eq!(config.labely(), Some("try"));
+        assert_eq!(config.get_labely(), Some(&labely));
     }
 }
