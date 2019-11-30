@@ -1,6 +1,47 @@
-// Trait bounds
+// Types
 use crate::errors::SavingError;
+
+// Trait bounds
 use core::fmt::Display;
+
+pub trait Preexplore: IntoIterator + Clone
+where 
+    Self::Item: Display,
+{
+    fn preexplore(self) -> crate::sequence::Sequence<Self> {
+        crate::sequence::Sequence::new(self)
+    }   
+}
+
+impl<I> Preexplore for I
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{}
+
+pub trait PreexploreProcess<I, J>
+where
+    I: IntoIterator + Clone, 
+    I::Item: Display,
+    J: IntoIterator + Clone, 
+    J::Item: Display,
+{
+    fn preexplore(self) -> crate::process::Process<I, J>;
+}
+
+impl<I, J> PreexploreProcess<I, J> for (I, J)
+where
+    I: IntoIterator + Clone, 
+    I::Item: Display,
+    J: IntoIterator + Clone, 
+    J::Item: Display,
+{
+    fn preexplore(self) -> crate::process::Process<I, J> {
+        crate::process::Process::new(self.0, self.1)
+    }   
+}
+
+
 
 pub trait Preexplorable {
     // Needed methods

@@ -45,5 +45,5 @@ pub use sequence::Sequence;
 pub mod prelude {
 
     pub use crate as pre;
-    pub use crate::traits::Preexplorable;
+    pub use crate::traits::*;
 }

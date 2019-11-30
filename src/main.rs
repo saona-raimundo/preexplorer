@@ -9,8 +9,8 @@ fn main() {
     // Arrange everything in a vector
 
     let group_of_plottings = vec![
-        pre::Sequence::new(data_1.iter()),
-        pre::Sequence::new(data_2.iter()),
+        data_1.preexplore(),
+        data_2.preexplore(),
     ];
 
     pre::sequence::Comparison::new(group_of_plottings)
