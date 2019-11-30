@@ -18,11 +18,6 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Add methods to act directly upon intoiterators:
-  - .preexplore() -> Sequence
-  - .preexplore_process() -> Process
-  - .preexplore() -> Sequence
-  - 
 - Change to preexplorer folder when creating data, plots, etc...
 - Write proper presentation of the crate:
   - Purpose
