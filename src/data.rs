@@ -56,7 +56,6 @@ where
         // Create the data structure for gnuplot
 
         let mut data_gnuplot = String::new();
-        data_gnuplot.push_str("# index value\n");
         if self.get_header() {
             data_gnuplot.push_str(&format!("# {}", serie));
             match self.get_title() {
@@ -69,11 +68,15 @@ where
             }
             data_gnuplot.push_str("\n");
         }
+
+        let mut counter = 0;
         for value in self.data.clone() {
-            for _ in 0..self.dim {
-                data_gnuplot.push_str(&format!("{}\t", value));
+            data_gnuplot.push_str(&format!("{}\t", value));
+            counter += 1;
+            if counter == self.dim {
+                counter = 0;
+                data_gnuplot.push_str("\n");
             }
-            data_gnuplot.push_str("\n");
         }
 
         // Write the data
