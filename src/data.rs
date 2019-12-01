@@ -157,11 +157,27 @@ where
     			process.write_plot_script(serie)?;
                 Ok(self)
     		},
-    		_ => return Err(
-                std::io::Error::new(
-                    std::io::ErrorKind::Other, "Ploting general data: dimension of data is too high to plot it automatically. Please do it yourself."
-                ).into()
-            ),
+    		_ => {
+                std::fs::create_dir_all("preexplorer\\plots")?;
+                let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
+
+                let mut gnuplot_script = self.base_plot_script();
+
+                let dashtype = match self.get_dashtype() {
+                    Some(dashtype) => dashtype,
+                    None => 1,
+                };
+                gnuplot_script += &format!("plot \"preexplorer/data/{}.txt\" with {} dashtype {} \n", 
+                    serie,
+                    self.get_style(),
+                    dashtype,
+                );
+                gnuplot_script += "pause -1\n";
+
+                std::fs::write(&gnuplot_file, &gnuplot_script)?;
+
+                Ok(self)
+            },
     	}
     }
 
