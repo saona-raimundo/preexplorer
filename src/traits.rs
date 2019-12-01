@@ -4,20 +4,23 @@ use crate::errors::SavingError;
 // Trait bounds
 use core::fmt::Display;
 
-pub trait Preexplore: IntoIterator + Clone
+pub trait Preexplore<I>
 where 
-    Self::Item: Display,
+	I: IntoIterator + Clone,
+    I::Item: Display,
 {
-    fn preexplore(self) -> crate::sequence::Sequence<Self> {
-        crate::sequence::Sequence::new(self)
-    }   
+    fn preexplore(self) -> crate::sequence::Sequence<I>;
 }
 
-impl<I> Preexplore for I
+impl<I> Preexplore<I> for I
 where
     I: IntoIterator + Clone,
     I::Item: Display,
-{}
+{
+	fn preexplore(self) -> crate::sequence::Sequence<I> {
+        crate::sequence::Sequence::new(self)
+    }   
+}
 
 pub trait PreexploreProcess<I, J>
 where
