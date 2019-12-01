@@ -4,7 +4,7 @@ pub use comparison::Comparison;
 /// Compare various ``Distribution`` types together.
 pub mod comparison;
 /// Distribution with values with n-dimensions.
-pub mod nddistribution;
+mod nddistribution;
 
 pub use crate::traits::Preexplorable;
 

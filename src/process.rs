@@ -10,7 +10,7 @@ pub use comparison::Comparison;
 /// Compare various ``Process`` types together.
 pub mod comparison;
 /// Time-series with values in R^n.
-pub mod ndprocess;
+mod ndprocess;
 
 pub use crate::traits::Preexplorable;
 

@@ -4,7 +4,7 @@ pub use comparison::Comparison;
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
 /// Sequence with values with n-dimensions.
-pub mod ndsequence;
+mod ndsequence;
 
 pub use crate::traits::Preexplorable;
 
