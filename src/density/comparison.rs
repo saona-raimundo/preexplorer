@@ -4,7 +4,7 @@ pub use crate::traits::Preexplorable;
 // Trait bounds
 use core::fmt::Display;
 
-/// See ``Distribution`` documentation for further use.
+/// See ``Density`` documentation for further use.
 ///
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct Comparison<I>
@@ -12,7 +12,7 @@ where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
-    pub(crate) data_set: Vec<crate::distribution::Distribution<I>>,
+    pub(crate) data_set: Vec<crate::density::Density<I>>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
@@ -23,18 +23,18 @@ where
 {
     pub fn new<K>(data_set: K) -> Comparison<I>
     where
-        K: IntoIterator<Item = crate::distribution::Distribution<I>>,
+        K: IntoIterator<Item = crate::density::Density<I>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<crate::distribution::Distribution<I>>>();
+            .collect::<Vec<crate::density::Density<I>>>();
         Comparison { data_set, config }
     }
 
     pub fn add<J>(&mut self, anothers: J)
     where
-        J: IntoIterator<Item = crate::distribution::Distribution<I>>,
+        J: IntoIterator<Item = crate::density::Density<I>>,
     {
         for sequence in anothers.into_iter() {
             self.data_set.push(sequence);
@@ -56,7 +56,7 @@ where
     /// quick template gnuplot script saved under ``plots`` directory.
     fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
         for (counter, distribution) in self.data_set.iter().enumerate() {
-            crate::distribution::Distribution::save(
+            crate::density::Density::save(
                 &distribution,
                 &format!("{}_{}", serie, counter),
             )?;

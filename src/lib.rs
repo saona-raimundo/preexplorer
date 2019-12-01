@@ -23,7 +23,7 @@
 /// Generic multi-dimensional data. 
 pub mod data;
 /// Histograms or realizations of the same variable.
-pub mod distribution;
+pub mod density;
 /// Time-series, indexed by a subset of R.
 pub mod process;
 /// Process indexed by 1, 2, 3, ...
@@ -37,7 +37,7 @@ pub mod errors;
 pub mod traits;
 
 pub use data::Data;
-pub use distribution::Distribution;
+pub use density::Density;
 pub use process::Process;
 pub use sequence::Sequence;
 

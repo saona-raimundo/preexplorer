@@ -18,7 +18,6 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Change to preexplorer folder when creating data, plots, etc...
 - Write proper presentation of the crate:
   - Purpose
   - Installation

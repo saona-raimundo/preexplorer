@@ -24,7 +24,7 @@ use core::fmt::Display;
 /// See ``compare`` method to compare two or more data sets.
 ///
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub struct Distribution<I>
+pub struct Density<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
@@ -33,45 +33,45 @@ where
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I> Distribution<I>
+impl<I> Density<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
-    pub fn new(realizations: I) -> Distribution<I> {
+    pub fn new(realizations: I) -> Density<I> {
         let mut config = crate::configuration::Configuration::default();
         config.style(crate::configuration::plot::style::Style::Steps);
 
-        Distribution {
+        Density {
             realizations,
             config,
         }
     }
 
-    /// Compare various ``Distribution`` types together.
+    /// Compare various ``Density`` types together.
     ///
     /// You can either put all together in a vector, or add them to a ``Comparison``
     ///
     /// # Remarks
     ///
-    /// Titles of ``Distribution`` types involved in a ``Comparison`` are presented as legend.
+    /// Titles of ``Density`` types involved in a ``Comparison`` are presented as legend.
     ///
     /// # Examples
     ///
     /// ```no_run
     /// ```
 
-    pub fn compare_with<J>(self, anothers: J) -> crate::distribution::comparison::Comparison<I>
+    pub fn compare_with<J>(self, anothers: J) -> crate::density::comparison::Comparison<I>
     where
-        J: IntoIterator<Item = crate::distribution::Distribution<I>>,
+        J: IntoIterator<Item = crate::density::Density<I>>,
     {
-        let mut comp = crate::distribution::comparison::Comparison::new(vec![self]);
+        let mut comp = crate::density::comparison::Comparison::new(vec![self]);
         comp.add(anothers.into_iter());
         comp
     }
 }
 
-impl<I> crate::traits::Preexplorable for Distribution<I>
+impl<I> crate::traits::Preexplorable for Density<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
