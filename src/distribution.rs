@@ -183,7 +183,7 @@ where
                     None => 1,
                 };
                 gnuplot_script += &format!(
-                    "plot \"data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with {} dashtype {}\n",
+                    "plot \"preexplorer/data/{}.txt\" using (hist($1,width)):(1.0/len) smooth frequency with {} dashtype {}\n",
                     serie, 
                     self.get_style(),
                     dashtype,

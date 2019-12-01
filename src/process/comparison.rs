@@ -91,7 +91,7 @@ where
     ///
     fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
         std::fs::create_dir_all("preexplorer\\plots")?;
-        let gnuplot_file = &format!("ppreexplorer\\lots\\{}.gnu", serie);
+        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
 
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
