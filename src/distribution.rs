@@ -89,7 +89,7 @@ where
 
         // Files creation
 
-        let data_dir = "data";
+        let data_dir = "preexplorer\\data";
         std::fs::create_dir_all(data_dir)?;
 
         let data_name = &format!("{}.{}", serie, self.get_extension());
@@ -130,9 +130,7 @@ where
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
-        let gnuplot_file = format!("{}.gnu", serie);
-
-        let gnuplot_file = &format!("plots\\{}", gnuplot_file);
+        let gnuplot_file = &format!("preexplorer\\plots\\{}", format!("{}.gnu", serie));
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
             .spawn()?;
@@ -145,8 +143,8 @@ where
     ///
     /// Only works for real numbers.
     fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("plots")?;
-        let gnuplot_file = &format!("plots\\{}.gnu", serie);
+        std::fs::create_dir_all("preexplorer\\plots")?;
+        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
 
         let mut gnuplot_script = self.base_plot_script();
 

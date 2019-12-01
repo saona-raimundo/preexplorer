@@ -80,9 +80,9 @@ where
 
         let gnuplot_file = format!("{}.gnu", serie);
 
-        let gnuplot_file = &format!("plots\\{}", gnuplot_file);
+        let gnuplot_path = &format!("preexplorer\\plots\\{}", gnuplot_file);
         std::process::Command::new("gnuplot")
-            .arg(gnuplot_file)
+            .arg(gnuplot_path)
             .spawn()?;
         Ok(self)
     }
@@ -90,8 +90,8 @@ where
     /// Write simple gnuplot script for this type of data.
     ///
     fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("plots")?;
-        let gnuplot_file = &format!("plots\\{}.gnu", serie);
+        std::fs::create_dir_all("preexplorer\\plots")?;
+        let gnuplot_file = &format!("ppreexplorer\\lots\\{}.gnu", serie);
 
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
@@ -118,7 +118,7 @@ where
             };
             
             gnuplot_script += &format!(
-                "\"data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
+                "\"preexplorer/data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
                 serie,
                 i,
                 process_style,

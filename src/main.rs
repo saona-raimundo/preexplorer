@@ -15,6 +15,6 @@ fn main() {
 
     pre::sequence::Comparison::new(group_of_plottings)
         .title("All together")
-        .plot(&"my_serie_name")
+        .plot(&"my serie name")
         .unwrap();
 }

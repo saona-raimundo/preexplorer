@@ -101,7 +101,7 @@ where
 
         // Files creation
 
-        let data_dir = "data";
+        let data_dir = "preexplorer\\data";
         std::fs::create_dir_all(data_dir)?;
 
         let data_name = &format!("{}.{}", serie, self.get_extension());
@@ -142,7 +142,7 @@ where
 
         let gnuplot_file = format!("{}.gnu", serie);
 
-        let gnuplot_file = &format!("plots\\{}", gnuplot_file);
+        let gnuplot_file = &format!("preexplorer\\plots\\{}", gnuplot_file);
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
             .spawn()?;
@@ -152,8 +152,8 @@ where
     /// Write simple gnuplot script for this type of data.
     ///
     fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("plots")?;
-        let gnuplot_file = &format!("plots\\{}.gnu", serie);
+        std::fs::create_dir_all("preexplorer\\plots")?;
+        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
 
         let mut gnuplot_script = self.base_plot_script();
 
@@ -162,7 +162,7 @@ where
             None => 1,
         };
 
-        gnuplot_script += &format!("plot \"data/{}.txt\" using 1:2 with {} dashtype {}\n", 
+        gnuplot_script += &format!("plot \"preexplorer/data/{}.txt\" using 1:2 with {} dashtype {}\n", 
             serie, 
             self.get_style(),
             dashtype,

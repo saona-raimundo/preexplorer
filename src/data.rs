@@ -47,7 +47,7 @@ where
 
         // Files creation
 
-        let data_dir = "data";
+        let data_dir = "preexplorer\\data";
         std::fs::create_dir_all(data_dir)?;
 
         let data_name = &format!("{}.{}", serie, self.get_extension());
@@ -159,7 +159,7 @@ where
     		},
     		_ => return Err(
                 std::io::Error::new(
-                    std::io::ErrorKind::Other, "ploting general data: dimension of data is too high to be automatically ploted. Please do it yourself."
+                    std::io::ErrorKind::Other, "Ploting general data: dimension of data is too high to plot it automatically. Please do it yourself."
                 ).into()
             ),
     	}
