@@ -92,7 +92,6 @@ where
     /// quick template gnuplot script saved under ``plots`` directory.
     fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
         let serie = &serie.to_string();
-        self.write_plot_script(serie)?;
 
         // Files creation
 
