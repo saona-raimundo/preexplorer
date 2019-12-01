@@ -166,14 +166,9 @@ where
 
                 let mut gnuplot_script = self.base_plot_script();
 
-                let dashtype = match self.get_dashtype() {
-                    Some(dashtype) => dashtype,
-                    None => 1,
-                };
-                gnuplot_script += &format!("plot \"preexplorer/data/{}.txt\" with {} dashtype {} \n", 
+                gnuplot_script += "# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
+                gnuplot_script += &format!("plot \"preexplorer/data/{}.txt\" \n", 
                     serie,
-                    self.get_style(),
-                    dashtype,
                 );
                 gnuplot_script += "pause -1\n";
 
