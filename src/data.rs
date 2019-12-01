@@ -15,7 +15,7 @@ where
 {
     pub(crate) data: I,
     pub(crate) config: crate::configuration::Configuration,
-    pub(crate) dim: u8,
+    pub(crate) dim: usize,
 }
 
 impl<I> Data<I>
@@ -23,7 +23,7 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new(data: I, dim: u8) -> Self {
+    pub fn new(data: I, dim: usize) -> Self {
         let config = crate::configuration::Configuration::default();
         Data { data, config, dim }
     }
