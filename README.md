@@ -18,6 +18,16 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- not pub? Preexplorable -> pub Configurable + pub Plotable.
+- Allow user defined configuration parameters
+  - HashMap
+- Decouple 
+  - save
+    - save_script
+    - save in system
+  - write_plot_script
+    - plot_script
+    - write script in system
 - Write proper presentation of the crate:
   - Purpose
   - Installation
