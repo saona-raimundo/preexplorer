@@ -18,6 +18,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- pub traits should be externally implementable
+- Implement Default trait
+  - rather than only the function
 - not pub? Preexplorable -> pub Configurable + pub Plotable.
 - Allow user defined configuration parameters
   - HashMap
