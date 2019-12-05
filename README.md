@@ -18,6 +18,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- More settings
+  - limx
+  - limy
 - pub traits should be externally implementable
 - Implement Default trait
   - rather than only the function
