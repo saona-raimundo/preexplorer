@@ -1,8 +1,12 @@
+// Structs
 use crate::errors::SavingError;
-pub use crate::traits::Preexplorable;
 
-// Trait bounds
+// Traits
+pub use crate::traits::Preexplorable;
 use core::fmt::Display;
+
+// Constants
+use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
 
 /// See ``Process`` documentation for further use.
 ///
@@ -53,6 +57,15 @@ where
     J: IntoIterator + Clone,
     J::Item: Display,
 {
+    fn raw_data(&self) -> String {
+        let mut raw_data = String::new();
+        for process in self.data_set.iter() {
+            raw_data += &process.raw_data();
+            raw_data += "\n";
+        }
+        raw_data
+    }
+    
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
     /// # Remark
@@ -74,13 +87,12 @@ where
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
     fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+
         let serie = &serie.to_string();
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
-        let gnuplot_file = format!("{}.gnu", serie);
-
-        let gnuplot_path = &format!("preexplorer\\plots\\{}", gnuplot_file);
+        let gnuplot_path = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
         std::process::Command::new("gnuplot")
             .arg(gnuplot_path)
             .spawn()?;
@@ -89,9 +101,7 @@ where
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("preexplorer\\plots")?;
-        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
+    fn plot_script<S: Display>(&self, serie: S) -> String {
 
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
@@ -114,16 +124,12 @@ where
                 None => {
                     dashtype_counter += 1;
                     dashtype_counter
-                },
+                }
             };
-            
+
             gnuplot_script += &format!(
-                "\"preexplorer/data/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
-                serie,
-                i,
-                process_style,
-                legend,
-                dashtype,
+                "\"{}/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
+                DATA_DIR_GNUPLOT, serie, i, process_style, legend, dashtype,
             );
             if i < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
@@ -132,9 +138,7 @@ where
         gnuplot_script += "\n";
         gnuplot_script += "pause -1\n";
 
-        std::fs::write(&gnuplot_file, &gnuplot_script)?;
-
-        Ok(self)
+        gnuplot_script
     }
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {

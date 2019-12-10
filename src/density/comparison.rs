@@ -1,8 +1,12 @@
+// Structs
 use crate::errors::SavingError;
-pub use crate::traits::Preexplorable;
 
-// Trait bounds
+// Traits
+pub use crate::traits::Preexplorable;
 use core::fmt::Display;
+
+// Constants
+use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
 
 /// See ``Density`` documentation for further use.
 ///
@@ -47,6 +51,15 @@ where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
+    fn raw_data(&self) -> String {
+        let mut raw_data = String::new();
+        for distribution in self.data_set.iter() {
+            raw_data += &distribution.raw_data();
+            raw_data += "\n";
+        }
+        raw_data
+    }
+
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
     /// # Remark
@@ -56,10 +69,7 @@ where
     /// quick template gnuplot script saved under ``plots`` directory.
     fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
         for (counter, distribution) in self.data_set.iter().enumerate() {
-            crate::density::Density::save(
-                &distribution,
-                &format!("{}_{}", serie, counter),
-            )?;
+            crate::density::Density::save(&distribution, &format!("{}_{}", serie, counter))?;
         }
 
         Ok(self)
@@ -72,24 +82,22 @@ where
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
     fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+
         let serie = &serie.to_string();
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
-        let gnuplot_file = format!("{}.gnu", serie);
-
-        let gnuplot_path = &format!("preexplorer\\plots\\{}", gnuplot_file);
+        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
         std::process::Command::new("gnuplot")
-            .arg(gnuplot_path)
+            .arg(gnuplot_file)
             .spawn()?;
         Ok(self)
     }
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("preexplorer\\plots")?;
-        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
+    fn plot_script<S: Display>(&self, serie: S) -> String {
+
 
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
@@ -103,7 +111,7 @@ where
             let n = 20;
             let (mut min, mut max, mut length);
             length = 0;
-            
+
             let mut realizations = distribution.realizations.clone().into_iter();
             match realizations.next() {
                 Some(value) => {
@@ -112,8 +120,12 @@ where
                     length += 1;
                     for val in realizations {
                         // let val = val.into();
-                        if val < min { min = val; }
-                        if val > max { max = val; }
+                        if val < min {
+                            min = val;
+                        }
+                        if val > max {
+                            max = val;
+                        }
                         length += 1;
                     }
 
@@ -123,25 +135,21 @@ where
                     gnuplot_script += &format!("max_{} = {} #max value\n", i, max);
                     gnuplot_script += &format!("min_{} = {} #min value\n", i, min);
                     gnuplot_script += &format!("len_{} = {}.0 #number of values\n", i, length);
-                    gnuplot_script += &format!(
-                        "width_{} = ({} - {}) / nbins_{} #width\n\n",
-                        i,
-                        max, min,
-                        i
-                    );
+                    gnuplot_script +=
+                        &format!("width_{} = ({} - {}) / nbins_{} #width\n\n", i, max, min, i);
                     gnuplot_script += "# function used to map a value to the intervals\n";
                     gnuplot_script += &format!(
                         "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",
                         i, i, i, i, i
                     );
-                },
+                }
                 None => {
                     std::io::Error::new(
-                        std::io::ErrorKind::Other, 
+                        std::io::ErrorKind::Other,
                         "No data to plot: There are no realizations, so no script can be prepared.",
                     );
-                },
-            }    
+                }
+            }
         }
 
         gnuplot_script += "plot ";
@@ -163,18 +171,19 @@ where
                 None => {
                     dashtype_counter += 1;
                     dashtype_counter
-                },
+                }
             };
 
             gnuplot_script += &format!(
-                "\"preexplorer/data/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with {} title \"{}\" dashtype {}, ",
-                serie, 
-                i, 
-                i, 
-                i, 
-                i, 
+                "\"{}/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with {} title \"{}\" dashtype {}, ",
+                DATA_DIR_GNUPLOT,
+                serie,
+                i,
+                i,
+                i,
+                i,
                 distribution_style,
-                legend, 
+                legend,
                 dashtype,
             );
             if i < self.data_set.len() - 1 {
@@ -184,9 +193,7 @@ where
         gnuplot_script += "\n";
         gnuplot_script += "pause -1\n";
 
-        std::fs::write(&gnuplot_file, &gnuplot_script)?;
-
-        Ok(self)
+        gnuplot_script
     }
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {

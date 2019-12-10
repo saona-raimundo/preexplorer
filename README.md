@@ -21,19 +21,15 @@ Rust is meant for computations and plotting is usually an iterative process, don
 - More settings
   - limx
   - limy
-- pub traits should be externally implementable
 - Implement Default trait
   - rather than only the function
-- not pub? Preexplorable -> pub Configurable + pub Plotable.
+- Subdivide trait Preexplorable
+  - Configurable
+  - Saveable
+  - Plotable
+- pub traits should be externally implementable
 - Allow user defined configuration parameters
   - HashMap
-- Decouple 
-  - save
-    - save_script
-    - save in system
-  - write_plot_script
-    - plot_script
-    - write script in system
 - Write proper presentation of the crate:
   - Purpose
   - Installation

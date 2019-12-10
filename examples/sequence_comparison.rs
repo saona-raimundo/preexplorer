@@ -35,9 +35,8 @@ fn increasing_comparisons() {
 
     let data_2 = vec![0., 1.4, 10., 4.];
     let group_of_plottings = vec![data_2.preexplore().title("Second").to_owned()];
-    let mut comparison_plotting = plotting_1
-        .compare_with(group_of_plottings);
-    
+    let mut comparison_plotting = plotting_1.compare_with(group_of_plottings);
+
     // Keep adding more
 
     let data_3 = vec![0.1, 1.5, 7., 5.];

@@ -9,10 +9,7 @@ impl SaveConfiguration {
         let extension = String::from("txt");
         let header = true;
 
-        SaveConfiguration {
-            extension,
-            header,
-        }
+        SaveConfiguration { extension, header }
     }
 
     pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
@@ -23,7 +20,6 @@ impl SaveConfiguration {
         self.header = header;
         self
     }
-
 
     pub(crate) fn get_extension(&self) -> &str {
         &self.extension

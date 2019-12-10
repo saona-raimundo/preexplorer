@@ -1,4 +1,3 @@
-
 pub(crate) mod style;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
@@ -22,7 +21,15 @@ impl PlotConfiguration {
         let style = crate::configuration::plot::style::Style::Default;
         let dashtype = None;
 
-        PlotConfiguration { title, logx, logy, labelx, labely, style, dashtype}
+        PlotConfiguration {
+            title,
+            logx,
+            logy,
+            labelx,
+            labely,
+            style,
+            dashtype,
+        }
     }
 
     pub(crate) fn base_plot_script(&self) -> String {
@@ -39,28 +46,28 @@ impl PlotConfiguration {
         match self.get_title() {
             Some(title) => {
                 gnuplot_script += &format!("set title \"{}\"\n", title);
-            },
+            }
             None => {
                 gnuplot_script += &format!("set title \"\"\n");
-            },
+            }
         }
 
         match self.get_labelx() {
             Some(labelx) => {
                 gnuplot_script += &format!("set xlabel \"{}\"\n", labelx);
-            },
+            }
             None => {
                 gnuplot_script += &format!("set xlabel \"\"\n");
-            },
+            }
         }
 
         match self.get_labely() {
             Some(labely) => {
                 gnuplot_script += &format!("set ylabel \"{}\"\n", labely);
-            },
+            }
             None => {
                 gnuplot_script += &format!("set ylabel \"\"\n");
-            },
+            }
         }
 
         if let Some(logx) = &self.get_logx() {
@@ -109,7 +116,6 @@ impl PlotConfiguration {
         self.dashtype = Some(dashtype);
         self
     }
-
 
     pub(crate) fn get_title(&self) -> Option<&String> {
         self.title.as_ref()

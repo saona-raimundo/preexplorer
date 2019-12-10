@@ -4,9 +4,12 @@ use crate::errors::SavingError;
 // Trait bounds
 use core::fmt::Display;
 
+// Constants
+use crate::{DATA_DIR, PLOT_DIR};
+
 pub trait Preexplore<I>
-where 
-	I: IntoIterator + Clone,
+where
+    I: IntoIterator + Clone,
     I::Item: Display,
 {
     fn preexplore(self) -> crate::sequence::Sequence<I>;
@@ -17,16 +20,16 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-	fn preexplore(self) -> crate::sequence::Sequence<I> {
+    fn preexplore(self) -> crate::sequence::Sequence<I> {
         crate::sequence::Sequence::new(self)
-    }   
+    }
 }
 
 pub trait PreexploreProcess<I, J>
 where
-    I: IntoIterator + Clone, 
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: IntoIterator + Clone, 
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     fn preexplore(self) -> crate::process::Process<I, J>;
@@ -34,34 +37,67 @@ where
 
 impl<I, J> PreexploreProcess<I, J> for (I, J)
 where
-    I: IntoIterator + Clone, 
+    I: IntoIterator + Clone,
     I::Item: Display,
-    J: IntoIterator + Clone, 
+    J: IntoIterator + Clone,
     J::Item: Display,
 {
     fn preexplore(self) -> crate::process::Process<I, J> {
         crate::process::Process::new(self.0, self.1)
-    }   
+    }
 }
-
-
 
 pub trait Preexplorable {
     // Needed methods
 
-    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
+    fn raw_data(&self) -> String;
 
     fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
 
-    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
+    fn plot_script<S: Display>(&self, serie: S) -> String;
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 
     fn configuration_as_ref(&self) -> &crate::configuration::Configuration;
 
-
     // Implemented methods
 
+    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+        let serie = &serie.to_string();
+        std::fs::create_dir_all(DATA_DIR)?;
+
+        let data_name = &format!("{}.{}", serie, self.get_extension());
+        let path = &format!("{}\\{}", DATA_DIR, data_name);
+
+        let mut data_gnuplot = String::new();
+        if self.get_header() {
+            data_gnuplot.push_str(&format!("# {}", serie));
+            match self.get_title() {
+                Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
+                None => data_gnuplot.push_str("\n"),
+            }
+        }
+
+        data_gnuplot += &self.raw_data();
+
+        std::fs::write(path, data_gnuplot)?;
+
+        Ok(self)
+    }
+    
+    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+        let serie = &serie.to_string();
+        std::fs::create_dir_all(PLOT_DIR)?;
+        let gnuplot_file = &format!("{}\\{}.gnu", PLOT_DIR, serie);
+        let gnuplot_script = self.plot_script(serie);
+
+        std::fs::write(&gnuplot_file, &gnuplot_script)?;
+        Ok(self)
+    }
+
+    fn base_plot_script(&self) -> String {
+        self.configuration_as_ref().base_plot_script()
+    }
     fn title<S: Display>(&mut self, title: S) -> &mut Self {
         self.configuration().title(title.to_string());
         self
@@ -90,11 +126,12 @@ pub trait Preexplorable {
         self.configuration().header(header);
         self
     }
-    fn style<S>(&mut self, style: S) -> &mut Self 
+    fn style<S>(&mut self, style: S) -> &mut Self
     where
         crate::configuration::plot::style::Style: From<S>,
     {
-        self.configuration().style(crate::configuration::plot::style::Style::from(style));
+        self.configuration()
+            .style(crate::configuration::plot::style::Style::from(style));
         self
     }
     fn dashtype(&mut self, dashtype: usize) -> &mut Self {
@@ -102,9 +139,6 @@ pub trait Preexplorable {
         self
     }
 
-    fn base_plot_script(&self) -> String {
-        self.configuration_as_ref().base_plot_script()
-    }
 
     fn get_title(&self) -> Option<&String> {
         self.configuration_as_ref().get_title()

@@ -1,15 +1,21 @@
+// Structs
 use crate::errors::SavingError;
-pub use comparison::Comparison;
+
+// Traits
+pub use crate::traits::Preexplorable;
+use core::fmt::Display;
+
+// Constants
+use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
 
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
 /// Sequence with values with n-dimensions.
 mod ndsequence;
+pub use comparison::Comparison;
 
-pub use crate::traits::Preexplorable;
 
-// Trait bounds
-use core::fmt::Display;
+
 
 /// Iterator over the data to be consumed when saved or plotted. Can also be compared with other Sequence types.
 ///
@@ -90,37 +96,17 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        let serie = &serie.to_string();
-
-        // Files creation
-
-        let data_dir = "preexplorer\\data";
-        std::fs::create_dir_all(data_dir)?;
-
-        let data_name = &format!("{}.{}", serie, self.get_extension());
-        let path = &format!("{}\\{}", data_dir, data_name);
+    fn raw_data(&self) -> String {
 
         // Create the data structure for gnuplot
 
-        let mut data_gnuplot = String::new();
-        if self.get_header() {
-            data_gnuplot.push_str(&format!("# {}", serie));
-            match self.get_title() {
-                Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
-                None => data_gnuplot.push_str("\n"),
-            }
-            data_gnuplot.push_str("# index value\n");
-        }
+        let mut raw_data = String::new();
+
         for (counter, value) in self.data.clone().into_iter().enumerate() {
-            data_gnuplot.push_str(&format!("{}\t{}\n", counter, value));
+            raw_data.push_str(&format!("{}\t{}\n", counter, value));
         }
 
-        // Write the data
-
-        std::fs::write(path, data_gnuplot)?;
-
-        Ok(self)
+        raw_data
     }
 
     /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
@@ -134,7 +120,7 @@ where
         self.write_plot_script(serie)?;
         self.save(serie)?;
 
-        let gnuplot_file = &format!("preexplorer\\plots\\{}", format!("{}.gnu", serie));
+        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
             .spawn()?;
@@ -143,9 +129,7 @@ where
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        std::fs::create_dir_all("preexplorer\\plots")?;
-        let gnuplot_file = &format!("preexplorer\\plots\\{}.gnu", serie);
+    fn plot_script<S: Display>(&self, serie: S) -> String {
 
         let mut gnuplot_script = self.base_plot_script();
 
@@ -153,16 +137,16 @@ where
             Some(dashtype) => dashtype,
             None => 1,
         };
-        gnuplot_script += &format!("plot \"preexplorer/data/{}.txt\" with {} dashtype {} \n", 
+        gnuplot_script += &format!(
+            "plot \"{}/{}.txt\" with {} dashtype {} \n",
+            DATA_DIR_GNUPLOT,
             serie,
             self.get_style(),
             dashtype,
         );
         gnuplot_script += "pause -1\n";
 
-        std::fs::write(&gnuplot_file, &gnuplot_script)?;
-
-        Ok(self)
+        gnuplot_script
     }
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
@@ -172,8 +156,6 @@ where
         &self.config
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -185,6 +167,9 @@ mod tests {
         let mut seq = Sequence::new(data);
         seq.style("points");
 
-        assert_eq!(&crate::configuration::plot::style::Style::Points, seq.get_style());
+        assert_eq!(
+            &crate::configuration::plot::style::Style::Points,
+            seq.get_style()
+        );
     }
 }

@@ -8,10 +8,7 @@ fn main() {
 
     // Arrange everything in a vector
 
-    let group_of_plottings = vec![
-        data_1.preexplore(),
-        data_2.preexplore(),
-    ];
+    let group_of_plottings = vec![data_1.preexplore(), data_2.preexplore()];
 
     pre::sequence::Comparison::new(group_of_plottings)
         .title("All together")

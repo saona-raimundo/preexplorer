@@ -1,7 +1,5 @@
-
-
-pub mod save;
 pub mod plot;
+pub mod save;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Configuration {
@@ -100,9 +98,7 @@ impl Configuration {
     pub(crate) fn get_header(&self) -> bool {
         self.save_config.get_header()
     }
-
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -135,7 +131,7 @@ mod tests {
         let mut config = Configuration::default();
 
         assert_eq!(config.get_labelx(), None);
-        
+
         let labelx = String::from("try");
         config.labelx(labelx.clone());
 
@@ -147,7 +143,7 @@ mod tests {
         let mut config = Configuration::default();
 
         assert_eq!(config.get_labely(), None);
-        
+
         let labely = String::from("try");
         config.labely(labely.clone());
 

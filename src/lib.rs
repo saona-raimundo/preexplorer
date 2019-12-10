@@ -20,7 +20,7 @@
 //! Recall that you will need to [install gnuplot](http://www.gnuplot.info/download.html)
 //! to use the crate at its full potential.
 
-/// Generic multi-dimensional data. 
+/// Generic multi-dimensional data.
 pub mod data;
 /// Histograms or realizations of the same variable.
 pub mod density;
@@ -47,3 +47,7 @@ pub mod prelude {
     pub use crate as pre;
     pub use crate::traits::*;
 }
+
+const DATA_DIR: &str = "target\\preexplorer\\data";
+const DATA_DIR_GNUPLOT: &str = "target/preexplorer/data";
+const PLOT_DIR: &str = "target\\preexplorer\\plots";
