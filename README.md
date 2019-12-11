@@ -18,6 +18,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Add id
+  - chrono::Utc::now(), DateTime<Utc>
+  - maybe save the date too? and put it in the headers?
 - More settings
   - limx
   - limy
