@@ -12,26 +12,6 @@ pub(crate) struct PlotConfiguration {
 }
 
 impl PlotConfiguration {
-    pub(crate) fn default() -> PlotConfiguration {
-        let title = None;
-        let logx = None;
-        let logy = None;
-        let labelx = None;
-        let labely = None;
-        let style = crate::configuration::plot::style::Style::Default;
-        let dashtype = None;
-
-        PlotConfiguration {
-            title,
-            logx,
-            logy,
-            labelx,
-            labely,
-            style,
-            dashtype,
-        }
-    }
-
     pub(crate) fn base_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
@@ -137,5 +117,27 @@ impl PlotConfiguration {
     }
     pub(crate) fn get_dashtype(&self) -> Option<usize> {
         self.dashtype
+    }
+}
+
+impl Default for PlotConfiguration {
+    fn default() -> PlotConfiguration {
+        let title = None;
+        let logx = None;
+        let logy = None;
+        let labelx = None;
+        let labely = None;
+        let style = crate::configuration::plot::style::Style::Default;
+        let dashtype = None;
+
+        PlotConfiguration {
+            title,
+            logx,
+            logy,
+            labelx,
+            labely,
+            style,
+            dashtype,
+        }
     }
 }

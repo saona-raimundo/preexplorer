@@ -69,3 +69,7 @@ impl Display for Style {
         }
     }
 }
+
+impl Default for Style {
+    fn default() -> Self { Style::Default }
+}

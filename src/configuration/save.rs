@@ -5,13 +5,6 @@ pub(crate) struct SaveConfiguration {
 }
 
 impl SaveConfiguration {
-    pub(crate) fn default() -> SaveConfiguration {
-        let extension = String::from("txt");
-        let header = true;
-
-        SaveConfiguration { extension, header }
-    }
-
     pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
         self.extension = extension;
         self
@@ -26,5 +19,14 @@ impl SaveConfiguration {
     }
     pub(crate) fn get_header(&self) -> bool {
         self.header
+    }
+}
+
+impl Default for SaveConfiguration {
+    fn default() -> Self {
+        let extension = String::from("txt");
+        let header = true;
+
+        SaveConfiguration { extension, header }
     }
 }

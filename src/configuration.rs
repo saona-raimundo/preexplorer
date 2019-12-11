@@ -1,23 +1,13 @@
 pub mod plot;
 pub mod save;
 
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Debug, PartialOrd, PartialEq, Clone, Default)]
 pub struct Configuration {
     save_config: crate::configuration::save::SaveConfiguration,
     plot_config: crate::configuration::plot::PlotConfiguration,
 }
 
 impl Configuration {
-    pub(crate) fn default() -> Configuration {
-        let save_config = crate::configuration::save::SaveConfiguration::default();
-        let plot_config = crate::configuration::plot::PlotConfiguration::default();
-
-        Configuration {
-            save_config,
-            plot_config,
-        }
-    }
-
     pub(crate) fn base_plot_script(&self) -> String {
         self.plot_config.base_plot_script()
     }

@@ -40,6 +40,7 @@ pub use data::Data;
 pub use density::Density;
 pub use process::Process;
 pub use sequence::Sequence;
+pub use traits::*;
 
 /// All you ussually need
 pub mod prelude {
