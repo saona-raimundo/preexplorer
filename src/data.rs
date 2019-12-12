@@ -67,11 +67,13 @@ where
     ///
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
-    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+        self.id(id);
+
         match self.dim {
     		1 => {
-    			let sequence = crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
-    			sequence.plot(serie)?;
+    			let mut sequence = crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
+    			sequence.plot(&self.get_checked_id())?;
                 Ok(self)
     		},
     		2 => {
@@ -88,12 +90,12 @@ where
                     .filter(move |_| second_filter.next().unwrap())
                     .collect::<Vec<_>>();
 
-    			let process = crate::process::Process::from_raw(
+    			let mut process = crate::process::Process::from_raw(
                     first_data.iter(),
                     second_data.iter(),
                     self.config.clone());
 
-    			process.plot(serie)?;
+    			process.plot(&self.get_checked_id())?;
                 Ok(self)
     		},
     		_ => return Err(
@@ -106,12 +108,12 @@ where
 
     /// Write simple gnuplot script for this type of data.
     ///
-    fn plot_script<S: Display>(&self, serie: S) -> String {
+    fn plot_script(&self) -> String {
         match self.dim {
             1 => {
                 let sequence =
                     crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
-                sequence.plot_script(serie)
+                sequence.plot_script()
             }
             2 => {
                 // separate iterators
@@ -137,14 +139,14 @@ where
                     self.config.clone(),
                 );
 
-                process.plot_script(serie)
+                process.plot_script()
             }
             _ => {
 
                 let mut gnuplot_script = self.base_plot_script();
 
                 gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n\n";
-                gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, serie,);
+                gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, self.get_checked_id(),);
                 gnuplot_script += "pause -1\n";
 
                 gnuplot_script

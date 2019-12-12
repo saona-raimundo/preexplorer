@@ -6,7 +6,7 @@ pub use crate::traits::Preexplorable;
 use core::fmt::Display;
 
 // Constants
-use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
+use crate::{DATA_DIR_GNUPLOT};
 
 /// See ``Sequence`` documentation for further use.
 ///
@@ -66,38 +66,21 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
+    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+
         for (counter, sequence) in self.data_set.iter().enumerate() {
-            crate::sequence::Sequence::save(&sequence, &format!("{}_{}", serie, counter))?;
+            let inner_id = format!("{}_{}", id, counter);
+            sequence.save_with_id(&inner_id)?;
         }
 
         Ok(self)
     }
 
-    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
-    ///
-    /// # Remark
-    ///
-    /// The plot will be executed asyncroniously and idependently of the Rust program.
-    ///
-    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-
-
-        let serie = &serie.to_string();
-        self.write_plot_script(serie)?;
-        self.save(serie)?;
-
-        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
-        std::process::Command::new("gnuplot")
-            .arg(gnuplot_file)
-            .spawn()?;
-        Ok(self)
-    }
-
     /// Write simple gnuplot script for this type of data.
     ///
-    fn plot_script<S: Display>(&self, serie: S) -> String {
+    fn plot_script(&self) -> String {
 
+        let id = self.get_checked_id();
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
         gnuplot_script += "plot ";
@@ -105,11 +88,11 @@ where
         let style = self.get_style();
         let mut dashtype_counter = 0;
 
-        for i in 0..self.data_set.len() {
-            let sequence = &self.data_set[i];
+        for (counter, sequence) in self.data_set.iter().enumerate()  {
+            let inner_id = format!("{}_{}", id, counter);
             let legend = match sequence.get_title() {
                 Some(leg) => String::from(leg),
-                None => i.to_string(),
+                None => counter.to_string(),
             };
             let sequence_style = match style {
                 crate::configuration::plot::style::Style::Default => sequence.get_style(),
@@ -123,10 +106,10 @@ where
                 }
             };
             gnuplot_script += &format!(
-                "\"{}/{}_{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
-                DATA_DIR_GNUPLOT, serie, i, sequence_style, legend, dashtype
+                "\"{}/{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
+                DATA_DIR_GNUPLOT, inner_id, sequence_style, legend, dashtype
             );
-            if i < self.data_set.len() - 1 {
+            if counter < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
             }
         }

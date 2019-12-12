@@ -80,6 +80,14 @@ impl Configuration {
         self.save_config.header(header);
         self
     }
+    pub(crate) fn date(&mut self, date: chrono::DateTime<chrono::Local>) -> &mut Self {
+        self.save_config.date(date);
+        self
+    }
+    pub(crate) fn id(&mut self, id: String) -> &mut Self {
+        self.save_config.id(id);
+        self
+    }
 
     // Getting
     pub(crate) fn get_extension(&self) -> &str {
@@ -88,11 +96,31 @@ impl Configuration {
     pub(crate) fn get_header(&self) -> bool {
         self.save_config.get_header()
     }
+    pub(crate) fn get_date(&self) -> &chrono::DateTime<chrono::Local> {
+        self.save_config.get_date()
+    }
+    pub(crate) fn get_id(&self) -> Option<&String> {
+        self.save_config.get_id()
+    }
+    pub(crate) fn get_checked_id(&self) -> &String {
+        self.save_config.get_checked_id()
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn check_id() {
+        let mut config = Configuration::default();
+        
+        config.id(1.to_string());
+        assert_eq!(config.get_id(), Some(&1.to_string()));
+
+        config.id("1".to_string());
+        assert_eq!(config.get_id(), Some(&String::from("1")));
+    }
 
     #[test]
     fn check_logx() {

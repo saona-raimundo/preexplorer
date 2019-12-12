@@ -21,7 +21,7 @@ fn comparing_interations() {
 
     pre::sequence::Comparison::new(vec![seq_1, seq_2])
         .title("All together")
-        .plot(1)
+        .plot("1")
         .unwrap();
 }
 
@@ -49,5 +49,5 @@ fn increasing_comparisons() {
 
     // Plot everything
 
-    comparison_plotting.plot("my_serie_name").unwrap();
+    comparison_plotting.id("my_serie_name").plot("2").unwrap();
 }

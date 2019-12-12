@@ -20,12 +20,10 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 - Add id
   - chrono::Utc::now(), DateTime<Utc>
-  - maybe save the date too? and put it in the headers?
+  - maybe save the date, id and title, if headers
 - More settings
   - limx
   - limy
-- Implement Default trait
-  - rather than only the function
 - Subdivide trait Preexplorable
   - Configurable
   - Saveable

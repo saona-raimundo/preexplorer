@@ -1,12 +1,12 @@
 // Structs
-use crate::errors::SavingError;
+
 
 // Traits
 pub use crate::traits::Preexplorable;
 use core::fmt::Display;
 
 // Constants
-use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
+use crate::{DATA_DIR_GNUPLOT};
 
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
@@ -109,27 +109,9 @@ where
         raw_data
     }
 
-    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
-    ///
-    /// # Remark
-    ///
-    /// The plot will be executed asyncroniously and idependently of the Rust program.
-    ///
-    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        let serie = &serie.to_string();
-        self.write_plot_script(serie)?;
-        self.save(serie)?;
-
-        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
-        std::process::Command::new("gnuplot")
-            .arg(gnuplot_file)
-            .spawn()?;
-        Ok(self)
-    }
-
     /// Write simple gnuplot script for this type of data.
     ///
-    fn plot_script<S: Display>(&self, serie: S) -> String {
+    fn plot_script(&self) -> String {
 
         let mut gnuplot_script = self.base_plot_script();
 
@@ -140,7 +122,7 @@ where
         gnuplot_script += &format!(
             "plot \"{}/{}.txt\" with {} dashtype {} \n",
             DATA_DIR_GNUPLOT,
-            serie,
+            self.get_checked_id(),
             self.get_style(),
             dashtype,
         );

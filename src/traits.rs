@@ -52,9 +52,20 @@ pub trait Preexplorable {
 
     fn raw_data(&self) -> String;
 
-    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError>;
+    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
 
-    fn plot_script<S: Display>(&self, serie: S) -> String;
+    	self.id(id);
+        self.write_plot_script()?;
+        self.save()?;
+
+        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", self.get_checked_id()));
+        std::process::Command::new("gnuplot")
+            .arg(gnuplot_file)
+            .spawn()?;
+        Ok(self)
+    }
+
+    fn plot_script(&self) -> String;
 
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 
@@ -62,36 +73,44 @@ pub trait Preexplorable {
 
     // Implemented methods
 
-    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        let serie = &serie.to_string();
+    fn save(&self) -> Result<&Self, SavingError> {
+        let id = self.get_checked_id();
+        self.save_with_id(id)
+    }
+
+    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+
         std::fs::create_dir_all(DATA_DIR)?;
 
-        let data_name = &format!("{}.{}", serie, self.get_extension());
-        let path = &format!("{}\\{}", DATA_DIR, data_name);
+        let data_name = format!("{}.{}", id, self.get_extension());
+        let path = format!("{}\\{}", DATA_DIR, data_name);
+
 
         let mut data_gnuplot = String::new();
         if self.get_header() {
-            data_gnuplot.push_str(&format!("# {}", serie));
-            match self.get_title() {
-                Some(title) => data_gnuplot.push_str(&format!(": {}\n", title)),
-                None => data_gnuplot.push_str("\n"),
-            }
+        	if let Some(title) = self.get_title() {
+        		data_gnuplot.push_str(&format!("# {}\n", title));
+        	}
+        	if let Some(id) = self.get_id() {
+        		data_gnuplot.push_str(&format!("# {}\n", id));
+        	}
+            data_gnuplot.push_str(&format!("# {}\n", self.get_date()));
         }
 
         data_gnuplot += &self.raw_data();
 
-        std::fs::write(path, data_gnuplot)?;
+        std::fs::write(&path, data_gnuplot)?;
 
         Ok(self)
     }
     
-    fn write_plot_script<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        let serie = &serie.to_string();
-        std::fs::create_dir_all(PLOT_DIR)?;
-        let gnuplot_file = &format!("{}\\{}.gnu", PLOT_DIR, serie);
-        let gnuplot_script = self.plot_script(serie);
+    fn write_plot_script(&self) -> Result<&Self, SavingError> {
 
-        std::fs::write(&gnuplot_file, &gnuplot_script)?;
+        std::fs::create_dir_all(PLOT_DIR)?;
+        let gnuplot_file = format!("{}\\{}.gnu", PLOT_DIR, self.get_checked_id());
+        let gnuplot_script = self.plot_script();
+
+        std::fs::write(gnuplot_file, gnuplot_script)?;
         Ok(self)
     }
 
@@ -138,6 +157,14 @@ pub trait Preexplorable {
         self.configuration().dashtype(dashtype);
         self
     }
+    fn date(&mut self, date: chrono::DateTime<chrono::Local>) -> &mut Self {
+        self.configuration().date(date);
+        self
+    }
+    fn id<S: Display>(&mut self, id: S) -> &mut Self {
+        self.configuration().id(id.to_string());
+        self
+    }
 
 
     fn get_title(&self) -> Option<&String> {
@@ -166,5 +193,14 @@ pub trait Preexplorable {
     }
     fn get_dashtype(&self) -> Option<usize> {
         self.configuration_as_ref().get_dashtype()
+    }
+    fn get_date(&self) -> &chrono::DateTime<chrono::Local> {
+        self.configuration_as_ref().get_date()
+    }
+    fn get_id(&self) -> Option<&String> {
+        self.configuration_as_ref().get_id()
+    }
+    fn get_checked_id(&self) -> &String {
+        self.configuration_as_ref().get_checked_id()
     }
 }

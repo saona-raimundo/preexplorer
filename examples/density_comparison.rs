@@ -9,6 +9,6 @@ fn main() {
         .to_owned()
         .compare_with(vec![pre::Density::new(values_2)])
         .title("My title")
-        .plot(1)
+        .plot("1")
         .unwrap();
 }

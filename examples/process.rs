@@ -7,6 +7,7 @@ fn main() {
         .preexplore()
         .title("My Title")
         .logx(-2)
-        .plot("my_serie_name")
+        .id("my_serie_name")
+        .plot("1")
         .unwrap();
 }

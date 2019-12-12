@@ -12,6 +12,6 @@ fn main() {
     let times = vec![1., 10., 100.];
     let values = vec![1, 4, 8];
 
-    let comp = plotting.compare_with(vec![(times, values).preexplore()]);
+    let mut comp = plotting.compare_with(vec![(times, values).preexplore()]);
     comp.plot("my_serie_name").unwrap();
 }

@@ -6,7 +6,7 @@ pub use crate::traits::Preexplorable;
 use core::fmt::Display;
 
 // Constants
-use crate::{PLOT_DIR, DATA_DIR_GNUPLOT};
+use crate::{DATA_DIR_GNUPLOT};
 
 /// See ``Density`` documentation for further use.
 ///
@@ -53,8 +53,8 @@ where
 {
     fn raw_data(&self) -> String {
         let mut raw_data = String::new();
-        for distribution in self.data_set.iter() {
-            raw_data += &distribution.raw_data();
+        for density in self.data_set.iter() {
+            raw_data += &density.raw_data();
             raw_data += "\n";
         }
         raw_data
@@ -67,44 +67,25 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn save<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-        for (counter, distribution) in self.data_set.iter().enumerate() {
-            crate::density::Density::save(&distribution, &format!("{}_{}", serie, counter))?;
+    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+        for (counter, density) in self.data_set.iter().enumerate() {
+            let inner_id = format!("{}_{}", id, counter);
+            density.save_with_id(&inner_id)?;
         }
 
         Ok(self)
     }
 
-    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
-    ///
-    /// # Remark
-    ///
-    /// The plot will be executed asyncroniously and idependently of the Rust program.
-    ///
-    fn plot<S: Display>(&self, serie: S) -> Result<&Self, SavingError> {
-
-        let serie = &serie.to_string();
-        self.write_plot_script(serie)?;
-        self.save(serie)?;
-
-        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", serie));
-        std::process::Command::new("gnuplot")
-            .arg(gnuplot_file)
-            .spawn()?;
-        Ok(self)
-    }
-
     /// Write simple gnuplot script for this type of data.
     ///
-    fn plot_script<S: Display>(&self, serie: S) -> String {
+    fn plot_script(&self) -> String {
 
-
+        let id = self.get_checked_id();
         let mut gnuplot_script = self.config.base_plot_script_comparison();
 
         // Treat each data to a prob distr funct
 
-        for i in 0..self.data_set.len() {
-            let distribution = &self.data_set[i];
+        for (counter, density) in self.data_set.iter().enumerate() {
 
             // Values for the histogram
 
@@ -112,7 +93,7 @@ where
             let (mut min, mut max, mut length);
             length = 0;
 
-            let mut realizations = distribution.realizations.clone().into_iter();
+            let mut realizations = density.realizations.clone().into_iter();
             match realizations.next() {
                 Some(value) => {
                     min = value;
@@ -131,16 +112,16 @@ where
 
                     // Gnuplot section
 
-                    gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", i, n);
-                    gnuplot_script += &format!("max_{} = {} #max value\n", i, max);
-                    gnuplot_script += &format!("min_{} = {} #min value\n", i, min);
-                    gnuplot_script += &format!("len_{} = {}.0 #number of values\n", i, length);
+                    gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", counter, n);
+                    gnuplot_script += &format!("max_{} = {} #max value\n", counter, max);
+                    gnuplot_script += &format!("min_{} = {} #min value\n", counter, min);
+                    gnuplot_script += &format!("len_{} = {}.0 #number of values\n", counter, length);
                     gnuplot_script +=
-                        &format!("width_{} = ({} - {}) / nbins_{} #width\n\n", i, max, min, i);
+                        &format!("width_{} = ({} - {}) / nbins_{} #width\n\n", counter, max, min, counter);
                     gnuplot_script += "# function used to map a value to the intervals\n";
                     gnuplot_script += &format!(
                         "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",
-                        i, i, i, i, i
+                        counter, counter, counter, counter, counter
                     );
                 }
                 None => {
@@ -156,14 +137,14 @@ where
         let style = self.get_style();
         let mut dashtype_counter = 0;
 
-        for i in 0..self.data_set.len() {
-            let distribution = &self.data_set[i];
-            let legend = match distribution.get_title() {
+        for (counter, density) in self.data_set.iter().enumerate() {
+            let inner_id = format!("{}_{}", id, counter);
+            let legend = match density.get_title() {
                 Some(leg) => String::from(leg),
-                None => i.to_string(),
+                None => counter.to_string(),
             };
             let distribution_style = match style {
-                crate::configuration::plot::style::Style::Default => distribution.get_style(),
+                crate::configuration::plot::style::Style::Default => density.get_style(),
                 _ => style,
             };
             let dashtype = match self.get_dashtype() {
@@ -175,18 +156,17 @@ where
             };
 
             gnuplot_script += &format!(
-                "\"{}/{}_{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with {} title \"{}\" dashtype {}, ",
+                "\"{}/{}.txt\" using (hist_{}($1,width_{})):(1.0/len_{}) smooth frequency with {} title \"{}\" dashtype {}, ",
                 DATA_DIR_GNUPLOT,
-                serie,
-                i,
-                i,
-                i,
-                i,
+                inner_id,
+                counter,
+                counter,
+                counter,
                 distribution_style,
                 legend,
                 dashtype,
             );
-            if i < self.data_set.len() - 1 {
+            if counter < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
             }
         }
