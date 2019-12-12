@@ -2,7 +2,7 @@
 
 
 // Traits
-pub use crate::traits::Preexplorable;
+pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
@@ -77,7 +77,20 @@ where
     }
 }
 
-impl<I> crate::traits::Preexplorable for Density<I>
+impl<I> Configurable for Density<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
+{
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
+    }
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
+}
+
+impl<I> Saveable for Density<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
@@ -97,7 +110,13 @@ where
         }
         raw_data
     }
+}
 
+impl<I> Plotable for Density<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
+{
     /// Write simple gnuplot script for this type of data.
     ///
     /// # Remark
@@ -167,12 +186,5 @@ where
         gnuplot_script += "pause -1\n";
 
         gnuplot_script
-    }
-
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
-        &mut self.config
-    }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
-        &self.config
     }
 }

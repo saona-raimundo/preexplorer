@@ -47,76 +47,11 @@ where
     }
 }
 
-pub trait Preexplorable {
-    // Needed methods
-
-    fn raw_data(&self) -> String;
-
-    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
-
-    	self.id(id);
-        self.write_plot_script()?;
-        self.save()?;
-
-        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", self.get_checked_id()));
-        std::process::Command::new("gnuplot")
-            .arg(gnuplot_file)
-            .spawn()?;
-        Ok(self)
-    }
-
-    fn plot_script(&self) -> String;
-
+pub trait Configurable {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 
     fn configuration_as_ref(&self) -> &crate::configuration::Configuration;
 
-    // Implemented methods
-
-    fn save(&self) -> Result<&Self, SavingError> {
-        let id = self.get_checked_id();
-        self.save_with_id(id)
-    }
-
-    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
-
-        std::fs::create_dir_all(DATA_DIR)?;
-
-        let data_name = format!("{}.{}", id, self.get_extension());
-        let path = format!("{}\\{}", DATA_DIR, data_name);
-
-
-        let mut data_gnuplot = String::new();
-        if self.get_header() {
-        	if let Some(title) = self.get_title() {
-        		data_gnuplot.push_str(&format!("# {}\n", title));
-        	}
-        	if let Some(id) = self.get_id() {
-        		data_gnuplot.push_str(&format!("# {}\n", id));
-        	}
-            data_gnuplot.push_str(&format!("# {}\n", self.get_date()));
-        }
-
-        data_gnuplot += &self.raw_data();
-
-        std::fs::write(&path, data_gnuplot)?;
-
-        Ok(self)
-    }
-    
-    fn write_plot_script(&self) -> Result<&Self, SavingError> {
-
-        std::fs::create_dir_all(PLOT_DIR)?;
-        let gnuplot_file = format!("{}\\{}.gnu", PLOT_DIR, self.get_checked_id());
-        let gnuplot_script = self.plot_script();
-
-        std::fs::write(gnuplot_file, gnuplot_script)?;
-        Ok(self)
-    }
-
-    fn base_plot_script(&self) -> String {
-        self.configuration_as_ref().base_plot_script()
-    }
     fn title<S: Display>(&mut self, title: S) -> &mut Self {
         self.configuration().title(title.to_string());
         self
@@ -203,4 +138,77 @@ pub trait Preexplorable {
     fn get_checked_id(&self) -> &String {
         self.configuration_as_ref().get_checked_id()
     }
+}
+
+pub trait Saveable: Configurable {
+
+    fn raw_data(&self) -> String;
+
+    fn save(&self) -> Result<&Self, SavingError> {
+        let id = self.get_checked_id();
+        self.save_with_id(id)
+    }
+
+    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+
+        std::fs::create_dir_all(DATA_DIR)?;
+
+        let data_name = format!("{}.{}", id, self.get_extension());
+        let path = format!("{}\\{}", DATA_DIR, data_name);
+
+
+        let mut data_gnuplot = String::new();
+        if self.get_header() {
+            if let Some(title) = self.get_title() {
+                data_gnuplot.push_str(&format!("# {}\n", title));
+            }
+            if let Some(id) = self.get_id() {
+                data_gnuplot.push_str(&format!("# {}\n", id));
+            }
+            data_gnuplot.push_str(&format!("# {}\n", self.get_date()));
+        }
+
+        data_gnuplot += &self.raw_data();
+
+        std::fs::write(&path, data_gnuplot)?;
+
+        Ok(self)
+    }
+
+}
+
+pub trait Plotable: Configurable + Saveable {
+    // Needed methods
+
+    fn plot_script(&self) -> String;
+
+    // Implemented methods
+
+    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+
+        self.id(id);
+        self.write_plot_script()?;
+        self.save()?;
+
+        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", self.get_checked_id()));
+        std::process::Command::new("gnuplot")
+            .arg(gnuplot_file)
+            .spawn()?;
+        Ok(self)
+    }
+
+    fn write_plot_script(&self) -> Result<&Self, SavingError> {
+
+        std::fs::create_dir_all(PLOT_DIR)?;
+        let gnuplot_file = format!("{}\\{}.gnu", PLOT_DIR, self.get_checked_id());
+        let gnuplot_script = self.plot_script();
+
+        std::fs::write(gnuplot_file, gnuplot_script)?;
+        Ok(self)
+    }
+
+    fn base_plot_script(&self) -> String {
+        self.configuration_as_ref().base_plot_script()
+    }
+
 }

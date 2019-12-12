@@ -8,7 +8,7 @@
 
 
 // Traits
-pub use crate::traits::Preexplorable;
+pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
@@ -37,11 +37,6 @@ pub use comparison::Comparison;
 ///
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct Process<I, J>
-where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
 {
     pub(crate) domain: I,
     pub(crate) image: J,
@@ -88,13 +83,23 @@ where
     }
 }
 
-impl<I, J> crate::traits::Preexplorable for Process<I, J>
+impl<I, J> Configurable for Process<I, J> {
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
+    }
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
+}
+
+impl<I, J> Saveable for Process<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
     J: IntoIterator + Clone,
     J::Item: Display,
 {
+
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
     /// # Remark
@@ -110,6 +115,15 @@ where
         }
         raw_data
     }
+}
+
+impl<I, J> Plotable for Process<I, J>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+    J: IntoIterator + Clone,
+    J::Item: Display,
+{
 
     /// Write simple gnuplot script for this type of data.
     ///
@@ -134,10 +148,5 @@ where
         gnuplot_script
     }
 
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
-        &mut self.config
-    }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
-        &self.config
-    }
+    
 }

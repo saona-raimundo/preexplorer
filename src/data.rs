@@ -2,7 +2,7 @@
 use crate::errors::SavingError;
 
 // Traits
-pub use crate::traits::Preexplorable;
+pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
@@ -32,7 +32,21 @@ where
     }
 }
 
-impl<I> crate::traits::Preexplorable for Data<I>
+impl<I> Configurable for Data<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
+    }
+
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
+}
+
+impl<I> Saveable for Data<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -60,6 +74,13 @@ where
 
         raw_data
     }
+}
+
+impl<I> Plotable for Data<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{
 
     /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
     ///
@@ -152,13 +173,5 @@ where
                 gnuplot_script
             }
         }
-    }
-
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
-        &mut self.config
-    }
-
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
-        &self.config
     }
 }

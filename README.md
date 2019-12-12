@@ -18,16 +18,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Add id
-  - chrono::Utc::now(), DateTime<Utc>
-  - maybe save the date, id and title, if headers
 - More settings
   - limx
   - limy
-- Subdivide trait Preexplorable
-  - Configurable
-  - Saveable
-  - Plotable
 - pub traits should be externally implementable
 - Allow user defined configuration parameters
   - HashMap

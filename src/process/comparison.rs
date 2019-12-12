@@ -2,7 +2,7 @@
 use crate::errors::SavingError;
 
 // Traits
-pub use crate::traits::Preexplorable;
+pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
@@ -50,36 +50,28 @@ where
     }
 }
 
-impl<I, J> crate::traits::Preexplorable for Comparison<I, J>
+impl<I, J> Configurable for Comparison<I, J>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
     J: IntoIterator + Clone,
     J::Item: Display,
 {
-    fn raw_data(&self) -> String {
-        let mut raw_data = String::new();
-        for process in self.data_set.iter() {
-            raw_data += &process.raw_data();
-            raw_data += "\n";
-        }
-        raw_data
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
     }
-    
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
-    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
-        for (counter, process) in self.data_set.iter().enumerate() {
-            let inner_id = format!("{}_{}", id, counter);
-            process.save_with_id(&inner_id)?;
-        }
-        Ok(self)
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
     }
+}
+
+impl<I, J> Plotable for Comparison<I, J>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+    J: IntoIterator + Clone,
+    J::Item: Display,
+{
 
     /// Write simple gnuplot script for this type of data.
     ///
@@ -124,10 +116,36 @@ where
         gnuplot_script
     }
 
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
-        &mut self.config
+}
+
+impl<I, J> Saveable for Comparison<I, J>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+    J: IntoIterator + Clone,
+    J::Item: Display,
+{
+    fn raw_data(&self) -> String {
+        let mut raw_data = String::new();
+        for process in self.data_set.iter() {
+            raw_data += &process.raw_data();
+            raw_data += "\n";
+        }
+        raw_data
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
-        &self.config
+    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
+    ///
+    /// # Remark
+    ///
+    /// It is inteded for when one only wants to save the data, and not call any plotting
+    /// during the Rust program execution. Posterior plotting can easily be done with the
+    /// quick template gnuplot script saved under ``plots`` directory.
+    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+        for (counter, process) in self.data_set.iter().enumerate() {
+            let inner_id = format!("{}_{}", id, counter);
+            process.save_with_id(&inner_id)?;
+        }
+        Ok(self)
     }
+
 }

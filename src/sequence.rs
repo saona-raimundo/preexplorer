@@ -2,7 +2,7 @@
 
 
 // Traits
-pub use crate::traits::Preexplorable;
+pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
@@ -84,11 +84,25 @@ where
     }
 }
 
-impl<I> crate::traits::Preexplorable for Sequence<I>
+impl<I> Configurable for Sequence<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
+    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
+    }
+    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
+}
+
+impl<I> Saveable for Sequence<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{
+
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
     /// # Remark
@@ -108,7 +122,13 @@ where
 
         raw_data
     }
+}
 
+impl<I> Plotable for Sequence<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{
     /// Write simple gnuplot script for this type of data.
     ///
     fn plot_script(&self) -> String {
@@ -131,12 +151,7 @@ where
         gnuplot_script
     }
 
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
-        &mut self.config
-    }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
-        &self.config
-    }
+
 }
 
 #[cfg(test)]
