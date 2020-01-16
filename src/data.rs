@@ -6,7 +6,7 @@ pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
 // Constants
-use crate::{DATA_DIR_GNUPLOT};
+use crate::{DATA_DIR_GNUPLOT, PLOT_DIR};
 
 /// Missing documentation.
 ///
@@ -166,8 +166,10 @@ where
 
                 let mut gnuplot_script = self.base_plot_script();
 
-                gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n\n";
-                gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, self.get_checked_id(),);
+                gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
+                gnuplot_script += "\n# To get the plot, run the following command:";
+                gnuplot_script += &format!("\n# gnuplot \"{}\\{}.gnu\" \n\n", PLOT_DIR, self.get_checked_id());
+                gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, self.get_checked_id());
                 gnuplot_script += "pause -1\n";
 
                 gnuplot_script
