@@ -18,6 +18,8 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
+- Duplicate methods, for easier use
+  - labelx and xlabel
 - More settings
   - limx
   - limy
