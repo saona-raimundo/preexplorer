@@ -117,7 +117,7 @@ where
                 crate::configuration::plot::style::Style::Default => sequence.get_style(),
                 _ => style,
             };
-            let dashtype = match self.get_dashtype() {
+            let dashtype = match sequence.get_dashtype() {
                 Some(dashtype) => dashtype,
                 None => {
                     dashtype_counter += 1;
