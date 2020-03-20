@@ -26,8 +26,8 @@ Rust is meant for computations and plotting is usually an iterative process, don
 - Duplicate methods, for easier use
   - labelx and xlabel
 - More settings
-  - limx, and xlim
-  - limy, and ylim
+  - rangex, and xrange
+  - rangey, and yrange
 - pub traits should be externally implementable
 - Allow user defined configuration parameters
   - HashMap
