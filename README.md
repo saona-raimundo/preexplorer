@@ -1,4 +1,8 @@
-# external_gnuplot
+# preexplorer
+Easy plotter and saver of simple data. Handy tool for development stage or small computational projects. 
+
+
+
 Handy way to save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
 if you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
 
@@ -48,4 +52,4 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # Disclaimer
 
-I have no connection with the gnuplot project.
+There is no connection with the gnuplot project.
