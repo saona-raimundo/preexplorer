@@ -1,12 +1,13 @@
 [package]
 name = "preexplorer"
 version = "0.1.0"
+authors = ["Raimundo Saona <rasa200@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/rasa200/markovian"
+repository = "https://github.com/rasa200/preexplorer"
 # documentation = "https://rust-random.github.io/rand/"
-# homepage = "https://crates.io/crates/rand"
+# homepage = "https://crates.io/crates/preexplorer"
 description = """
 Easy plotter and saver of simple data. Handy tool for development stage or small computational projects.
 """
@@ -17,7 +18,7 @@ categories = ["Visualization", "Science"]
 
 [dependencies]
 failure = "0.1"
-chrono = "0.4.10"
+chrono = "0.4"
 
 [dev-dependencies]
 ndarray = "0.13"
