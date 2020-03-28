@@ -22,17 +22,52 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # To do
 
-- Add method
+- Interoperability
   - to_comparison
     - In all basic structures
     - Is this part of the trait?
     - type: Comparison?
 - Duplicate methods, for easier use
   - labelx and xlabel
+- Warning: Windows only, beacuse of extensions in file name. Help wanted.
 - More settings
+  - Extensible Configuration struct
+    - through a HashMap
   - rangex, and xrange
   - rangey, and yrange
+  - set or unset 
+    - palette
+    - tics
+      - xrange
+      - yrange
+      - colorbox
 - pub traits should be externally implementable
+  - raw_data
+    - Change to plotable_data
+      raw data can be seen as something else
+  - Include 
+    - pub use configuration::*; 
+      in lib level.
+  - Expose base_plot_script
+    - At least examples for plot script in Plotable
+  - Make a personalized plot_script writable
+    - Add a macro for it? 
+  - Make data and plot directory constants public
+  - Add method
+    - .path_to_data
+      - Gives the full path to the data file
+        with extension
+    - .path_to_plot_script
+      - Gives the full path to the plot script file
+        with extension
+  - Document 
+    - Trait structure
+      - Configurable + -> Saveable + -> Plotable
+    - Saveable
+      - raw_data
+    - Plotable
+      - plot_script
+      - base_plot_script
 - Allow user defined configuration parameters
   - HashMap
 - Write proper presentation of the crate:
@@ -46,9 +81,6 @@ Rust is meant for computations and plotting is usually an iterative process, don
     - sonify()
 - ndimensional variants
 - Document project
-- Publish it in crates.io
-
-
 
 # Disclaimer
 
