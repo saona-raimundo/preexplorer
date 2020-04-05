@@ -5,7 +5,7 @@ fn main() -> failure::Fallible<()> {
     let data = array![[1, 2, 3, 4, 5], [2, 5, 6, 7, 8], [3, 11, 12, 13, 14],];
     let dim = 5;
 
-    pre::Data::new(data.iter(), dim).title("My Title").id("1").save()?;
+    pre::Data::new(data.iter(), dim).title("My Title").id("1").write_plot_script()?.save()?;
 
     Ok(())
 }

@@ -68,6 +68,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
     - Plotable
       - plot_script
       - base_plot_script
+- Add plot_later command, 
+  - save and write_plot_script together
+- Add SequenceWithError and ProcessWithError for error plotting
 - Allow user defined configuration parameters
   - HashMap
 - Write proper presentation of the crate:
@@ -81,6 +84,7 @@ Rust is meant for computations and plotting is usually an iterative process, don
     - sonify()
 - ndimensional variants
 - Document project
+  - Add bingenes crate as an example of implementing traits
 
 # Disclaimer
 
