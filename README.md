@@ -23,6 +23,7 @@ Rust is meant for computations and plotting is usually an iterative process, don
 # To do
 
 - Interoperability
+  - Implement Eq trait in all structs
   - to_comparison
     - In all basic structures
     - Is this part of the trait?
