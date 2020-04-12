@@ -29,7 +29,7 @@ mod nddistribution;
 ///
 /// See ``compare`` method to compare two or more data sets.
 ///
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Density<I>
 where
     I: IntoIterator + Clone,

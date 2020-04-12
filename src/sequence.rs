@@ -2,8 +2,9 @@
 
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
+use crate::traits::SequenceTrait;
 
 // Constants
 use crate::{DATA_DIR_GNUPLOT};
@@ -12,7 +13,7 @@ use crate::{DATA_DIR_GNUPLOT};
 pub mod comparison;
 /// Sequence with values with n-dimensions.
 mod ndsequence;
-pub use comparison::Comparison;
+pub use comparison::Sequences;
 
 
 
@@ -29,7 +30,7 @@ pub use comparison::Comparison;
 /// See ``compare`` method to compare two or more data sets.
 ///
 
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sequence<I>
 where
     I: IntoIterator + Clone,
@@ -74,13 +75,17 @@ where
     /// ```no_run
     /// ```
     ///
-    pub fn compare_with<J>(self, anothers: J) -> crate::sequence::comparison::Comparison<I>
+    pub fn compare_with<J>(self, anothers: J) -> crate::sequence::comparison::Sequences<I>
     where
         J: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
-        let mut comp = crate::sequence::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter());
+        let mut comp = crate::sequence::comparison::Sequences::new(vec![self]);
+        comp.add_many(anothers.into_iter());
         comp
+    }
+
+    pub fn to_comparison(self) -> crate::sequence::comparison::Sequences<I> {
+        self.into()
     }
 }
 
@@ -154,6 +159,15 @@ where
 
 }
 
+
+impl<I> SequenceTrait for Sequence<I> 
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{}
+
+
+///////////////////////////////////////////////
 #[cfg(test)]
 mod tests {
     use super::*;

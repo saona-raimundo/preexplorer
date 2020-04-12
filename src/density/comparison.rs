@@ -10,7 +10,7 @@ use crate::{DATA_DIR_GNUPLOT};
 
 /// See ``Density`` documentation for further use.
 ///
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug, PartialEq)]
 pub struct Comparison<I>
 where
     I: IntoIterator + Clone,

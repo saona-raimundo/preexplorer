@@ -10,32 +10,44 @@ if you are looking for a pure Rust plotter, check out [plotters](https://crates.
 
 Rust is meant for computations and plotting is usually an iterative process, done best in tools like [gnuplot](http://www.gnuplot.info/). That is way we separate both steps: compute in Rust, save the data, find the best plot with [gnuplot](http://www.gnuplot.info/). 
 
+# Purpose
 
+TO DOCUMENT
+
+# Examples
+
+For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
 
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
 - Add ``preexplorer = "0.1"`` to your ``Cargo.toml`` file under ``[dependencies]``.
-- I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` .
+- I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
 
 
 # To do
 
+- Rethink the distribution so that it integrates one
+- Use [std](https://doc.rust-lang.org/std/index.html)::[path](https://doc.rust-lang.org/std/path/index.html)::[PathBuf](https://doc.rust-lang.org/std/path/struct.PathBuf.html) for the path of files
 - Interoperability
-  - Implement Eq trait in all structs
-  - to_comparison
-    - In all basic structures
-    - Is this part of the trait?
-    - type: Comparison?
-- Duplicate methods, for easier use
-  - labelx and xlabel
-- Warning: Windows only, beacuse of extensions in file name. Help wanted.
+  - In basic struct
+    - Add method 
+      - to_comparison
+        - self.into()
+    - Implement own trait
+      - Sequence: Configurable + Plotable + Saveable
+  - In comparison
+    - Change name to "add an s"
+    - Implement
+      - From<basic>
+      - crate::traits::Comparison
+- Why processes must be the same structs to be compared? 
+  - Can comparisons not simply have basic traits as objects?
+- Warning: Windows only, because of extensions in file name. Help wanted.
 - More settings
   - Extensible Configuration struct
     - through a HashMap
-  - rangex, and xrange
-  - rangey, and yrange
   - set or unset 
     - palette
     - tics
@@ -71,14 +83,11 @@ Rust is meant for computations and plotting is usually an iterative process, don
       - base_plot_script
 - Add plot_later command, 
   - save and write_plot_script together
-- Add SequenceWithError and ProcessWithError for error plotting
+- New Structs for error plotting
+  - SequenceWithError 
+  - ProcessWithError
 - Allow user defined configuration parameters
   - HashMap
-- Write proper presentation of the crate:
-  - Purpose
-  - Installation
-    - Recall gnuplot
-  - Use with Rust
 - More customization
   - Audio
     - audify()
@@ -86,6 +95,27 @@ Rust is meant for computations and plotting is usually an iterative process, don
 - ndimensional variants
 - Document project
   - Add bingenes crate as an example of implementing traits
+
+# Questions
+
+Why the following code does not work?
+
+```rust
+MarkovChain::new(init_state, &transition)
+    .take(max_steps)
+	.preexplore()
+```
+
+
+
+# Q & A
+
+1. Why do the structs not implement Eq traits?
+   Because we use f64
+2. Why do the structs not implement PartialOrd traits?
+   Because we use HashMap
+3. Why do we not have two Configurations? SaveConfiguration and PlotConfiguration?
+   To make life simpler for those outside the crate
 
 # Disclaimer
 

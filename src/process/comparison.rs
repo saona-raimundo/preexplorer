@@ -10,7 +10,7 @@ use crate::{DATA_DIR_GNUPLOT};
 
 /// See ``Process`` documentation for further use.
 ///
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug, PartialEq)]
 pub struct Comparison<I, J>
 where
     I: IntoIterator + Clone,

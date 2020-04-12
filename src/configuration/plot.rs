@@ -7,6 +7,8 @@ pub(crate) struct PlotConfiguration {
     logy: Option<f64>,
     labelx: Option<String>,
     labely: Option<String>,
+    rangex: Option<(f64, f64)>,
+    rangey: Option<(f64, f64)>,
     style: crate::configuration::plot::style::Style,
     dashtype: Option<usize>,
 }
@@ -65,6 +67,13 @@ impl PlotConfiguration {
             }
         }
 
+        if let Some(rangex) = &self.get_rangex() {
+            gnuplot_script += &format!("set xrange [{}:{}]\n", rangex.0, rangex.1);
+        }
+        if let Some(rangey) = &self.get_rangey() {
+            gnuplot_script += &format!("set yrange [{}:{}]\n", rangey.0, rangey.1);
+        }
+
         gnuplot_script
     }
 
@@ -86,6 +95,14 @@ impl PlotConfiguration {
     }
     pub(crate) fn labely(&mut self, labely: String) -> &mut Self {
         self.labely = Some(labely);
+        self
+    }
+    pub(crate) fn rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
+        self.rangex = Some(rangex);
+        self
+    }
+    pub(crate) fn rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
+        self.rangey = Some(rangey);
         self
     }
     pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
@@ -112,6 +129,12 @@ impl PlotConfiguration {
     pub(crate) fn get_labely(&self) -> Option<&String> {
         self.labely.as_ref()
     }
+    pub(crate) fn get_rangex(&self) -> Option<(f64, f64)> {
+        self.rangex
+    }
+    pub(crate) fn get_rangey(&self) -> Option<(f64, f64)> {
+        self.rangey
+    }
     pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
         &self.style
     }
@@ -127,6 +150,8 @@ impl Default for PlotConfiguration {
         let logy = None;
         let labelx = None;
         let labely = None;
+        let rangex = None;
+        let rangey = None;
         let style = crate::configuration::plot::style::Style::Default;
         let dashtype = None;
 
@@ -134,6 +159,8 @@ impl Default for PlotConfiguration {
             title,
             logx,
             logy,
+            rangex,
+            rangey,
             labelx,
             labely,
             style,

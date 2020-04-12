@@ -4,14 +4,15 @@ use crate::errors::SavingError;
 // Traits
 pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
+use crate::traits::SequenceTrait;
 
 // Constants
 use crate::{DATA_DIR_GNUPLOT};
 
 /// See ``Sequence`` documentation for further use.
 ///
-#[derive(Debug, PartialEq, PartialOrd)]
-pub struct Comparison<I>
+#[derive(Debug, PartialEq)]
+pub struct Sequences<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -19,12 +20,12 @@ where
     pub(crate) data_set: Vec<crate::sequence::Sequence<I>>,
     pub(crate) config: crate::configuration::Configuration,
 }
-impl<I> Comparison<I>
+impl<I> Sequences<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    pub fn new<K>(data_set: K) -> Comparison<I>
+    pub fn new<K>(data_set: K) -> Sequences<I>
     where
         K: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
@@ -32,20 +33,32 @@ where
         let data_set = data_set
             .into_iter()
             .collect::<Vec<crate::sequence::Sequence<I>>>();
-        Comparison { data_set, config }
-    }
-
-    pub fn add<J>(&mut self, anothers: J)
-    where
-        J: IntoIterator<Item = crate::sequence::Sequence<I>>,
-    {
-        for sequence in anothers.into_iter() {
-            self.data_set.push(sequence);
-        }
+        Sequences { data_set, config }
     }
 }
 
-impl<I> Configurable for Comparison<I>
+impl<I> From<crate::sequence::Sequence<I>> for Sequences<I> 
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+{
+    fn from(sequence: crate::sequence::Sequence<I>) -> Self { 
+        Sequences::new(vec![sequence]) 
+    }
+}
+
+impl<I> crate::traits::Comparison<crate::sequence::Sequence<I>> for Sequences<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: Display,
+    {
+    fn add(&mut self, other: crate::sequence::Sequence<I>) -> &mut Self {
+        self.data_set.push(other);
+        self
+    }
+}
+
+impl<I> Configurable for Sequences<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -58,7 +71,7 @@ where
     }
 }
 
-impl<I> Saveable for Comparison<I>
+impl<I> Saveable for Sequences<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,
@@ -90,7 +103,7 @@ where
     }
 }
 
-impl<I> Plotable for Comparison<I>
+impl<I> Plotable for Sequences<I>
 where
     I: IntoIterator + Clone,
     I::Item: Display,

@@ -1,10 +1,13 @@
+use std::collections::HashMap;
+
 pub mod plot;
 pub mod save;
 
-#[derive(Debug, PartialOrd, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default)]
 pub struct Configuration {
     save_config: crate::configuration::save::SaveConfiguration,
     plot_config: crate::configuration::plot::PlotConfiguration,
+    custom_config: HashMap<String, String>,
 }
 
 impl Configuration {
@@ -38,6 +41,14 @@ impl Configuration {
         self.plot_config.labely(labely);
         self
     }
+    pub(crate) fn rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
+        self.plot_config.rangex(rangex);
+        self
+    }
+    pub(crate) fn rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
+        self.plot_config.rangey(rangey);
+        self
+    }
     pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
         self.plot_config.style(style);
         self
@@ -62,6 +73,12 @@ impl Configuration {
     }
     pub(crate) fn get_labely(&self) -> Option<&String> {
         self.plot_config.get_labely()
+    }
+    pub(crate) fn get_rangex(&self) -> Option<(f64, f64)> {
+        self.plot_config.get_rangex()
+    }
+    pub(crate) fn get_rangey(&self) -> Option<(f64, f64)> {
+        self.plot_config.get_rangey()
     }
     pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
         self.plot_config.get_style()
@@ -104,6 +121,16 @@ impl Configuration {
     }
     pub(crate) fn get_checked_id(&self) -> &String {
         self.save_config.get_checked_id()
+    }
+
+    ////////////////// CustomConfiguration ///////////////////
+    pub(crate) fn custom(&mut self, key: String, value: String) -> &mut Self {
+    	self.custom_config.insert(key, value);
+    	self
+    }
+
+    pub(crate) fn get_custom(&self, key: String) -> Option<&String> {
+    	self.custom_config.get(&key)
     }
 }
 

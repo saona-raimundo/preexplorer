@@ -10,7 +10,7 @@ use crate::{DATA_DIR_GNUPLOT, PLOT_DIR};
 
 /// Missing documentation.
 ///
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Data<I>
 where
     I: IntoIterator + Clone,

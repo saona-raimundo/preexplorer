@@ -35,7 +35,7 @@ pub use comparison::Comparison;
 ///
 /// See ``compare`` method to compare two or more data sets.
 ///
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Process<I, J>
 {
     pub(crate) domain: I,

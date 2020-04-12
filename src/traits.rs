@@ -64,6 +64,13 @@ pub trait Configurable {
         self.configuration().logy(logy.into());
         self
     }
+    fn xlog<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
+        self.logx(logx)
+    }
+    fn ylog<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
+        self.logy(logy)
+    }
+
     fn labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
         self.configuration().labelx(labelx.to_string());
         self
@@ -72,6 +79,45 @@ pub trait Configurable {
         self.configuration().labely(labely.to_string());
         self
     }
+
+    fn xlabel<S: Display>(&mut self, labelx: S) -> &mut Self {
+        self.labelx(labelx)
+    }
+    fn ylabel<S: Display>(&mut self, labely: S) -> &mut Self {
+        self.labely(labely)
+    }
+
+    fn rangex<S, T>(&mut self, left: S, right: T) -> &mut Self 
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.configuration().rangex((f64::from(left), f64::from(right)));
+        self
+    }
+    fn rangey<S, T>(&mut self, down: S, up: T) -> &mut Self 
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.configuration().rangey((f64::from(down), f64::from(up)));
+        self
+    }
+    fn xrange<S, T>(&mut self, left: S, right: T) -> &mut Self 
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.rangex(left, right)
+    }
+    fn yrange<S, T>(&mut self, down: S, up: T) -> &mut Self 
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.rangey(down, up)
+    }
+
     fn extension<S: Display>(&mut self, extension: S) -> &mut Self {
         self.configuration().extension(extension.to_string());
         self
@@ -101,7 +147,13 @@ pub trait Configurable {
         self
     }
 
+    fn custom<S: Display, T: Display>(&mut self, key: S, value: T) -> &mut Self {
+        self.configuration().custom(key.to_string(), value.to_string());
+        self
+    }
 
+    //////////////////////////////////////////////////////////
+    // Getting
     fn get_title(&self) -> Option<&String> {
         self.configuration_as_ref().get_title()
     }
@@ -111,11 +163,35 @@ pub trait Configurable {
     fn get_logy(&self) -> Option<f64> {
         self.configuration_as_ref().get_logy()
     }
+    fn get_xlog(&self) -> Option<f64> {
+        self.get_logx()
+    }
+    fn get_ylog(&self) -> Option<f64> {
+        self.get_logy()
+    }
     fn get_labelx(&self) -> Option<&String> {
         self.configuration_as_ref().get_labelx()
     }
     fn get_labely(&self) -> Option<&String> {
         self.configuration_as_ref().get_labely()
+    }
+    fn get_xlabel(&self) -> Option<&String> {
+        self.get_labelx()
+    }
+    fn get_ylabel(&self) -> Option<&String> {
+        self.get_labely()
+    }
+    fn get_rangex(&self) -> Option<(f64, f64)> {
+        self.configuration_as_ref().get_rangex()
+    }
+    fn get_rangey(&self) -> Option<(f64, f64)> {
+        self.configuration_as_ref().get_rangey()
+    }
+    fn get_xrange(&self) -> Option<(f64, f64)> {
+        self.get_rangex()
+    }
+    fn get_yrange(&self) -> Option<(f64, f64)> {
+        self.get_rangey()
     }
     fn get_extension(&self) -> &str {
         self.configuration_as_ref().get_extension()
@@ -137,6 +213,9 @@ pub trait Configurable {
     }
     fn get_checked_id(&self) -> &String {
         self.configuration_as_ref().get_checked_id()
+    }
+    fn get_custom<S: Display>(&self, key: S) -> Option<&String> {
+        self.configuration_as_ref().get_custom(key.to_string())
     }
 }
 
@@ -210,5 +289,20 @@ pub trait Plotable: Configurable + Saveable {
     fn base_plot_script(&self) -> String {
         self.configuration_as_ref().base_plot_script()
     }
-
 }
+
+
+pub trait Comparison<T>: From<T> {
+    fn add(&mut self, other: T) -> &mut Self;
+
+    fn add_many<J: IntoIterator<Item = T>>(&mut self, others: J) -> &mut Self {
+        for other in others {
+            self.add(other);
+        }
+        self
+    }
+}
+
+pub(crate) trait SequenceTrait: Configurable + Saveable + Plotable {}
+trait ProcessTrait: Configurable + Saveable + Plotable {}
+trait DensityTrait: Configurable + Saveable + Plotable {}
