@@ -8,7 +8,7 @@
 
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
 
 // Constants
@@ -21,7 +21,7 @@ pub mod comparison;
 /// Time-series with values in R^n.
 mod ndprocess;
 
-pub use comparison::Comparison;
+pub use comparison::Processes;
 
 
 /// Iterator over the data to be consumed when saved or plotted. Can also be compared with other ``Process`` types.
@@ -72,13 +72,17 @@ where
         }
     }
 
+    pub fn to_comparison(self) -> crate::process::comparison::Processes<I, J> {
+        self.into()
+    }
+
     /// Pending documentation.
-    pub fn compare_with<K>(self, anothers: K) -> crate::process::comparison::Comparison<I, J>
+    pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<I, J>
     where
         K: IntoIterator<Item = crate::process::Process<I, J>>,
     {
-        let mut comp = crate::process::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter());
+        let mut comp: Processes<I, J> = self.into();
+        comp.add_many(others);
         comp
     }
 }

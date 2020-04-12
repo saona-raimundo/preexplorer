@@ -4,7 +4,6 @@ use crate::errors::SavingError;
 // Traits
 pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
-use crate::traits::SequenceTrait;
 
 // Constants
 use crate::{DATA_DIR_GNUPLOT};

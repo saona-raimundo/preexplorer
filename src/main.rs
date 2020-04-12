@@ -10,8 +10,10 @@ fn main() {
 
     let group_of_plottings = vec![data_1.preexplore(), data_2.preexplore()];
 
-    pre::sequence::Comparison::new(group_of_plottings)
+    pre::Sequences::new(group_of_plottings)
         .title("All together")
+        .custom("palette", "red")
+        .xrange("10", "20")
         .plot("1")
         .unwrap();
 }

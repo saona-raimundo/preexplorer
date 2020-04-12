@@ -2,13 +2,14 @@
 
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
 
 // Constants
 use crate::{DATA_DIR_GNUPLOT};
 
-pub use comparison::Comparison;
+// Structs
+pub use comparison::Densities;
 
 /// Compare various ``Distribution`` types together.
 pub mod comparison;
@@ -66,14 +67,17 @@ where
     ///
     /// ```no_run
     /// ```
-
-    pub fn compare_with<J>(self, anothers: J) -> crate::density::comparison::Comparison<I>
+    pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<I>
     where
         J: IntoIterator<Item = crate::density::Density<I>>,
     {
-        let mut comp = crate::density::comparison::Comparison::new(vec![self]);
-        comp.add(anothers.into_iter());
+        let mut comp: Densities<I> = self.into();
+        comp.add_many(others);
         comp
+    }
+
+    pub fn to_comparison(self) -> crate::density::comparison::Densities<I> {
+        self.into()
     }
 }
 

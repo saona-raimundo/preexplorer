@@ -4,10 +4,11 @@
 // Traits
 pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
-use crate::traits::SequenceTrait;
+
+
 
 // Constants
-use crate::{DATA_DIR_GNUPLOT};
+use crate::DATA_DIR_GNUPLOT;
 
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
@@ -75,12 +76,12 @@ where
     /// ```no_run
     /// ```
     ///
-    pub fn compare_with<J>(self, anothers: J) -> crate::sequence::comparison::Sequences<I>
+    pub fn compare_with<J>(self, others: J) -> crate::sequence::comparison::Sequences<I>
     where
         J: IntoIterator<Item = crate::sequence::Sequence<I>>,
     {
-        let mut comp = crate::sequence::comparison::Sequences::new(vec![self]);
-        comp.add_many(anothers.into_iter());
+        let mut comp: Sequences<I> = self.into();
+        comp.add_many(others);
         comp
     }
 
@@ -158,13 +159,6 @@ where
 
 
 }
-
-
-impl<I> SequenceTrait for Sequence<I> 
-where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-{}
 
 
 ///////////////////////////////////////////////

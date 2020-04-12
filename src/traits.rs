@@ -302,7 +302,3 @@ pub trait Comparison<T>: From<T> {
         self
     }
 }
-
-pub(crate) trait SequenceTrait: Configurable + Saveable + Plotable {}
-trait ProcessTrait: Configurable + Saveable + Plotable {}
-trait DensityTrait: Configurable + Saveable + Plotable {}

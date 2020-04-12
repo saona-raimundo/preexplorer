@@ -29,26 +29,31 @@ pub mod process;
 /// Process indexed by 1, 2, 3, ...
 pub mod sequence;
 
-/// Struct with config for explorable data.
+/// Struct with config for explorable data. 
 pub mod configuration;
-/// Errors wrapper from writting data
+/// Errors wrapper from writting data. 
 pub mod errors;
-/// Common traits.
+/// Common traits. 
 pub mod traits;
 
-pub use data::Data;
-pub use density::Density;
-pub use process::Process;
-pub use sequence::Sequence;
+
+pub use data::*;
+pub use density::*;
+pub use process::*;
+pub use sequence::*;
 pub use traits::*;
+pub use constants::*;
 
 /// All you ussually need
 pub mod prelude {
-
     pub use crate as pre;
     pub use crate::traits::*;
 }
 
-const DATA_DIR: &str = "target\\preexplorer\\data";
-const DATA_DIR_GNUPLOT: &str = "target/preexplorer/data";
-const PLOT_DIR: &str = "target\\preexplorer\\plots";
+/// Directory paths. 
+pub mod constants {
+	pub const DATA_DIR: &str = "target\\preexplorer\\data";
+	pub const DATA_DIR_GNUPLOT: &str = "target/preexplorer/data";
+	pub const PLOT_DIR: &str = "target\\preexplorer\\plots";
+}
+	

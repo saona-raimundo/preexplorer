@@ -14,6 +14,13 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 TO DOCUMENT
 
+# Main features
+
+- Easy plotting
+- Easy comparison
+- Extensible options
+- Implementable traits?
+
 # Examples
 
 For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
@@ -30,30 +37,13 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 - Rethink the distribution so that it integrates one
 - Use [std](https://doc.rust-lang.org/std/index.html)::[path](https://doc.rust-lang.org/std/path/index.html)::[PathBuf](https://doc.rust-lang.org/std/path/struct.PathBuf.html) for the path of files
-- Interoperability
-  - In basic struct
-    - Add method 
-      - to_comparison
-        - self.into()
-    - Implement own trait
-      - Sequence: Configurable + Plotable + Saveable
-  - In comparison
-    - Change name to "add an s"
-    - Implement
-      - From<basic>
-      - crate::traits::Comparison
-- Why processes must be the same structs to be compared? 
-  - Can comparisons not simply have basic traits as objects?
 - Warning: Windows only, because of extensions in file name. Help wanted.
 - More settings
-  - Extensible Configuration struct
-    - through a HashMap
-  - set or unset 
-    - palette
-    - tics
-      - xrange
-      - yrange
-      - colorbox
+  - xtics: Option<String>, default: Option<String::from("")>
+  - ytics: Option<String>
+  - ticsx
+  - ticsy
+  - pause(i64) seconds
 - pub traits should be externally implementable
   - raw_data
     - Change to plotable_data
@@ -62,17 +52,24 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
     - pub use configuration::*; 
       in lib level.
   - Expose base_plot_script
-    - At least examples for plot script in Plotable
+    - It is behind the Configuration 
+      - Shall we expose the whole thing? No
+        - Document well that all configurations are taken into account
+        - Document how to add more settings
+    - At least examples for plot script in Plotable Trait documentation
   - Make a personalized plot_script writable
-    - Add a macro for it? 
-  - Make data and plot directory constants public
-  - Add method
-    - .path_to_data
-      - Gives the full path to the data file
-        with extension
-    - .path_to_plot_script
-      - Gives the full path to the plot script file
-        with extension
+    - Add a macro for it?
+  - Extend traits
+    - Saveable
+      - .path_to_data
+        - Gives the full path to the data file
+          with extension
+    - Plotable
+      - .plot_later 
+        - save and write_plot_script together
+      - .path_to_plot_script
+        - Gives the full path to the plot script file
+          with extension
   - Document 
     - Trait structure
       - Configurable + -> Saveable + -> Plotable
@@ -81,13 +78,9 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
     - Plotable
       - plot_script
       - base_plot_script
-- Add plot_later command, 
-  - save and write_plot_script together
 - New Structs for error plotting
   - SequenceWithError 
   - ProcessWithError
-- Allow user defined configuration parameters
-  - HashMap
 - More customization
   - Audio
     - audify()
@@ -116,6 +109,8 @@ MarkovChain::new(init_state, &transition)
    Because we use HashMap
 3. Why do we not have two Configurations? SaveConfiguration and PlotConfiguration?
    To make life simpler for those outside the crate
+4. Why processes must be the same structs to be compared? 
+   Because of Rust explicit typing: comparisons need to save an explicit type. 
 
 # Disclaimer
 

@@ -11,7 +11,7 @@ use crate::{DATA_DIR_GNUPLOT};
 /// See ``Density`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
-pub struct Comparison<I>
+pub struct Densities<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
@@ -20,12 +20,12 @@ where
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I> Comparison<I>
+impl<I> Densities<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
 {
-    pub fn new<K>(data_set: K) -> Comparison<I>
+    pub fn new<K>(data_set: K) -> Densities<I>
     where
         K: IntoIterator<Item = crate::density::Density<I>>,
     {
@@ -33,20 +33,33 @@ where
         let data_set = data_set
             .into_iter()
             .collect::<Vec<crate::density::Density<I>>>();
-        Comparison { data_set, config }
-    }
-
-    pub fn add<J>(&mut self, anothers: J)
-    where
-        J: IntoIterator<Item = crate::density::Density<I>>,
-    {
-        for sequence in anothers.into_iter() {
-            self.data_set.push(sequence);
-        }
+        Densities { data_set, config }
     }
 }
 
-impl<I> Configurable for Comparison<I>
+impl<I> From<crate::density::Density<I>> for Densities<I> 
+where
+    I: IntoIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
+{
+    fn from(density: crate::density::Density<I>) -> Self { 
+        Densities::new(vec![density]) 
+    }
+}
+
+impl<I> crate::traits::Comparison<crate::density::Density<I>> for Densities<I>
+where
+    I: IntoIterator + Clone,
+    I::Item: PartialOrd + Display + Copy,
+    {
+    fn add(&mut self, other: crate::density::Density<I>) -> &mut Self {
+        self.data_set.push(other);
+        self
+    }
+}
+
+
+impl<I> Configurable for Densities<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
@@ -59,7 +72,7 @@ where
     }
 }
 
-impl<I> Saveable for Comparison<I>
+impl<I> Saveable for Densities<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,
@@ -90,7 +103,7 @@ where
     }
 }
 
-impl<I> Plotable for Comparison<I>
+impl<I> Plotable for Densities<I>
 where
     I: IntoIterator + Clone,
     I::Item: PartialOrd + Display + Copy,

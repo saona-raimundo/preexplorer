@@ -19,7 +19,7 @@ fn comparing_interations() {
 
     // Create comparison and plot
 
-    pre::sequence::Comparison::new(vec![seq_1, seq_2])
+    pre::Sequences::new(vec![seq_1, seq_2])
         .title("All together")
         .plot("1")
         .unwrap();
@@ -41,7 +41,7 @@ fn increasing_comparisons() {
 
     let data_3 = vec![0.1, 1.5, 7., 5.];
     let group_of_plottings = vec![data_3.preexplore().title("Third").to_owned()];
-    comparison_plotting.add(group_of_plottings);
+    comparison_plotting.add_many(group_of_plottings);
 
     // Change some settings
 
