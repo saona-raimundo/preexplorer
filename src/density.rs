@@ -128,7 +128,7 @@ where
     /// Only works for real numbers.
     fn plot_script(&self) -> String {
 
-        let mut gnuplot_script = self.base_plot_script();
+        let mut gnuplot_script = self.opening_plot_script();
 
         // Values for the histogram
 
@@ -187,7 +187,7 @@ where
 
         // Gnuplot section
 
-        gnuplot_script += "pause -1\n";
+        gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
     }

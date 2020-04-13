@@ -11,12 +11,16 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    pub(crate) fn base_plot_script(&self) -> String {
-        self.plot_config.base_plot_script()
+    pub(crate) fn opening_plot_script(&self) -> String {
+        self.plot_config.opening_plot_script()
     }
 
-    pub(crate) fn base_plot_script_comparison(&self) -> String {
-        self.plot_config.base_plot_script_comparison()
+    pub(crate) fn opening_plot_script_comparison(&self) -> String {
+        self.plot_config.opening_plot_script_comparison()
+    }
+
+    pub(crate) fn ending_plot_script(&self) -> String {
+        self.plot_config.ending_plot_script()
     }
 
     /////////////////////////// PlotConfiguration
@@ -57,6 +61,27 @@ impl Configuration {
         self.plot_config.dashtype(dashtype);
         self
     }
+    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self 
+    where
+        T: Into<Option<String>>,
+    {
+        self.plot_config.ticsx(ticsx);
+        self
+    }
+    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self 
+    where
+        T: Into<Option<String>>,
+    {
+        self.plot_config.ticsy(ticsy);
+        self
+    }
+    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self 
+    where
+        T: Into<Option<f64>>,
+    {
+        self.plot_config.pause(pause);
+        self
+    }
 
     // Getting
     pub(crate) fn get_title(&self) -> Option<&String> {
@@ -85,6 +110,18 @@ impl Configuration {
     }
     pub(crate) fn get_dashtype(&self) -> Option<usize> {
         self.plot_config.get_dashtype()
+    }
+    pub(crate) fn get_ticsx(&self) -> Option<&String> 
+    {
+        self.plot_config.get_ticsx()
+    }
+    pub(crate) fn get_ticsy(&self) -> Option<&String> 
+    {
+        self.plot_config.get_ticsy()
+    }
+    pub(crate) fn get_pause(&self) -> Option<f64> 
+    {
+        self.plot_config.get_pause()
     }
 
     ////////// SaveConfiguration /////////////////

@@ -164,13 +164,14 @@ where
             }
             _ => {
 
-                let mut gnuplot_script = self.base_plot_script();
+                let mut gnuplot_script = self.opening_plot_script();
 
                 gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
                 gnuplot_script += "\n# To get the plot, run the following command:";
                 gnuplot_script += &format!("\n# gnuplot \"{}\\{}.gnu\" \n\n", PLOT_DIR, self.get_checked_id());
                 gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, self.get_checked_id());
-                gnuplot_script += "pause -1\n";
+                
+                gnuplot_script += &self.ending_plot_script();
 
                 gnuplot_script
             }

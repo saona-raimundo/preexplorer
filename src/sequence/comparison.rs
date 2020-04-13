@@ -112,7 +112,7 @@ where
     fn plot_script(&self) -> String {
 
         let id = self.get_checked_id();
-        let mut gnuplot_script = self.config.base_plot_script_comparison();
+        let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
         gnuplot_script += "plot ";
 
@@ -145,7 +145,7 @@ where
             }
         }
         gnuplot_script += "\n";
-        gnuplot_script += "pause -1\n";
+        gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
     }

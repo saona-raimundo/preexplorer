@@ -13,7 +13,10 @@ fn main() {
     pre::Sequences::new(group_of_plottings)
         .title("All together")
         .custom("palette", "red")
-        .xrange("10", "20")
+        .xrange(0, 20)
+        .ticsy("0, 0.5, 1")
+        .ytics("0, 0.3, 2")
+        .pause(3)
         .plot("1")
         .unwrap();
 }

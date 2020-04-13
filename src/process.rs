@@ -133,7 +133,7 @@ where
     ///
     fn plot_script(&self) -> String {
 
-        let mut gnuplot_script = self.base_plot_script();
+        let mut gnuplot_script = self.opening_plot_script();
 
         let dashtype = match self.get_dashtype() {
             Some(dashtype) => dashtype,
@@ -147,7 +147,7 @@ where
             self.get_style(),
             dashtype,
         );
-        gnuplot_script += "pause -1\n";
+        gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
     }

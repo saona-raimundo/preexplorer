@@ -9,20 +9,23 @@ pub(crate) struct PlotConfiguration {
     labely: Option<String>,
     rangex: Option<(f64, f64)>,
     rangey: Option<(f64, f64)>,
+    ticsx: Option<String>,
+    ticsy: Option<String>,
     style: crate::configuration::plot::style::Style,
     dashtype: Option<usize>,
+    pause: Option<f64>,
 }
 
 impl PlotConfiguration {
-    pub(crate) fn base_plot_script(&self) -> String {
+    pub(crate) fn opening_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
-        gnuplot_script += &self.base_plot_script_comparison();
+        gnuplot_script += &self.opening_plot_script_comparison();
 
         gnuplot_script
     }
 
-    pub(crate) fn base_plot_script_comparison(&self) -> String {
+    pub(crate) fn opening_plot_script_comparison(&self) -> String {
         let mut gnuplot_script = String::new();
 
         match self.get_title() {
@@ -74,6 +77,35 @@ impl PlotConfiguration {
             gnuplot_script += &format!("set yrange [{}:{}]\n", rangey.0, rangey.1);
         }
 
+        match self.get_ticsx() {
+            Some(ticsx) => {
+                gnuplot_script += &format!("set xtics {}\n", ticsx);
+            }
+            None => {
+                gnuplot_script += &format!("unset xtics\n");
+            }
+        }
+
+        match self.get_ticsy() {
+            Some(ticsy) => {
+                gnuplot_script += &format!("set ytics {}\n", ticsy);
+            }
+            None => {
+                gnuplot_script += &format!("unset ytics\n");
+            }
+        }
+
+        gnuplot_script
+    }
+
+    pub(crate) fn ending_plot_script(&self) -> String {
+        let mut gnuplot_script = String::new();
+
+
+        if let Some(pause) = &self.get_pause() {
+            gnuplot_script += &format!("pause {}", pause);
+        }
+
         gnuplot_script
     }
 
@@ -113,7 +145,30 @@ impl PlotConfiguration {
         self.dashtype = Some(dashtype);
         self
     }
+    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self 
+    where
+        T: Into<Option<String>>,
+    {
+        self.ticsx = ticsx.into();
+        self
+    }
+    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self 
+    where
+        T: Into<Option<String>>,
+    {
+        self.ticsy = ticsy.into();
+        self
+    }
+    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self 
+    where
+        T: Into<Option<f64>>,
+    {
+        self.pause = pause.into();
+        self
+    }
 
+    //////////////////////////////////////////////////////////
+    // Getting
     pub(crate) fn get_title(&self) -> Option<&String> {
         self.title.as_ref()
     }
@@ -141,6 +196,19 @@ impl PlotConfiguration {
     pub(crate) fn get_dashtype(&self) -> Option<usize> {
         self.dashtype
     }
+    pub(crate) fn get_ticsx(&self) -> Option<&String> 
+    {
+        self.ticsx.as_ref()
+    }
+    pub(crate) fn get_ticsy(&self) -> Option<&String> 
+    {
+        self.ticsy.as_ref()
+    }
+    pub(crate) fn get_pause(&self) -> Option<f64> 
+    {
+        self.pause
+    }
+
 }
 
 impl Default for PlotConfiguration {
@@ -154,6 +222,9 @@ impl Default for PlotConfiguration {
         let rangey = None;
         let style = crate::configuration::plot::style::Style::Default;
         let dashtype = None;
+        let ticsx = Some(String::from(""));
+        let ticsy = Some(String::from(""));
+        let pause = Some(-1.0);
 
         PlotConfiguration {
             title,
@@ -165,6 +236,9 @@ impl Default for PlotConfiguration {
             labely,
             style,
             dashtype,
+            ticsx, 
+            ticsy, 
+            pause, 
         }
     }
 }

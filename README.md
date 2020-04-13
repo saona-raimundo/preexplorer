@@ -35,15 +35,16 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
-- Rethink the distribution so that it integrates one
+- Rethink
+  - Density, so that it integrates one
+    - Do we need all the realizations and post process it with gnuplot?
+      - If not, we can use up to 2^64 buckets and some histogram in rust!
+        - [hdrhistogram](https://crates.io/crates/hdrhistogram)
+          - Try it.
+        - [histrogam](https://crates.io/crates/histogram) 
+  - Data, so that it does not plot depending on the dimension
 - Use [std](https://doc.rust-lang.org/std/index.html)::[path](https://doc.rust-lang.org/std/path/index.html)::[PathBuf](https://doc.rust-lang.org/std/path/struct.PathBuf.html) for the path of files
 - Warning: Windows only, because of extensions in file name. Help wanted.
-- More settings
-  - xtics: Option<String>, default: Option<String::from("")>
-  - ytics: Option<String>
-  - ticsx
-  - ticsy
-  - pause(i64) seconds
 - pub traits should be externally implementable
   - raw_data
     - Change to plotable_data
@@ -77,7 +78,8 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
       - raw_data
     - Plotable
       - plot_script
-      - base_plot_script
+      - opening_plot_script
+      - ending_plot_script
 - New Structs for error plotting
   - SequenceWithError 
   - ProcessWithError
@@ -85,7 +87,6 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
   - Audio
     - audify()
     - sonify()
-- ndimensional variants
 - Document project
   - Add bingenes crate as an example of implementing traits
 
@@ -111,6 +112,8 @@ MarkovChain::new(init_state, &transition)
    To make life simpler for those outside the crate
 4. Why processes must be the same structs to be compared? 
    Because of Rust explicit typing: comparisons need to save an explicit type. 
+5. Are there n-dimensional variants?
+   No, it is out of scope. Please implement your own plot script for that. You can do so easily based in the Data struct. 
 
 # Disclaimer
 

@@ -151,6 +151,47 @@ pub trait Configurable {
         self.configuration().custom(key.to_string(), value.to_string());
         self
     }
+    fn ticsx<T, S>(&mut self, ticsx: T) -> &mut Self 
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        let ticsx: Option<S> = ticsx.into();
+        self.configuration().ticsx(ticsx.map(|t| t.to_string()));
+        self
+    }
+    fn ticsy<T, S>(&mut self, ticsy: T) -> &mut Self 
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        let ticsy: Option<S> = ticsy.into();
+        self.configuration().ticsy(ticsy.map(|t| t.to_string()));
+        self
+    }
+    fn xtics<T, S>(&mut self, ticsx: T) -> &mut Self 
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        self.ticsx(ticsx)
+    }
+    fn ytics<T, S>(&mut self, ticsy: T) -> &mut Self 
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        self.ticsy(ticsy)
+    }
+    fn pause<T, S>(&mut self, pause: T) -> &mut Self 
+    where
+        T: Into<Option<S>>,
+        f64: From<S>,
+    {
+        let pause: Option<S> = pause.into();
+        self.configuration().pause(pause.map(|t| f64::from(t)));
+        self
+    }
 
     //////////////////////////////////////////////////////////
     // Getting
@@ -216,6 +257,26 @@ pub trait Configurable {
     }
     fn get_custom<S: Display>(&self, key: S) -> Option<&String> {
         self.configuration_as_ref().get_custom(key.to_string())
+    }
+    fn get_ticsx(&self) -> Option<&String> 
+    {
+        self.configuration_as_ref().get_ticsx()
+    }
+    fn get_xtics(&self) -> Option<&String> 
+    {
+        self.get_ticsx()
+    }
+    fn get_ticsy(&self) -> Option<&String> 
+    {
+        self.configuration_as_ref().get_ticsy()
+    }
+    fn get_ytics(&self) -> Option<&String> 
+    {
+        self.get_ticsy()
+    }
+    fn get_pause(&self) -> Option<f64> 
+    {
+        self.configuration_as_ref().get_pause()
     }
 }
 
@@ -286,8 +347,12 @@ pub trait Plotable: Configurable + Saveable {
         Ok(self)
     }
 
-    fn base_plot_script(&self) -> String {
-        self.configuration_as_ref().base_plot_script()
+    fn opening_plot_script(&self) -> String {
+        self.configuration_as_ref().opening_plot_script()
+    }
+
+    fn ending_plot_script(&self) -> String {
+        self.configuration_as_ref().ending_plot_script()
     }
 }
 
