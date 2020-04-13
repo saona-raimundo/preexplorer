@@ -25,6 +25,10 @@ TO DOCUMENT
 
 For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
 
+# Warning
+
+For now, this crate is Windows only, because of extensions in file name. Help wanted.
+
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
@@ -33,15 +37,8 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 
 
-# To do
+# To do 
 
-- Use [std](https://doc.rust-lang.org/std/index.html)::[path](https://doc.rust-lang.org/std/path/index.html)::[PathBuf](https://doc.rust-lang.org/std/path/struct.PathBuf.html) for the path of files
-  - Use within the structs
-  - Constrain ``id`` to by AsRef<OsString> 
-- Warning: Windows only, because of extensions in file name. Help wanted.
-- Examples
-  - density
-    - log scale does not work
 - pub traits should be externally implementable
   - Expose base_plot_script
     - It is behind the Configuration 
