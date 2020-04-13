@@ -5,9 +5,6 @@ use crate::errors::SavingError;
 pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
-// Constants
-use crate::{DATA_DIR_GNUPLOT, PLOT_DIR};
-
 /// Missing documentation.
 ///
 #[derive(Debug, PartialEq, Clone)]
@@ -58,7 +55,7 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn raw_data(&self) -> String {
+    fn plotable_data(&self) -> String {
 
         let mut raw_data = String::new();
 
@@ -89,92 +86,29 @@ where
     /// The plot will be executed asyncroniously and idependently of the Rust program.
     ///
     fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
-        self.id(id);
+        
+        self.plot_later(id)?;
 
-        match self.dim {
-    		1 => {
-    			let mut sequence = crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
-    			sequence.plot(&self.get_checked_id())?;
-                Ok(self)
-    		},
-    		2 => {
-    			// separate iterators
-    			let mut first_filter = vec![true, false].into_iter().cycle();
-    			let mut second_filter = vec![false, true].into_iter().cycle();
-
-    			let first_data = self.data.clone()
-                    .into_iter()
-                    .filter(move |_| first_filter.next().unwrap())
-                    .collect::<Vec<_>>();
-    			let second_data = self.data.clone()
-                    .into_iter()
-                    .filter(move |_| second_filter.next().unwrap())
-                    .collect::<Vec<_>>();
-
-    			let mut process = crate::process::Process::from_raw(
-                    first_data.iter(),
-                    second_data.iter(),
-                    self.config.clone());
-
-    			process.plot(&self.get_checked_id())?;
-                Ok(self)
-    		},
-    		_ => return Err(
-                std::io::Error::new(
-                    std::io::ErrorKind::Other, "ploting general data: dimension of data is too high to be automatically ploted. Please do it yourself."
-                ).into()
-            ),
-    	}
+        let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.get_plot_path());
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Other, 
+            message
+        ).into())
     }
 
     /// Write simple gnuplot script for this type of data.
     ///
     fn plot_script(&self) -> String {
-        match self.dim {
-            1 => {
-                let sequence =
-                    crate::sequence::Sequence::from_raw(self.data.clone(), self.config.clone());
-                sequence.plot_script()
-            }
-            2 => {
-                // separate iterators
-                let mut first_filter = vec![true, false].into_iter().cycle();
-                let mut second_filter = vec![false, true].into_iter().cycle();
 
-                let first_data = self
-                    .data
-                    .clone()
-                    .into_iter()
-                    .filter(move |_| first_filter.next().unwrap())
-                    .collect::<Vec<_>>();
-                let second_data = self
-                    .data
-                    .clone()
-                    .into_iter()
-                    .filter(move |_| second_filter.next().unwrap())
-                    .collect::<Vec<_>>();
+        let mut gnuplot_script = self.opening_plot_script();
 
-                let process = crate::process::Process::from_raw(
-                    first_data.iter(),
-                    second_data.iter(),
-                    self.config.clone(),
-                );
+        gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
+        gnuplot_script += "\n# To get the plot, run the following command:";
+        gnuplot_script += &format!("\n# gnuplot {:?} \n\n", self.get_plot_path());
+        gnuplot_script += &format!("plot {:?} \n", self.get_data_path());
+        
+        gnuplot_script += &self.ending_plot_script();
 
-                process.plot_script()
-            }
-            _ => {
-
-                let mut gnuplot_script = self.opening_plot_script();
-
-                gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
-                gnuplot_script += "\n# To get the plot, run the following command:";
-                gnuplot_script += &format!("\n# gnuplot \"{}\\{}.gnu\" \n\n", PLOT_DIR, self.get_checked_id());
-                gnuplot_script += &format!("plot \"{}/{}.txt\" \n", DATA_DIR_GNUPLOT, self.get_checked_id());
-                
-                gnuplot_script += &self.ending_plot_script();
-
-                gnuplot_script
-            }
-        }
+        gnuplot_script
     }
 }

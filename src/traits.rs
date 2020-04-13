@@ -1,4 +1,8 @@
 // Types
+use std::path::PathBuf;
+use std::path::Path;
+use std::ffi::OsStr;
+
 use crate::errors::SavingError;
 
 // Trait bounds
@@ -118,10 +122,16 @@ pub trait Configurable {
         self.rangey(down, up)
     }
 
-    fn extension<S: Display>(&mut self, extension: S) -> &mut Self {
-        self.configuration().extension(extension.to_string());
+    fn data_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+        self.configuration().data_extension(extension);
         self
     }
+
+    fn plot_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+        self.configuration().plot_extension(extension);
+        self
+    }
+
     fn header(&mut self, header: bool) -> &mut Self {
         self.configuration().header(header);
         self
@@ -234,8 +244,17 @@ pub trait Configurable {
     fn get_yrange(&self) -> Option<(f64, f64)> {
         self.get_rangey()
     }
-    fn get_extension(&self) -> &str {
-        self.configuration_as_ref().get_extension()
+    fn get_plot_extension(&self) -> Option<&OsStr> {
+        self.configuration_as_ref().get_plot_extension()
+    }
+    fn get_data_extension(&self) -> Option<&OsStr> {
+        self.configuration_as_ref().get_data_extension()
+    }
+    fn get_plot_path(&self) -> &Path {
+        self.configuration_as_ref().get_plot_path()
+    }
+    fn get_data_path(&self) -> &Path {
+        self.configuration_as_ref().get_data_path()
     }
     fn get_header(&self) -> bool {
         self.configuration_as_ref().get_header()
@@ -282,19 +301,24 @@ pub trait Configurable {
 
 pub trait Saveable: Configurable {
 
-    fn raw_data(&self) -> String;
+    fn plotable_data(&self) -> String;
 
     fn save(&self) -> Result<&Self, SavingError> {
         let id = self.get_checked_id();
         self.save_with_id(id)
     }
 
+    /// Does not change the current id to save the data. 
     fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+        let data_dir_path: PathBuf = DATA_DIR.iter().collect();
+        std::fs::create_dir_all(data_dir_path)?;
 
-        std::fs::create_dir_all(DATA_DIR)?;
-
-        let data_name = format!("{}.{}", id, self.get_extension());
-        let path = format!("{}\\{}", DATA_DIR, data_name);
+        let mut path = self.get_data_path().to_path_buf();
+        path.set_file_name(id);
+        if let Some(extension) = self.get_data_extension() {
+            path.set_extension(extension);
+        };
+        
 
 
         let mut data_gnuplot = String::new();
@@ -308,9 +332,10 @@ pub trait Saveable: Configurable {
             data_gnuplot.push_str(&format!("# {}\n", self.get_date()));
         }
 
-        data_gnuplot += &self.raw_data();
+        data_gnuplot += &self.plotable_data();
 
-        std::fs::write(&path, data_gnuplot)?;
+        std::fs::write(path, data_gnuplot)?;
+
 
         Ok(self)
     }
@@ -324,13 +349,20 @@ pub trait Plotable: Configurable + Saveable {
 
     // Implemented methods
 
-    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+    fn plot_later(&mut self, id: &str) -> Result<&mut Self, SavingError> {
 
         self.id(id);
         self.write_plot_script()?;
         self.save()?;
 
-        let gnuplot_file = &format!("{}\\{}", PLOT_DIR, format!("{}.gnu", self.get_checked_id()));
+        Ok(self)
+    }    
+
+    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+
+        self.plot_later(id)?;
+
+        let gnuplot_file = self.get_plot_path();
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
             .spawn()?;
@@ -339,8 +371,9 @@ pub trait Plotable: Configurable + Saveable {
 
     fn write_plot_script(&self) -> Result<&Self, SavingError> {
 
-        std::fs::create_dir_all(PLOT_DIR)?;
-        let gnuplot_file = format!("{}\\{}.gnu", PLOT_DIR, self.get_checked_id());
+        let path: PathBuf = PLOT_DIR.iter().collect();
+        std::fs::create_dir_all(path)?;
+        let gnuplot_file = self.get_plot_path();
         let gnuplot_script = self.plot_script();
 
         std::fs::write(gnuplot_file, gnuplot_script)?;

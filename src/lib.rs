@@ -43,6 +43,9 @@ pub use process::*;
 pub use sequence::*;
 pub use traits::*;
 pub use constants::*;
+pub use errors::*;
+pub use configuration::*;
+
 
 /// All you ussually need
 pub mod prelude {
@@ -52,8 +55,7 @@ pub mod prelude {
 
 /// Directory paths. 
 pub mod constants {
-	pub const DATA_DIR: &str = "target\\preexplorer\\data";
-	pub const DATA_DIR_GNUPLOT: &str = "target/preexplorer/data";
-	pub const PLOT_DIR: &str = "target\\preexplorer\\plots";
+	pub const DATA_DIR: [&str; 3] = [r"target", "preexplorer", "data"];
+	pub const PLOT_DIR: [&str; 3] = [r"target", "preexplorer", "plots"];
 }
 	

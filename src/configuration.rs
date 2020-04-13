@@ -1,3 +1,5 @@
+use std::path::Path;
+use std::ffi::OsStr;
 use std::collections::HashMap;
 
 pub mod plot;
@@ -25,6 +27,10 @@ impl Configuration {
 
     /////////////////////////// PlotConfiguration
     // Setting
+    pub(crate) fn plot_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+        self.plot_config.extension(extension);
+        self
+    }
     pub(crate) fn title(&mut self, title: String) -> &mut Self {
         self.plot_config.title(title);
         self
@@ -84,6 +90,12 @@ impl Configuration {
     }
 
     // Getting
+    pub(crate) fn get_plot_extension(&self) -> Option<&OsStr> {
+        self.plot_config.get_extension()
+    }
+    pub(crate) fn get_plot_path(&self) -> &Path  {
+        self.plot_config.get_path()
+    }
     pub(crate) fn get_title(&self) -> Option<&String> {
         self.plot_config.get_title()
     }
@@ -126,7 +138,7 @@ impl Configuration {
 
     ////////// SaveConfiguration /////////////////
     // Setting
-    pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
+    pub(crate) fn data_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
         self.save_config.extension(extension);
         self
     }
@@ -139,13 +151,17 @@ impl Configuration {
         self
     }
     pub(crate) fn id(&mut self, id: String) -> &mut Self {
+        self.plot_config.id(&id);
         self.save_config.id(id);
         self
     }
 
     // Getting
-    pub(crate) fn get_extension(&self) -> &str {
+    pub(crate) fn get_data_extension(&self) -> Option<&OsStr> {
         self.save_config.get_extension()
+    }
+    pub(crate) fn get_data_path(&self) -> &Path  {
+        self.save_config.get_path()
     }
     pub(crate) fn get_header(&self) -> bool {
         self.save_config.get_header()
@@ -230,5 +246,28 @@ mod tests {
         config.labely(labely.clone());
 
         assert_eq!(config.get_labely(), Some(&labely));
+    }
+
+    #[test]
+    fn check_paths() {
+        let mut config = Configuration::default();
+
+        assert_eq!(config.get_id(), None);
+        assert_eq!(config.get_data_extension().unwrap().to_str(), Some("txt"));
+
+        assert_eq!(config.get_data_path().file_name().unwrap().to_str(), Some("none.txt"));
+        assert_eq!(config.get_data_path().file_stem().unwrap().to_str(), Some("none"));
+        assert_eq!(config.get_data_path().extension().unwrap().to_str(), Some("txt"));
+
+        assert_eq!(config.get_plot_path().file_name().unwrap().to_str(), Some("none.gnu"));
+        assert_eq!(config.get_data_path().file_stem().unwrap().to_str(), Some("none"));
+        assert_eq!(config.get_plot_path().extension().unwrap().to_str(), Some("gnu"));
+
+
+        config.id("testing".to_string());
+
+        assert_eq!(config.get_plot_path().file_name().unwrap().to_str(), Some("testing.gnu"));
+        assert_eq!(config.get_data_path().file_name().unwrap().to_str(), Some("testing.txt"));
+
     }
 }

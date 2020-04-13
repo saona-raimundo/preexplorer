@@ -1,14 +1,18 @@
+use std::ffi::OsStr;
+use crate::constants::DATA_DIR;
+use std::path::{Path, PathBuf};
+
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct SaveConfiguration {
-    extension: String,
+    path_buf: PathBuf,
     header: bool,
     date: chrono::DateTime<chrono::Local>,
     id: Option<String>,  
 }
 
 impl SaveConfiguration {
-    pub(crate) fn extension(&mut self, extension: String) -> &mut Self {
-        self.extension = extension;
+    pub(crate) fn extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+        self.path_buf.set_extension(extension);
         self
     }
     pub(crate) fn header(&mut self, header: bool) -> &mut Self {
@@ -20,13 +24,23 @@ impl SaveConfiguration {
         self
     }
     pub(crate) fn id(&mut self, id: String) -> &mut Self {
+        if let Some(extension) = self.path_buf.clone().extension() {
+            self.path_buf.set_file_name(&id);
+            self.path_buf.set_extension(extension);
+        } else {
+            self.path_buf.set_file_name(&id);
+        }
         self.id = Some(id);
+        
         self
     }
     
 
-    pub(crate) fn get_extension(&self) -> &str {
-        &self.extension
+    pub(crate) fn get_extension(&self) -> Option<&OsStr> {
+        self.path_buf.extension()
+    }
+    pub(crate) fn get_path(&self) -> &Path {
+        self.path_buf.as_path()
     }
     pub(crate) fn get_header(&self) -> bool {
         self.header
@@ -47,11 +61,13 @@ impl SaveConfiguration {
 
 impl Default for SaveConfiguration {
     fn default() -> Self {
-        let extension = String::from("txt");
+        let mut path_buf: PathBuf = DATA_DIR.iter().collect();
+        path_buf.push("none");
+        path_buf.set_extension("txt");
         let header = true;
         let date = chrono::Local::now();
         let id = None;
 
-        SaveConfiguration { extension, header, date, id }
+        SaveConfiguration { path_buf, header, date, id }
     }
 }

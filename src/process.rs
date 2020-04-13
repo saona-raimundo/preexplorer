@@ -11,15 +11,9 @@
 pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
 
-// Constants
-use crate::{DATA_DIR_GNUPLOT};
-
-
 
 /// Compare various ``Process`` types together.
 pub mod comparison;
-/// Time-series with values in R^n.
-mod ndprocess;
 
 pub use comparison::Processes;
 
@@ -60,17 +54,17 @@ where
         }
     }
 
-    pub(crate) fn from_raw(
-        domain: I,
-        image: J,
-        config: crate::configuration::Configuration,
-    ) -> Process<I, J> {
-        Process {
-            domain,
-            image,
-            config,
-        }
-    }
+    // pub(crate) fn from_raw(
+    //     domain: I,
+    //     image: J,
+    //     config: crate::configuration::Configuration,
+    // ) -> Process<I, J> {
+    //     Process {
+    //         domain,
+    //         image,
+    //         config,
+    //     }
+    // }
 
     pub fn to_comparison(self) -> crate::process::comparison::Processes<I, J> {
         self.into()
@@ -111,7 +105,7 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn raw_data(&self) -> String {
+    fn plotable_data(&self) -> String {
 
         let mut raw_data = String::new();
         for (time, value) in self.domain.clone().into_iter().zip(self.image.clone()) {
@@ -141,9 +135,8 @@ where
         };
 
         gnuplot_script += &format!(
-            "plot \"{}/{}.txt\" using 1:2 with {} dashtype {}\n",
-            DATA_DIR_GNUPLOT,
-            self.get_checked_id(),
+            "plot {:?} using 1:2 with {} dashtype {}\n",
+            self.get_data_path(),
             self.get_style(),
             dashtype,
         );

@@ -5,9 +5,6 @@ use crate::errors::SavingError;
 pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
-// Constants
-use crate::{DATA_DIR_GNUPLOT};
-
 /// See ``Sequence`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
@@ -75,10 +72,10 @@ where
     I: IntoIterator + Clone,
     I::Item: Display,
 {
-    fn raw_data(&self) -> String {
+    fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
         for sequence in self.data_set.iter() {
-            raw_data += &sequence.raw_data();
+            raw_data += &sequence.plotable_data();
             raw_data += "\n";
         }
         raw_data
@@ -121,6 +118,13 @@ where
 
         for (counter, sequence) in self.data_set.iter().enumerate()  {
             let inner_id = format!("{}_{}", id, counter);
+            let mut inner_path = self.get_data_path().to_path_buf();
+            if let Some(extension) = self.get_data_extension() {
+                inner_path.set_file_name(&inner_id);
+                inner_path.set_extension(extension);
+            } else {
+                inner_path.set_file_name(&id);
+            }
             let legend = match sequence.get_title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
@@ -137,8 +141,8 @@ where
                 }
             };
             gnuplot_script += &format!(
-                "\"{}/{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
-                DATA_DIR_GNUPLOT, inner_id, sequence_style, legend, dashtype
+                "{:?} using 1:2 with {} title \"{}\" dashtype {}, ",
+                inner_path, sequence_style, legend, dashtype
             );
             if counter < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";

@@ -35,42 +35,20 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
-- Rethink
-  - Density, so that it integrates one
-    - Do we need all the realizations and post process it with gnuplot?
-      - If not, we can use up to 2^64 buckets and some histogram in rust!
-        - [hdrhistogram](https://crates.io/crates/hdrhistogram)
-          - Try it.
-        - [histrogam](https://crates.io/crates/histogram) 
-  - Data, so that it does not plot depending on the dimension
 - Use [std](https://doc.rust-lang.org/std/index.html)::[path](https://doc.rust-lang.org/std/path/index.html)::[PathBuf](https://doc.rust-lang.org/std/path/struct.PathBuf.html) for the path of files
+  - Use within the structs
+  - Constrain ``id`` to by AsRef<OsString> 
 - Warning: Windows only, because of extensions in file name. Help wanted.
+- Examples
+  - density
+    - log scale does not work
 - pub traits should be externally implementable
-  - raw_data
-    - Change to plotable_data
-      raw data can be seen as something else
-  - Include 
-    - pub use configuration::*; 
-      in lib level.
   - Expose base_plot_script
     - It is behind the Configuration 
       - Shall we expose the whole thing? No
         - Document well that all configurations are taken into account
         - Document how to add more settings
     - At least examples for plot script in Plotable Trait documentation
-  - Make a personalized plot_script writable
-    - Add a macro for it?
-  - Extend traits
-    - Saveable
-      - .path_to_data
-        - Gives the full path to the data file
-          with extension
-    - Plotable
-      - .plot_later 
-        - save and write_plot_script together
-      - .path_to_plot_script
-        - Gives the full path to the plot script file
-          with extension
   - Document 
     - Trait structure
       - Configurable + -> Saveable + -> Plotable
@@ -80,6 +58,8 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
       - plot_script
       - opening_plot_script
       - ending_plot_script
+      - Make a personalized plot_script writable
+        - Add a macro for it?
 - New Structs for error plotting
   - SequenceWithError 
   - ProcessWithError

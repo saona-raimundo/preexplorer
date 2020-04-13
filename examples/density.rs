@@ -5,7 +5,7 @@ fn main() {
 
     pre::Density::new(values)
         .title("My Title")
-        .logx(2)
+        // .logx(2)
         .plot("1")
         .unwrap();
 }

@@ -11,6 +11,7 @@ pub enum Style {
     Steps,
     Fsteps,
     Histeps,
+    Boxes,
 }
 
 impl From<&str> for Style {
@@ -26,6 +27,7 @@ impl From<&str> for Style {
             "steps" => Style::Steps,
             "fsteps" => Style::Fsteps,
             "histeps" => Style::Histeps,
+            "boxes" => Style::Boxes, 
             _ => Style::Lines,
         }
     }
@@ -49,7 +51,8 @@ impl From<u32> for Style {
             6 => Style::Steps,
             7 => Style::Fsteps,
             8 => Style::Histeps,
-            _ => Style::Lines,
+            9 => Style::Boxes,
+            _ => Style::Default,
         }
     }
 }
@@ -66,6 +69,7 @@ impl Display for Style {
             Style::Steps => write!(f, "steps"),
             Style::Fsteps => write!(f, "fsteps"),
             Style::Histeps => write!(f, "histeps"),
+            Style::Boxes => write!(f, "boxes"),
         }
     }
 }

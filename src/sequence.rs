@@ -6,14 +6,9 @@ pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
 use core::fmt::Display;
 
 
-
-// Constants
-use crate::DATA_DIR_GNUPLOT;
-
 /// Compare various ``Sequence`` types together.
 pub mod comparison;
-/// Sequence with values with n-dimensions.
-mod ndsequence;
+
 pub use comparison::Sequences;
 
 
@@ -52,9 +47,9 @@ where
         Sequence { data, config }
     }
 
-    pub(crate) fn from_raw(data: I, config: crate::configuration::Configuration) -> Sequence<I> {
-        Sequence { data, config }
-    }
+    // pub(crate) fn from_raw(data: I, config: crate::configuration::Configuration) -> Sequence<I> {
+    //     Sequence { data, config }
+    // }
 
     /// Compare various ``Sequence`` types together.
     ///
@@ -116,7 +111,7 @@ where
     /// It is inteded for when one only wants to save the data, and not call any plotting
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
-    fn raw_data(&self) -> String {
+    fn plotable_data(&self) -> String {
 
         // Create the data structure for gnuplot
 
@@ -146,9 +141,8 @@ where
             None => 1,
         };
         gnuplot_script += &format!(
-            "plot \"{}/{}.txt\" with {} dashtype {} \n",
-            DATA_DIR_GNUPLOT,
-            self.get_checked_id(),
+            "plot {:?} with {} dashtype {} \n",
+            self.get_data_path(),
             self.get_style(),
             dashtype,
         );

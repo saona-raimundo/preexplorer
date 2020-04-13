@@ -5,9 +5,6 @@ use crate::errors::SavingError;
 pub use crate::traits::{Configurable, Saveable, Plotable};
 use core::fmt::Display;
 
-// Constants
-use crate::{DATA_DIR_GNUPLOT};
-
 /// See ``Process`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
@@ -103,6 +100,13 @@ where
 
         for (counter, process) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
+            let mut inner_path = self.get_data_path().to_path_buf();
+            if let Some(extension) = self.get_data_extension() {
+                inner_path.set_file_name(&inner_id);
+                inner_path.set_extension(extension);
+            } else {
+                inner_path.set_file_name(&id);
+            }
             let legend = match process.get_title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
@@ -120,8 +124,8 @@ where
             };
 
             gnuplot_script += &format!(
-                "\"{}/{}.txt\" using 1:2 with {} title \"{}\" dashtype {}, ",
-                DATA_DIR_GNUPLOT, inner_id, process_style, legend, dashtype,
+                "{:?} using 1:2 with {} title \"{}\" dashtype {}, ",
+                inner_path, process_style, legend, dashtype,
             );
             if counter < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
@@ -142,10 +146,10 @@ where
     J: IntoIterator + Clone,
     J::Item: Display,
 {
-    fn raw_data(&self) -> String {
+    fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
         for process in self.data_set.iter() {
-            raw_data += &process.raw_data();
+            raw_data += &process.plotable_data();
             raw_data += "\n";
         }
         raw_data

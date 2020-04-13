@@ -1,7 +1,13 @@
+use std::ffi::OsStr;
+use crate::constants::PLOT_DIR;
+use std::path::{Path, PathBuf};
+
+
 pub(crate) mod style;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct PlotConfiguration {
+    path_buf: PathBuf,
     title: Option<String>,
     logx: Option<f64>,
     logy: Option<f64>,
@@ -17,6 +23,11 @@ pub(crate) struct PlotConfiguration {
 }
 
 impl PlotConfiguration {
+    pub(crate) fn extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+        self.path_buf.set_extension(extension);
+        self
+    }
+
     pub(crate) fn opening_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
         gnuplot_script += "unset key\n";
@@ -166,9 +177,25 @@ impl PlotConfiguration {
         self.pause = pause.into();
         self
     }
+    pub(crate) fn id<S: AsRef<OsStr>>(&mut self, id: S) -> &mut Self {
+        if let Some(extension) = self.path_buf.clone().extension() {
+            self.path_buf.set_file_name(id);
+            self.path_buf.set_extension(extension);
+        } else {
+            self.path_buf.set_file_name(id);
+        }
+        
+        self
+    }
 
     //////////////////////////////////////////////////////////
     // Getting
+    pub(crate) fn get_extension(&self) -> Option<&OsStr> {
+        self.path_buf.extension()
+    }
+    pub(crate) fn get_path(&self) -> &Path {
+        self.path_buf.as_path()
+    }
     pub(crate) fn get_title(&self) -> Option<&String> {
         self.title.as_ref()
     }
@@ -213,6 +240,9 @@ impl PlotConfiguration {
 
 impl Default for PlotConfiguration {
     fn default() -> PlotConfiguration {
+        let mut path_buf: PathBuf = PLOT_DIR.iter().collect();
+        path_buf.push("none");
+        path_buf.set_extension("gnu");
         let title = None;
         let logx = None;
         let logy = None;
@@ -227,6 +257,7 @@ impl Default for PlotConfiguration {
         let pause = Some(-1.0);
 
         PlotConfiguration {
+            path_buf,
             title,
             logx,
             logy,
