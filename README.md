@@ -12,7 +12,9 @@ Rust is meant for computations and plotting is usually an iterative process, don
 
 # Purpose
 
-TO DOCUMENT
+Do you have a costly process in Rust and want to save the data for postprocessing?
+Would you like to still have a basic glance to check it and leave fine-tuning of the plot for later?
+This is the crate for you!
 
 # Main features
 
