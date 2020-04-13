@@ -8,7 +8,7 @@ fn main() {
         .title("My legend")
         .to_owned()
         .compare_with(vec![pre::Density::new(values_2)])
-        .title("My title")
-        .plot("1")
+        .title("My overall title")
+        .plot("identifier")
         .unwrap();
 }

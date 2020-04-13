@@ -1,16 +1,123 @@
+//! # Implementing 
+//! 
+//! You should proceed in the following order. 
+//! 1. ``Configurable``
+//! 2. ``Saveable``
+//! 3. ``Plotable``
+//!
+//! ## Configurable
+//! 
+//! Include ``Configuration`` as part of your struct, as a field. 
+//! This allows to handle all options. Then, include the following code. 
+//! ```
+//! struct MyStruct{config: preexplorer::Configuration};
+//! impl preexplorer::Configurable for MyStruct {
+//!     fn configuration(&mut self) -> &mut preexplorer::Configuration {
+//!         &mut self.config
+//!     }
+//!     fn configuration_as_ref(&self) -> &preexplorer::Configuration {
+//!         &self.config
+//!     }
+//! }
+//! ```
+//!
+//! ## Saveable
+//! 
+//! Extract the data to plot from your struct in the form of a String. 
+//! Different from serializing your struct, you only want the data. 
+//! 
+//! ### Examples
+//! 
+//! After implementing ``Configurable``. 
+//! ```
+//! struct MyStruct {
+//!     content: f64,
+//!     config: preexplorer::Configuration,
+//! };
+//! # impl preexplorer::Configurable for MyStruct {
+//! #     fn configuration(&mut self) -> &mut preexplorer::Configuration {
+//! #         &mut self.config
+//! #     }
+//! #     fn configuration_as_ref(&self) -> &preexplorer::Configuration {
+//! #         &self.config
+//! #     }
+//! # }
+//! impl preexplorer::Saveable for MyStruct
+//! {
+//!     fn plotable_data(&self) -> String {
+//!         let mut plotable_data = String::new();
+//!         plotable_data.push_str(&format!("{}", self.content));
+//!         plotable_data
+//!     }
+//! } 
+//! ```
+//!
+//! ## Plotable
+//! 
+//! Write your own plot script to be executed in gnuplot. 
+//! You can base this script by helper functions from the ``Configurable`` trait.  
+//! 
+//! ### Examples
+//! 
+//! After implementing ``Configurable`` and ``Saveable``. 
+//! ```
+//! struct MyStruct {
+//!     content: f64,
+//!     config: preexplorer::Configuration,
+//! };
+//! # impl preexplorer::Configurable for MyStruct {
+//! #     fn configuration(&mut self) -> &mut preexplorer::Configuration {
+//! #         &mut self.config
+//! #     }
+//! #     fn configuration_as_ref(&self) -> &preexplorer::Configuration {
+//! #         &self.config
+//! #     }
+//! # }
+//! # impl preexplorer::Saveable for MyStruct
+//! # {
+//! #     fn plotable_data(&self) -> String {
+//! #         let mut plotable_data = String::new();
+//! #         plotable_data.push_str(&format!("{}", self.content));
+//! #         plotable_data
+//! #     }
+//! # } 
+//! # use preexplorer::Configurable;
+//! impl preexplorer::Plotable for MyStruct {
+//!     fn plot_script(&self) -> String {
+//!         // Start with a basis that takes into account configuration options. 
+//!         let mut gnuplot_script = self.opening_plot_script();
+//!         // Retrieve your own options or simply personalize the plot command. 
+//!         let dashtype = match self.get_dashtype() {
+//!             Some(dashtype) => dashtype,
+//!             None => 1,
+//!         };
+//!         // Include the main plot command. 
+//!         gnuplot_script += &format!(
+//!             "plot {:?} with {} dashtype {} \n",
+//!             self.get_data_path(),
+//!             self.get_style(),
+//!             dashtype,
+//!         );
+//!         // End with other configuration options.  
+//!         gnuplot_script += &self.ending_plot_script();
+//!         gnuplot_script
+//!     }
+//! }
+//! ```
+
 // Types
-use std::path::PathBuf;
 use std::path::Path;
 use std::ffi::OsStr;
-
 use crate::errors::SavingError;
 
-// Trait bounds
+// Traits
 use core::fmt::Display;
 
-// Constants
-use crate::{DATA_DIR, PLOT_DIR};
-
+/// Quickly transform interators in ``Sequence``. 
+/// 
+/// # Remarks
+/// 
+/// It is meant to be used as part of the ``prelude`` module. 
 pub trait Preexplore<I>
 where
     I: IntoIterator + Clone,
@@ -29,6 +136,11 @@ where
     }
 }
 
+/// Quickly transform tuples of interators in ``Process``. 
+/// 
+/// # Remarks
+/// 
+/// It is meant to be used as part of the ``prelude`` module. 
 pub trait PreexploreProcess<I, J>
 where
     I: IntoIterator + Clone,
@@ -51,6 +163,7 @@ where
     }
 }
 
+/// 
 pub trait Configurable {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration;
 
@@ -310,7 +423,7 @@ pub trait Saveable: Configurable {
 
     /// Does not change the current id to save the data. 
     fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
-        let data_dir_path: PathBuf = DATA_DIR.iter().collect();
+        let data_dir_path = self.get_data_path().parent().unwrap();
         std::fs::create_dir_all(data_dir_path)?;
 
         let mut path = self.get_data_path().to_path_buf();
@@ -371,7 +484,7 @@ pub trait Plotable: Configurable + Saveable {
 
     fn write_plot_script(&self) -> Result<&Self, SavingError> {
 
-        let path: PathBuf = PLOT_DIR.iter().collect();
+        let path = self.get_plot_path().parent().unwrap();
         std::fs::create_dir_all(path)?;
         let gnuplot_file = self.get_plot_path();
         let gnuplot_script = self.plot_script();

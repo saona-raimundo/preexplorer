@@ -24,15 +24,13 @@
 //! # Examples
 //! 
 //! Quickly check your results. 
-//! ```
+//! ```no-run
 //! use preexplorer::prelude::*;
 //! (0..100).map(|i| i * i)
 //! 	.preexplore()
 //! 	.plot("My first plot")
 //! 	.unwrap();
 //! ```
-//! You obtain the following image. 
-//! ![gnuplot result](url://for/this/image.png "Quick plot")
 //! 
 //! Check numerical simulations. 
 //! ```no-run

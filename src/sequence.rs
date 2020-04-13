@@ -112,16 +112,13 @@ where
     /// during the Rust program execution. Posterior plotting can easily be done with the
     /// quick template gnuplot script saved under ``plots`` directory.
     fn plotable_data(&self) -> String {
-
-        // Create the data structure for gnuplot
-
-        let mut raw_data = String::new();
+        let mut plotable_data = String::new();
 
         for (counter, value) in self.data.clone().into_iter().enumerate() {
-            raw_data.push_str(&format!("{}\t{}\n", counter, value));
+            plotable_data.push_str(&format!("{}\t{}\n", counter, value));
         }
 
-        raw_data
+        plotable_data
     }
 }
 
@@ -150,8 +147,6 @@ where
 
         gnuplot_script
     }
-
-
 }
 
 

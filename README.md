@@ -41,33 +41,38 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # To do 
 
-- pub traits should be externally implementable
-  - Expose base_plot_script
-    - It is behind the Configuration 
-      - Shall we expose the whole thing? No
-        - Document well that all configurations are taken into account
-        - Document how to add more settings
-    - At least examples for plot script in Plotable Trait documentation
-  - Document 
-    - Trait structure
-      - Configurable + -> Saveable + -> Plotable
-    - Saveable
-      - raw_data
-    - Plotable
-      - plot_script
-      - opening_plot_script
-      - ending_plot_script
-      - Make a personalized plot_script writable
-        - Add a macro for it?
+- [ ] Document
+
+  - [ ] Traits
+    - [x] Examples
+    - [x] Preexplore
+    - [x] PreexploreProcess
+    - [ ] Configurable
+    - [ ] Saveable
+    - [ ] Plotable
+    - [ ] Comparison
+  - [ ] Plotable structs
+    - [ ] Sequence
+      - [ ] Sequences
+    - [ ] Process
+      - [ ] Processes
+    - [ ] Density
+      - [ ] Densities
+    - [ ] Data
+  - [ ] Configuration
+  - [ ] Errors
+
+  - [ ] Examples
+    - [ ] Include images in a readme file 
+
 - New Structs for error plotting
-  - SequenceWithError 
-  - ProcessWithError
+  - [ ] SequenceWithError 
+  - [ ] ProcessWithError
+  
 - More customization
   - Audio
     - audify()
     - sonify()
-- Document project
-  - Add bingenes crate as an example of implementing traits
 
 # Questions
 

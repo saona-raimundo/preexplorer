@@ -4,13 +4,13 @@ fn main() {
     // Simpliest use
 
     let data = 0..10;
-    data.preexplore().plot("1").unwrap();
+    data.preexplore().plot("id_1").unwrap();
 
     // Data is an iterator already
 
     let data = 0..10;
     let mut plotting = data.preexplore();
-    plotting.title("My Title").logx(-1.).plot("2").unwrap();
+    plotting.title("My Title").logx(-1.).plot("id_2").unwrap();
 
     // Data is a full array
 
@@ -19,7 +19,7 @@ fn main() {
     plotting
         .title("My Title 2")
         .logx(-1.)
-        .plot("my_plot_serie_name")
+        .plot("id_3")
         .unwrap();
 
     println!("{:?}", data);

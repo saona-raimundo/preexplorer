@@ -29,25 +29,27 @@ fn increasing_comparisons() {
     // First Sequence
 
     let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    let plotting_1 = data_1.preexplore().title("First").to_owned();
+    let mut main_plot = data_1.preexplore().title("First").to_owned().to_comparison();
 
     // Another sequence
 
     let data_2 = vec![0., 1.4, 10., 4.];
-    let group_of_plottings = vec![data_2.preexplore().title("Second").to_owned()];
-    let mut comparison_plotting = plotting_1.compare_with(group_of_plottings);
+    let plot2 = data_2.preexplore().title("Second").to_owned();
 
-    // Keep adding more
+    main_plot.add(plot2);
+
+    // Add many
 
     let data_3 = vec![0.1, 1.5, 7., 5.];
     let group_of_plottings = vec![data_3.preexplore().title("Third").to_owned()];
-    comparison_plotting.add_many(group_of_plottings);
+    
+    main_plot.add_many(group_of_plottings);
 
     // Change some settings
 
-    comparison_plotting.title("More comparisons");
+    main_plot.title("More comparisons");
 
     // Plot everything
 
-    comparison_plotting.id("my_serie_name").plot("2").unwrap();
+    main_plot.plot("my_id").unwrap();
 }
