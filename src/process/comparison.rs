@@ -8,68 +8,58 @@ use core::fmt::Display;
 /// See ``Process`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
-pub struct Processes<I, J>
+pub struct Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
 {
-    pub(crate) data_set: Vec<crate::process::Process<I, J>>,
+    pub(crate) data_set: Vec<crate::process::Process<T, S>>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I, J> Processes<I, J>
+impl<T, S> Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
 {
-    pub fn new<K>(data_set: K) -> Processes<I, J>
+    pub fn new<I>(data_set: I) -> Processes<T, S>
     where
-        K: IntoIterator<Item = crate::process::Process<I, J>>,
+        I: IntoIterator<Item = crate::process::Process<T, S>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<crate::process::Process<I, J>>>();
+            .collect::<Vec<crate::process::Process<T, S>>>();
         Processes { data_set, config }
     }
 }
 
-impl<I, J> From<crate::process::Process<I, J>> for Processes<I, J> 
+impl<T, S> From<crate::process::Process<T, S>> for Processes<T, S> 
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
 {
-    fn from(process: crate::process::Process<I, J>) -> Self { 
+    fn from(process: crate::process::Process<T, S>) -> Self { 
         Processes::new(vec![process]) 
     }
 }
 
-impl<I, J> crate::traits::Comparison<crate::process::Process<I, J>> for Processes<I, J>
+impl<T, S> crate::traits::Comparison<crate::process::Process<T, S>> for Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
     {
-    fn add(&mut self, other: crate::process::Process<I, J>) -> &mut Self {
+    fn add(&mut self, other: crate::process::Process<T, S>) -> &mut Self {
         self.data_set.push(other);
         self
     }
 }
 
 
-impl<I, J> Configurable for Processes<I, J>
+impl<T, S> Configurable for Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -79,12 +69,10 @@ where
     }
 }
 
-impl<I, J> Plotable for Processes<I, J>
+impl<T, S> Plotable for Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
 
     /// Write simple gnuplot script for this type of data.
@@ -139,12 +127,10 @@ where
 
 }
 
-impl<I, J> Saveable for Processes<I, J>
+impl<T, S> Saveable for Processes<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();

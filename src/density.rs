@@ -26,21 +26,23 @@ pub mod comparison;
 /// See ``compare`` method to compare two or more data sets.
 ///
 #[derive(Debug, PartialEq, Clone)]
-pub struct Density<I>
+pub struct Density<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
-    pub(crate) realizations: I,
+    pub(crate) realizations: Vec<T>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I> Density<I>
+impl<T> Density<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
-    pub fn new(realizations: I) -> Density<I> {
+    pub fn new<I>(realizations: I) -> Density<T> 
+    where
+        I: IntoIterator<Item = T>,
+    {
+        let realizations: Vec<T> = realizations.into_iter().collect();
         let mut config = crate::configuration::Configuration::default();
         config.style(crate::configuration::plot::style::Style::Histeps);
 
@@ -62,24 +64,23 @@ where
     ///
     /// ```no_run
     /// ```
-    pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<I>
+    pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<T>
     where
-        J: IntoIterator<Item = crate::density::Density<I>>,
+        J: IntoIterator<Item = crate::density::Density<T>>,
     {
-        let mut comp: Densities<I> = self.into();
+        let mut comp: Densities<T> = self.into();
         comp.add_many(others);
         comp
     }
 
-    pub fn to_comparison(self) -> crate::density::comparison::Densities<I> {
+    pub fn to_comparison(self) -> crate::density::comparison::Densities<T> {
         self.into()
     }
 }
 
-impl<I> Configurable for Density<I>
+impl<T> Configurable for Density<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -89,10 +90,9 @@ where
     }
 }
 
-impl<I> Saveable for Density<I>
+impl<T> Saveable for Density<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
@@ -111,10 +111,9 @@ where
     }
 }
 
-impl<I> Plotable for Density<I>
+impl<T> Plotable for Density<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     /// Write simple gnuplot script for this type of data.
     ///
@@ -139,7 +138,6 @@ where
                 max = value;
                 length += 1;
                 for val in realizations {
-                    // let val = val.into();
                     if val < min {
                         min = val;
                     }

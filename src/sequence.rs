@@ -27,29 +27,27 @@ pub use comparison::Sequences;
 ///
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Sequence<I>
+pub struct Sequence<T> 
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+	T: Display,
 {
-    pub(crate) data: I,
+    pub(crate) data: Vec<T>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I> Sequence<I>
+impl<T> Sequence<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    pub fn new(data: I) -> Sequence<I> {
+    pub fn new<I>(data: I) -> Sequence<T> 
+    where
+    	I: IntoIterator<Item=T>,
+    {
+        let data: Vec<T> = data.into_iter().collect();
         let config = crate::configuration::Configuration::default();
 
         Sequence { data, config }
     }
-
-    // pub(crate) fn from_raw(data: I, config: crate::configuration::Configuration) -> Sequence<I> {
-    //     Sequence { data, config }
-    // }
 
     /// Compare various ``Sequence`` types together.
     ///
@@ -71,24 +69,23 @@ where
     /// ```no_run
     /// ```
     ///
-    pub fn compare_with<J>(self, others: J) -> crate::sequence::comparison::Sequences<I>
+    pub fn compare_with<J>(self, others: J) -> crate::sequence::comparison::Sequences<T>
     where
-        J: IntoIterator<Item = crate::sequence::Sequence<I>>,
+        J: IntoIterator<Item = crate::sequence::Sequence<T>>,
     {
-        let mut comp: Sequences<I> = self.into();
+        let mut comp: Sequences<T> = self.into();
         comp.add_many(others);
         comp
     }
 
-    pub fn to_comparison(self) -> crate::sequence::comparison::Sequences<I> {
+    pub fn to_comparison(self) -> crate::sequence::comparison::Sequences<T> {
         self.into()
     }
 }
 
-impl<I> Configurable for Sequence<I>
+impl<T> Configurable for Sequence<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -98,10 +95,9 @@ where
     }
 }
 
-impl<I> Saveable for Sequence<I>
+impl<T> Saveable for Sequence<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
 
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -122,10 +118,9 @@ where
     }
 }
 
-impl<I> Plotable for Sequence<I>
+impl<T> Plotable for Sequence<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
     /// Write simple gnuplot script for this type of data.
     ///

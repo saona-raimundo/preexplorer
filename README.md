@@ -41,9 +41,17 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # To do 
 
+- [ ] Correct meaningful trait bounds
+  - [ ] T: Display + Clone + Num?
+    - [ ] Sequence
+      - [ ] Sequences
+    - [ ] Process
+      - [ ] Processes
+    - [ ] Density
+      - [ ] Densities
+    - [ ] Data
 - [ ] Document
-
-  - [ ] Traits
+- [ ] Traits
     - [x] Examples
     - [x] Preexplore
     - [x] PreexploreProcess
@@ -61,30 +69,16 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
     - [ ] Data
   - [ ] Configuration
   - [ ] Errors
-
-  - [ ] Examples
+  
+- [ ] Examples
     - [ ] Include images in a readme file 
-
 - New Structs for error plotting
   - [ ] SequenceWithError 
   - [ ] ProcessWithError
-  
 - More customization
   - Audio
     - audify()
     - sonify()
-
-# Questions
-
-Why the following code does not work?
-
-```rust
-MarkovChain::new(init_state, &transition)
-    .take(max_steps)
-	.preexplore()
-```
-
-
 
 # Q & A
 

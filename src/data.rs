@@ -8,31 +8,32 @@ use core::fmt::Display;
 /// Missing documentation.
 ///
 #[derive(Debug, PartialEq, Clone)]
-pub struct Data<I>
+pub struct Data<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    pub(crate) data: I,
+    pub(crate) data: Vec<T>,
     pub(crate) config: crate::configuration::Configuration,
     pub(crate) dim: usize,
 }
 
-impl<I> Data<I>
+impl<T> Data<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    pub fn new(data: I, dim: usize) -> Self {
+    pub fn new<I>(data: I, dim: usize) -> Self 
+    where
+        I: IntoIterator<Item = T>,
+    {
+        let data: Vec<T> = data.into_iter().collect();
         let config = crate::configuration::Configuration::default();
         Data { data, config, dim }
     }
 }
 
-impl<I> Configurable for Data<I>
+impl<T> Configurable for Data<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -43,10 +44,9 @@ where
     }
 }
 
-impl<I> Saveable for Data<I>
+impl<T> Saveable for Data<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
     ///
@@ -73,10 +73,9 @@ where
     }
 }
 
-impl<I> Plotable for Data<I>
+impl<T> Plotable for Data<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
 
     /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.

@@ -118,20 +118,20 @@ use core::fmt::Display;
 /// # Remarks
 /// 
 /// It is meant to be used as part of the ``prelude`` module. 
-pub trait Preexplore<I>
+pub trait Preexplore<I, T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    I: IntoIterator<Item = T>,
+    T: Display,
 {
-    fn preexplore(self) -> crate::sequence::Sequence<I>;
+    fn preexplore(self) -> crate::sequence::Sequence<T>;
 }
 
-impl<I> Preexplore<I> for I
+impl<I, T> Preexplore<I, T> for I
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    I: IntoIterator<Item = T>,
+    T: Display,
 {
-    fn preexplore(self) -> crate::sequence::Sequence<I> {
+    fn preexplore(self) -> crate::sequence::Sequence<T> {
         crate::sequence::Sequence::new(self)
     }
 }
@@ -141,24 +141,24 @@ where
 /// # Remarks
 /// 
 /// It is meant to be used as part of the ``prelude`` module. 
-pub trait PreexploreProcess<I, J>
+pub trait PreexploreProcess<I, T, J, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    I: IntoIterator<Item = T>,
+    T: Display,
+    J: IntoIterator<Item = S>,
+    S: Display,
 {
-    fn preexplore(self) -> crate::process::Process<I, J>;
+    fn preexplore(self) -> crate::process::Process<T, S>;
 }
 
-impl<I, J> PreexploreProcess<I, J> for (I, J)
+impl<I, T, J, S> PreexploreProcess<I, T, J, S> for (I, J)
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    I: IntoIterator<Item = T>,
+    T: Display,
+    J: IntoIterator<Item = S>,
+    S: Display,
 {
-    fn preexplore(self) -> crate::process::Process<I, J> {
+    fn preexplore(self) -> crate::process::Process<T, S> {
         crate::process::Process::new(self.0, self.1)
     }
 }

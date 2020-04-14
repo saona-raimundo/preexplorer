@@ -30,21 +30,25 @@ pub use comparison::Processes;
 /// See ``compare`` method to compare two or more data sets.
 ///
 #[derive(Debug, PartialEq, Clone)]
-pub struct Process<I, J>
+pub struct Process<T, S>
 {
-    pub(crate) domain: I,
-    pub(crate) image: J,
+    pub(crate) domain: Vec<T>,
+    pub(crate) image: Vec<S>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I, J> Process<I, J>
+impl<T, S> Process<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display,
+    S: Display,
 {
-    pub fn new(domain: I, image: J) -> Process<I, J> {
+    pub fn new<I, J>(domain: I, image: J) -> Process<T, S> 
+    where
+        I: IntoIterator<Item = T>,
+        J: IntoIterator<Item = S>,
+    {
+        let domain: Vec<T> = domain.into_iter().collect();
+        let image: Vec<S> = image.into_iter().collect();
         let config = crate::configuration::Configuration::default();
 
         Process {
@@ -54,34 +58,22 @@ where
         }
     }
 
-    // pub(crate) fn from_raw(
-    //     domain: I,
-    //     image: J,
-    //     config: crate::configuration::Configuration,
-    // ) -> Process<I, J> {
-    //     Process {
-    //         domain,
-    //         image,
-    //         config,
-    //     }
-    // }
-
-    pub fn to_comparison(self) -> crate::process::comparison::Processes<I, J> {
+    pub fn to_comparison(self) -> crate::process::comparison::Processes<T, S> {
         self.into()
     }
 
     /// Pending documentation.
-    pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<I, J>
+    pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<T, S>
     where
-        K: IntoIterator<Item = crate::process::Process<I, J>>,
+        K: IntoIterator<Item = crate::process::Process<T, S>>,
     {
-        let mut comp: Processes<I, J> = self.into();
+        let mut comp: Processes<T, S> = self.into();
         comp.add_many(others);
         comp
     }
 }
 
-impl<I, J> Configurable for Process<I, J> {
+impl<T, S> Configurable for Process<T, S> {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
@@ -90,12 +82,10 @@ impl<I, J> Configurable for Process<I, J> {
     }
 }
 
-impl<I, J> Saveable for Process<I, J>
+impl<T, S> Saveable for Process<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
 
     /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
@@ -115,12 +105,10 @@ where
     }
 }
 
-impl<I, J> Plotable for Process<I, J>
+impl<T, S> Plotable for Process<T, S>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
-    J: IntoIterator + Clone,
-    J::Item: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
 
     /// Write simple gnuplot script for this type of data.

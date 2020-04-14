@@ -8,56 +8,51 @@ use core::fmt::Display;
 /// See ``Sequence`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
-pub struct Sequences<I>
+pub struct Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    pub(crate) data_set: Vec<crate::sequence::Sequence<I>>,
+    pub(crate) data_set: Vec<crate::sequence::Sequence<T>>,
     pub(crate) config: crate::configuration::Configuration,
 }
-impl<I> Sequences<I>
+impl<T> Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    pub fn new<K>(data_set: K) -> Sequences<I>
+    pub fn new<I>(data_set: I) -> Sequences<T>
     where
-        K: IntoIterator<Item = crate::sequence::Sequence<I>>,
+        I: IntoIterator<Item = crate::sequence::Sequence<T>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<crate::sequence::Sequence<I>>>();
+            .collect::<Vec<crate::sequence::Sequence<T>>>();
         Sequences { data_set, config }
     }
 }
 
-impl<I> From<crate::sequence::Sequence<I>> for Sequences<I> 
+impl<T> From<crate::sequence::Sequence<T>> for Sequences<T> 
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
-    fn from(sequence: crate::sequence::Sequence<I>) -> Self { 
+    fn from(sequence: crate::sequence::Sequence<T>) -> Self { 
         Sequences::new(vec![sequence]) 
     }
 }
 
-impl<I> crate::traits::Comparison<crate::sequence::Sequence<I>> for Sequences<I>
+impl<T> crate::traits::Comparison<crate::sequence::Sequence<T>> for Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
     {
-    fn add(&mut self, other: crate::sequence::Sequence<I>) -> &mut Self {
+    fn add(&mut self, other: crate::sequence::Sequence<T>) -> &mut Self {
         self.data_set.push(other);
         self
     }
 }
 
-impl<I> Configurable for Sequences<I>
+impl<T> Configurable for Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -67,10 +62,9 @@ where
     }
 }
 
-impl<I> Saveable for Sequences<I>
+impl<T> Saveable for Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
@@ -99,10 +93,9 @@ where
     }
 }
 
-impl<I> Plotable for Sequences<I>
+impl<T> Plotable for Sequences<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: Display,
+    T: Display + Clone,
 {
     /// Write simple gnuplot script for this type of data.
     ///

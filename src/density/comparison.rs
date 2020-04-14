@@ -8,58 +8,53 @@ use core::fmt::Display;
 /// See ``Density`` documentation for further use.
 ///
 #[derive(Debug, PartialEq)]
-pub struct Densities<I>
+pub struct Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
-    pub(crate) data_set: Vec<crate::density::Density<I>>,
+    pub(crate) data_set: Vec<crate::density::Density<T>>,
     pub(crate) config: crate::configuration::Configuration,
 }
 
-impl<I> Densities<I>
+impl<T> Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
-    pub fn new<K>(data_set: K) -> Densities<I>
+    pub fn new<K>(data_set: K) -> Densities<T>
     where
-        K: IntoIterator<Item = crate::density::Density<I>>,
+        K: IntoIterator<Item = crate::density::Density<T>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<crate::density::Density<I>>>();
+            .collect::<Vec<crate::density::Density<T>>>();
         Densities { data_set, config }
     }
 }
 
-impl<I> From<crate::density::Density<I>> for Densities<I> 
+impl<T> From<crate::density::Density<T>> for Densities<T> 
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
-    fn from(density: crate::density::Density<I>) -> Self { 
+    fn from(density: crate::density::Density<T>) -> Self { 
         Densities::new(vec![density]) 
     }
 }
 
-impl<I> crate::traits::Comparison<crate::density::Density<I>> for Densities<I>
+impl<T> crate::traits::Comparison<crate::density::Density<T>> for Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
     {
-    fn add(&mut self, other: crate::density::Density<I>) -> &mut Self {
+    fn add(&mut self, other: crate::density::Density<T>) -> &mut Self {
         self.data_set.push(other);
         self
     }
 }
 
 
-impl<I> Configurable for Densities<I>
+impl<T> Configurable for Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -69,10 +64,9 @@ where
     }
 }
 
-impl<I> Saveable for Densities<I>
+impl<T> Saveable for Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
@@ -100,10 +94,9 @@ where
     }
 }
 
-impl<I> Plotable for Densities<I>
+impl<T> Plotable for Densities<T>
 where
-    I: IntoIterator + Clone,
-    I::Item: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Copy,
 {
     /// Write simple gnuplot script for this type of data.
     ///
