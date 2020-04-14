@@ -42,13 +42,6 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # To do 
 
-- [ ] Document
-    - [ ] Configuration
-      - [ ] Plot
-        - [ ] Style
-      - [ ] Save
-    - [ ] Errors
-- [ ] Run clippy
 - [ ] Examples
     - [ ] Include images in a readme file 
 - [ ] New Structs for error plotting
@@ -62,9 +55,9 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # Q & A
 
-4. Why processes must be the same structs to be compared? 
+1. Why processes must be the same structs to be compared? 
    Because of Rust explicit typing: comparisons need to save an explicit type. 
-5. Are there n-dimensional variants?
+2. Are there n-dimensional variants?
    No, it is out of scope. Please implement your own plot script for that. You can do so easily based in the Data struct. 
 
 # Disclaimer
