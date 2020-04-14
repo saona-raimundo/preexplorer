@@ -6,10 +6,10 @@ Collection of very simple examples.
 
 ![sequences](sequences/sequences.png "sequences")
 
-![processes](processes\processes.png "processes")
+![processes](processes/processes.png "processes")
 
-![process](process\process.png "process")
+![process](process/process.png "process")
 
-![density](density\density.png "density")
+![density](density/density.png "density")
 
-![densities](densities\densities.png "densities")
+![densities](densities/densities.png "densities")
