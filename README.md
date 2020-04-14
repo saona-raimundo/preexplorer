@@ -42,8 +42,6 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # To do 
 
-- [ ] Examples
-    - [ ] Include images in a readme file 
 - [ ] New Structs for error plotting
   - [ ] SequenceWithError 
   - [ ] ProcessWithError
