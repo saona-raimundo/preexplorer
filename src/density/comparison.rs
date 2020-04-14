@@ -1,24 +1,36 @@
+//! Comparison of histograms.
+//!
+//! # Examples
+//!
+//! Quick plot.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! let many_dens = (0..5).map(|_| pre::Density::new((0..10)));
+//! pre::Densities::new(many_dens).plot("my_identifier").unwrap();
+//! ```
+//!
+
 // Structs
 use crate::errors::SavingError;
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-/// See ``Density`` documentation for further use.
+/// Comparison counter part of ``Density`` struct.
 ///
 #[derive(Debug, PartialEq)]
 pub struct Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    pub(crate) data_set: Vec<crate::density::Density<T>>,
-    pub(crate) config: crate::configuration::Configuration,
+    data_set: Vec<crate::density::Density<T>>,
+    config: crate::configuration::Configuration,
 }
 
 impl<T> Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
     pub fn new<K>(data_set: K) -> Densities<T>
     where
@@ -32,29 +44,28 @@ where
     }
 }
 
-impl<T> From<crate::density::Density<T>> for Densities<T> 
+impl<T> From<crate::density::Density<T>> for Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    fn from(density: crate::density::Density<T>) -> Self { 
-        Densities::new(vec![density]) 
+    fn from(density: crate::density::Density<T>) -> Self {
+        Densities::new(vec![density])
     }
 }
 
 impl<T> crate::traits::Comparison<crate::density::Density<T>> for Densities<T>
 where
-    T: PartialOrd + Display + Copy,
-    {
+    T: PartialOrd + Display + Clone,
+{
     fn add(&mut self, other: crate::density::Density<T>) -> &mut Self {
         self.data_set.push(other);
         self
     }
 }
 
-
 impl<T> Configurable for Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -66,7 +77,7 @@ where
 
 impl<T> Saveable for Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
@@ -77,14 +88,7 @@ where
         raw_data
     }
 
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
-    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+    fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, SavingError> {
         for (counter, density) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             density.save_with_id(&inner_id)?;
@@ -96,19 +100,15 @@ where
 
 impl<T> Plotable for Densities<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    /// Write simple gnuplot script for this type of data.
-    ///
     fn plot_script(&self) -> String {
-
         let id = self.get_checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
         // Treat each data to a prob distr funct
 
         for (counter, density) in self.data_set.iter().enumerate() {
-
             // Values for the histogram
 
             let n = 20;
@@ -118,13 +118,13 @@ where
             let mut realizations = density.realizations.clone().into_iter();
             match realizations.next() {
                 Some(value) => {
-                    min = value;
+                    min = value.clone();
                     max = value;
                     length += 1;
                     for val in realizations {
                         // let val = val.into();
                         if val < min {
-                            min = val;
+                            min = val.clone();
                         }
                         if val > max {
                             max = val;
@@ -137,9 +137,12 @@ where
                     gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", counter, n);
                     gnuplot_script += &format!("max_{} = {} #max value\n", counter, max);
                     gnuplot_script += &format!("min_{} = {} #min value\n", counter, min);
-                    gnuplot_script += &format!("len_{} = {}.0 #number of values\n", counter, length);
                     gnuplot_script +=
-                        &format!("width_{} = ({} - {}) / nbins_{} #width\n\n", counter, max, min, counter);
+                        &format!("len_{} = {}.0 #number of values\n", counter, length);
+                    gnuplot_script += &format!(
+                        "width_{} = ({} - {}) / nbins_{} #width\n\n",
+                        counter, max, min, counter
+                    );
                     gnuplot_script += "# function used to map a value to the intervals\n";
                     gnuplot_script += &format!(
                         "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",

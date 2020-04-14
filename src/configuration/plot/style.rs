@@ -1,5 +1,12 @@
+//! Styles for plotting in gnuplot. 
+
 use core::fmt::Display;
 
+/// A small collection of all possible styles. 
+/// 
+/// # Remarks
+/// 
+/// There are ``From<>`` implementations for ease of use. 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Style {
     Default,
@@ -27,7 +34,7 @@ impl From<&str> for Style {
             "steps" => Style::Steps,
             "fsteps" => Style::Fsteps,
             "histeps" => Style::Histeps,
-            "boxes" => Style::Boxes, 
+            "boxes" => Style::Boxes,
             _ => Style::Lines,
         }
     }
@@ -75,5 +82,7 @@ impl Display for Style {
 }
 
 impl Default for Style {
-    fn default() -> Self { Style::Default }
+    fn default() -> Self {
+        Style::Default
+    }
 }

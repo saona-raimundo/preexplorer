@@ -1,10 +1,23 @@
-use std::path::Path;
-use std::ffi::OsStr;
+//! Configuration for all basic options included.
+//!
+//! # Remarks
+//!
+//! See ``Configurable`` documentation for its main use.
+
+// Traits
+use core::fmt::Display;
+
+// Structs
 use std::collections::HashMap;
+use std::ffi::OsStr;
+use std::path::Path;
 
 pub mod plot;
 pub mod save;
 
+/// Configuration for all basic options included.
+///
+/// See the documentation of ``Configurable`` trait for all methods.
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct Configuration {
     save_config: crate::configuration::save::SaveConfiguration,
@@ -13,7 +26,9 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    pub(crate) fn opening_plot_script(&self) -> String {
+
+    /// Opening for a plot script including all common or setted configurations. 
+    pub fn opening_plot_script(&self) -> String {
         self.plot_config.opening_plot_script()
     }
 
@@ -21,180 +36,208 @@ impl Configuration {
         self.plot_config.opening_plot_script_comparison()
     }
 
-    pub(crate) fn ending_plot_script(&self) -> String {
+    /// Ending for a plot script including all common or setted configurations. 
+    pub fn ending_plot_script(&self) -> String {
         self.plot_config.ending_plot_script()
+    }
+}
+
+impl crate::Configurable for Configuration {
+    fn configuration(&mut self) -> &mut Configuration {
+        self
+    }
+
+    fn configuration_as_ref(&self) -> &Configuration {
+        self
     }
 
     /////////////////////////// PlotConfiguration
     // Setting
-    pub(crate) fn plot_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+    fn plot_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
         self.plot_config.extension(extension);
         self
     }
-    pub(crate) fn title(&mut self, title: String) -> &mut Self {
-        self.plot_config.title(title);
+    fn title<S: Display>(&mut self, title: S) -> &mut Self {
+        self.plot_config.title(title.to_string());
         self
     }
-    pub(crate) fn logx(&mut self, logx: f64) -> &mut Self {
-        self.plot_config.logx(logx);
+    fn logx<N: Into<f64>>(&mut self, logx: N) -> &mut Self {
+        self.plot_config.logx(logx.into());
         self
     }
-    pub(crate) fn logy(&mut self, logy: f64) -> &mut Self {
-        self.plot_config.logy(logy);
+    fn logy<N: Into<f64>>(&mut self, logy: N) -> &mut Self {
+        self.plot_config.logy(logy.into());
         self
     }
-    pub(crate) fn labelx(&mut self, labelx: String) -> &mut Self {
-        self.plot_config.labelx(labelx);
+    fn labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
+        self.plot_config.labelx(labelx.to_string());
         self
     }
-    pub(crate) fn labely(&mut self, labely: String) -> &mut Self {
-        self.plot_config.labely(labely);
+    fn labely<S: Display>(&mut self, labely: S) -> &mut Self {
+        self.plot_config.labely(labely.to_string());
         self
     }
-    pub(crate) fn rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
-        self.plot_config.rangex(rangex);
+    fn rangex<S, T>(&mut self, left: S, right: T) -> &mut Self
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.plot_config.rangex((f64::from(left), f64::from(right)));
         self
     }
-    pub(crate) fn rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
-        self.plot_config.rangey(rangey);
+    fn rangey<S, T>(&mut self, down: S, up: T) -> &mut Self
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.plot_config.rangey((f64::from(down), f64::from(up)));
         self
     }
-    pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
-        self.plot_config.style(style);
+    fn style<S>(&mut self, style: S) -> &mut Self
+    where
+        crate::configuration::plot::style::Style: From<S>,
+    {
+        self.plot_config.style(style.into());
         self
     }
-    pub(crate) fn dashtype(&mut self, dashtype: usize) -> &mut Self {
+    fn dashtype(&mut self, dashtype: usize) -> &mut Self {
         self.plot_config.dashtype(dashtype);
         self
     }
-    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self 
+    fn ticsx<T, S>(&mut self, ticsx: T) -> &mut Self
     where
-        T: Into<Option<String>>,
+        T: Into<Option<S>>,
+        S: Display,
     {
-        self.plot_config.ticsx(ticsx);
+        let ticsx: Option<S> = ticsx.into();
+        self.plot_config.ticsx(ticsx.map(|t| t.to_string()));
         self
     }
-    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self 
+    fn ticsy<T, S>(&mut self, ticsy: T) -> &mut Self
     where
-        T: Into<Option<String>>,
+        T: Into<Option<S>>,
+        S: Display,
     {
-        self.plot_config.ticsy(ticsy);
+        let ticsy: Option<S> = ticsy.into();
+        self.plot_config.ticsy(ticsy.map(|t| t.to_string()));
         self
     }
-    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self 
+    fn pause<T, S>(&mut self, pause: T) -> &mut Self
     where
-        T: Into<Option<f64>>,
+        T: Into<Option<S>>,
+        f64: From<S>,
     {
-        self.plot_config.pause(pause);
+        let pause: Option<S> = pause.into();
+        self.plot_config.pause(pause.map(f64::from));
         self
     }
 
     // Getting
-    pub(crate) fn get_plot_extension(&self) -> Option<&OsStr> {
+    fn get_plot_extension(&self) -> Option<&OsStr> {
         self.plot_config.get_extension()
     }
-    pub(crate) fn get_plot_path(&self) -> &Path  {
+    fn get_plot_path(&self) -> &Path {
         self.plot_config.get_path()
     }
-    pub(crate) fn get_title(&self) -> Option<&String> {
+    fn get_title(&self) -> Option<&String> {
         self.plot_config.get_title()
     }
-    pub(crate) fn get_logx(&self) -> Option<f64> {
+    fn get_logx(&self) -> Option<f64> {
         self.plot_config.get_logx()
     }
-    pub(crate) fn get_logy(&self) -> Option<f64> {
+    fn get_logy(&self) -> Option<f64> {
         self.plot_config.get_logy()
     }
-    pub(crate) fn get_labelx(&self) -> Option<&String> {
+    fn get_labelx(&self) -> Option<&String> {
         self.plot_config.get_labelx()
     }
-    pub(crate) fn get_labely(&self) -> Option<&String> {
+    fn get_labely(&self) -> Option<&String> {
         self.plot_config.get_labely()
     }
-    pub(crate) fn get_rangex(&self) -> Option<(f64, f64)> {
+    fn get_rangex(&self) -> Option<(f64, f64)> {
         self.plot_config.get_rangex()
     }
-    pub(crate) fn get_rangey(&self) -> Option<(f64, f64)> {
+    fn get_rangey(&self) -> Option<(f64, f64)> {
         self.plot_config.get_rangey()
     }
-    pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
+    fn get_style(&self) -> &crate::configuration::plot::style::Style {
         self.plot_config.get_style()
     }
-    pub(crate) fn get_dashtype(&self) -> Option<usize> {
+    fn get_dashtype(&self) -> Option<usize> {
         self.plot_config.get_dashtype()
     }
-    pub(crate) fn get_ticsx(&self) -> Option<&String> 
-    {
+    fn get_ticsx(&self) -> Option<&String> {
         self.plot_config.get_ticsx()
     }
-    pub(crate) fn get_ticsy(&self) -> Option<&String> 
-    {
+    fn get_ticsy(&self) -> Option<&String> {
         self.plot_config.get_ticsy()
     }
-    pub(crate) fn get_pause(&self) -> Option<f64> 
-    {
+    fn get_pause(&self) -> Option<f64> {
         self.plot_config.get_pause()
     }
 
     ////////// SaveConfiguration /////////////////
     // Setting
-    pub(crate) fn data_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+    fn data_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
         self.save_config.extension(extension);
         self
     }
-    pub(crate) fn header(&mut self, header: bool) -> &mut Self {
+    fn header(&mut self, header: bool) -> &mut Self {
         self.save_config.header(header);
         self
     }
-    pub(crate) fn date(&mut self, date: chrono::DateTime<chrono::Local>) -> &mut Self {
+    fn date(&mut self, date: chrono::DateTime<chrono::Local>) -> &mut Self {
         self.save_config.date(date);
         self
     }
-    pub(crate) fn id(&mut self, id: String) -> &mut Self {
+    fn id<S: Display>(&mut self, id: S) -> &mut Self {
+        let id = id.to_string();
         self.plot_config.id(&id);
         self.save_config.id(id);
         self
     }
 
     // Getting
-    pub(crate) fn get_data_extension(&self) -> Option<&OsStr> {
+    fn get_data_extension(&self) -> Option<&OsStr> {
         self.save_config.get_extension()
     }
-    pub(crate) fn get_data_path(&self) -> &Path  {
+    fn get_data_path(&self) -> &Path {
         self.save_config.get_path()
     }
-    pub(crate) fn get_header(&self) -> bool {
+    fn get_header(&self) -> bool {
         self.save_config.get_header()
     }
-    pub(crate) fn get_date(&self) -> &chrono::DateTime<chrono::Local> {
+    fn get_date(&self) -> &chrono::DateTime<chrono::Local> {
         self.save_config.get_date()
     }
-    pub(crate) fn get_id(&self) -> Option<&String> {
+    fn get_id(&self) -> Option<&String> {
         self.save_config.get_id()
     }
-    pub(crate) fn get_checked_id(&self) -> &String {
+    fn get_checked_id(&self) -> &String {
         self.save_config.get_checked_id()
     }
 
     ////////////////// CustomConfiguration ///////////////////
-    pub(crate) fn custom(&mut self, key: String, value: String) -> &mut Self {
-    	self.custom_config.insert(key, value);
-    	self
+    fn custom<S: Display, T: Display>(&mut self, key: S, value: T) -> &mut Self {
+        self.custom_config
+            .insert(key.to_string(), value.to_string());
+        self
     }
 
-    pub(crate) fn get_custom(&self, key: String) -> Option<&String> {
-    	self.custom_config.get(&key)
+    fn get_custom<S: Display>(&self, key: S) -> Option<&String> {
+        self.custom_config.get(&key.to_string())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::prelude::*;
 
     #[test]
     fn check_id() {
         let mut config = Configuration::default();
-        
+
         config.id(1.to_string());
         assert_eq!(config.get_id(), Some(&1.to_string()));
 
@@ -255,19 +298,41 @@ mod tests {
         assert_eq!(config.get_id(), None);
         assert_eq!(config.get_data_extension().unwrap().to_str(), Some("txt"));
 
-        assert_eq!(config.get_data_path().file_name().unwrap().to_str(), Some("none.txt"));
-        assert_eq!(config.get_data_path().file_stem().unwrap().to_str(), Some("none"));
-        assert_eq!(config.get_data_path().extension().unwrap().to_str(), Some("txt"));
+        assert_eq!(
+            config.get_data_path().file_name().unwrap().to_str(),
+            Some("none.txt")
+        );
+        assert_eq!(
+            config.get_data_path().file_stem().unwrap().to_str(),
+            Some("none")
+        );
+        assert_eq!(
+            config.get_data_path().extension().unwrap().to_str(),
+            Some("txt")
+        );
 
-        assert_eq!(config.get_plot_path().file_name().unwrap().to_str(), Some("none.gnu"));
-        assert_eq!(config.get_data_path().file_stem().unwrap().to_str(), Some("none"));
-        assert_eq!(config.get_plot_path().extension().unwrap().to_str(), Some("gnu"));
-
+        assert_eq!(
+            config.get_plot_path().file_name().unwrap().to_str(),
+            Some("none.gnu")
+        );
+        assert_eq!(
+            config.get_data_path().file_stem().unwrap().to_str(),
+            Some("none")
+        );
+        assert_eq!(
+            config.get_plot_path().extension().unwrap().to_str(),
+            Some("gnu")
+        );
 
         config.id("testing".to_string());
 
-        assert_eq!(config.get_plot_path().file_name().unwrap().to_str(), Some("testing.gnu"));
-        assert_eq!(config.get_data_path().file_name().unwrap().to_str(), Some("testing.txt"));
-
+        assert_eq!(
+            config.get_plot_path().file_name().unwrap().to_str(),
+            Some("testing.gnu")
+        );
+        assert_eq!(
+            config.get_data_path().file_name().unwrap().to_str(),
+            Some("testing.txt")
+        );
     }
 }

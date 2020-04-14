@@ -1,48 +1,66 @@
+//! Indexed collection of values.
 //!
-//! ```math
-//! X: A \subseteq{\mathbb{R}} \to \mathbb{R} \,.
+//! # Remarks
+//!
+//! With the ``prelude`` module, we can easily convert a tuple of ``IntoIterator``s
+//! into ``Process`` for ease of use. The same can be achieved with the
+//! ``new`` method.
+//!
+//! # Examples
+//!
+//! Quick plot.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
 //! ```
 //!
-
-// Structs
-
+//! Compare ``Process``es.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! pre::Processes::new(vec![
+//!     ((0..10), (0..10)).preexplore(),
+//!     ((0..10), (0..10)).preexplore(),
+//!     ])
+//!     .plot("my_identifier").unwrap();
+//! ```
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
+pub use crate::traits::{Comparison, Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-
-/// Compare various ``Process`` types together.
+/// Compare various ``Process``es.
 pub mod comparison;
 
 pub use comparison::Processes;
 
-
-/// Iterator over the data to be consumed when saved or plotted. Can also be compared with other ``Process`` types.
-///
-/// # Examples
-///
-/// ```no_run
-/// ```
-///
-/// # Remarks
-///
-/// See ``compare`` method to compare two or more data sets.
-///
+/// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Process<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
 {
-    pub(crate) domain: Vec<T>,
-    pub(crate) image: Vec<S>,
-    pub(crate) config: crate::configuration::Configuration,
+    domain: Vec<T>,
+    image: Vec<S>,
+    config: crate::configuration::Configuration,
 }
 
 impl<T, S> Process<T, S>
 where
-    T: Display,
-    S: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
-    pub fn new<I, J>(domain: I, image: J) -> Process<T, S> 
+    /// Create a new ``Process``.
+    ///
+    /// # Examples
+    ///
+    /// From a complicated computation.
+    /// ```
+    /// use preexplorer::prelude::*;
+    /// let data = (0..10).map(|i| i * i + 1);
+    /// let seq = pre::Process::new((0..10), data);
+    /// ```
+    pub fn new<I, J>(domain: I, image: J) -> Process<T, S>
     where
         I: IntoIterator<Item = T>,
         J: IntoIterator<Item = S>,
@@ -58,11 +76,27 @@ where
         }
     }
 
-    pub fn to_comparison(self) -> crate::process::comparison::Processes<T, S> {
-        self.into()
+    /// Convert to ``Processes`` quickly.
+    pub fn to_comparison(&self) -> crate::process::comparison::Processes<T, S> {
+        self.clone().into()
     }
 
-    /// Pending documentation.
+    /// Compare your ``Process`` with various ``Process``es.
+    ///
+    /// # Remarks
+    ///
+    /// Titles of ``Process``es involved in a ``Processes`` are presented as legends.
+    ///
+    /// # Examples
+    ///
+    /// Compare many ``Process``es by gathering all first (in some ``IntoIterator``).
+    /// ```no_run
+    /// use preexplorer::prelude::*;
+    /// let first_pro = ((0..10), (0..10)).preexplore().title("legend").to_owned();
+    /// let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
+    /// let mut processes = first_pro.compare_with(many_pros);
+    /// processes.title("Main title");
+    /// ```
     pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<T, S>
     where
         K: IntoIterator<Item = crate::process::Process<T, S>>,
@@ -73,7 +107,11 @@ where
     }
 }
 
-impl<T, S> Configurable for Process<T, S> {
+impl<T, S> Configurable for Process<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
@@ -87,16 +125,7 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
     fn plotable_data(&self) -> String {
-
         let mut raw_data = String::new();
         for (time, value) in self.domain.clone().into_iter().zip(self.image.clone()) {
             raw_data.push_str(&format!("{}\t{}\n", time, value));
@@ -110,11 +139,7 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-
-    /// Write simple gnuplot script for this type of data.
-    ///
     fn plot_script(&self) -> String {
-
         let mut gnuplot_script = self.opening_plot_script();
 
         let dashtype = match self.get_dashtype() {
@@ -132,6 +157,4 @@ where
 
         gnuplot_script
     }
-
-    
 }

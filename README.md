@@ -21,7 +21,8 @@ This is the crate for you!
 - Easy plotting
 - Easy comparison
 - Extensible options
-- Implementable traits?
+- Implementable traits
+- Extensive documentation
 
 # Examples
 
@@ -34,47 +35,26 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
-- Add ``preexplorer = "0.1"`` to your ``Cargo.toml`` file under ``[dependencies]``.
+- Add ``preexplorer = "0.2"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
 
 
 # To do 
 
-- [ ] Correct meaningful trait bounds
-  - [ ] T: Display + Clone + Num?
-    - [ ] Sequence
-      - [ ] Sequences
-    - [ ] Process
-      - [ ] Processes
-    - [ ] Density
-      - [ ] Densities
-    - [ ] Data
 - [ ] Document
-- [ ] Traits
-    - [x] Examples
-    - [x] Preexplore
-    - [x] PreexploreProcess
-    - [ ] Configurable
-    - [ ] Saveable
-    - [ ] Plotable
-    - [ ] Comparison
-  - [ ] Plotable structs
-    - [ ] Sequence
-      - [ ] Sequences
-    - [ ] Process
-      - [ ] Processes
-    - [ ] Density
-      - [ ] Densities
-    - [ ] Data
-  - [ ] Configuration
-  - [ ] Errors
-  
+    - [ ] Configuration
+      - [ ] Plot
+        - [ ] Style
+      - [ ] Save
+    - [ ] Errors
+- [ ] Run clippy
 - [ ] Examples
     - [ ] Include images in a readme file 
-- New Structs for error plotting
+- [ ] New Structs for error plotting
   - [ ] SequenceWithError 
   - [ ] ProcessWithError
+- [ ] test all methods in the Configurable trait 
 - More customization
   - Audio
     - audify()
@@ -82,12 +62,6 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 # Q & A
 
-1. Why do the structs not implement Eq traits?
-   Because we use f64
-2. Why do the structs not implement PartialOrd traits?
-   Because we use HashMap
-3. Why do we not have two Configurations? SaveConfiguration and PlotConfiguration?
-   To make life simpler for those outside the crate
 4. Why processes must be the same structs to be compared? 
    Because of Rust explicit typing: comparisons need to save an explicit type. 
 5. Are there n-dimensional variants?

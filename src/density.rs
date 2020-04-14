@@ -1,8 +1,25 @@
-// Structs
-
+//! Histogram type of plotting: point cloud, density and cummulative distribution.
+//!
+//! # Examples
+//!
+//! Quick plot.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! pre::Density::new((0..10)).plot("my_identifier").unwrap();
+//! ```
+//!
+//! Compare ``Density``s.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! pre::Densities::new(vec![
+//!     pre::Density::new((0..10)),
+//!     pre::Density::new((0..10)),
+//!     ])
+//!     .plot("my_identifier").unwrap();
+//! ```
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable, Comparison};
+pub use crate::traits::{Comparison, Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
 // Structs
@@ -11,34 +28,36 @@ pub use comparison::Densities;
 /// Compare various ``Distribution`` types together.
 pub mod comparison;
 
-
-
-/// Iterator over the data to be consumed when saved or plotted.
-/// Can also be compared with other Distribution types.
-///
-/// # Examples
-///
-/// ```no_run
-/// ```
-///
-/// # Remarks
-///
-/// See ``compare`` method to compare two or more data sets.
-///
+/// Akin to a histogram: point cloud, density and cummulative distribution.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Density<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    pub(crate) realizations: Vec<T>,
-    pub(crate) config: crate::configuration::Configuration,
+    realizations: Vec<T>,
+    config: crate::configuration::Configuration,
 }
 
 impl<T> Density<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    pub fn new<I>(realizations: I) -> Density<T> 
+    /// Create a new ``Density``.
+    ///
+    /// # Examples
+    ///
+    /// From a complicated computation.
+    /// ```no_run
+    /// use preexplorer::prelude::*;
+    /// use rand_distr::Exp1;
+    /// use rand::prelude::*;
+    /// let simulation_results: Vec<f64> = (0..100).map(|_| thread_rng().sample(Exp1)).collect();
+    /// pre::Density::new(simulation_results)
+    ///     .title("Empirical Exponential 1")
+    ///     .plot("my_identifier")
+    ///     .unwrap();
+    /// ```
+    pub fn new<I>(realizations: I) -> Density<T>
     where
         I: IntoIterator<Item = T>,
     {
@@ -52,17 +71,26 @@ where
         }
     }
 
-    /// Compare various ``Density`` types together.
-    ///
-    /// You can either put all together in a vector, or add them to a ``Comparison``
+    /// Convert to ``Densities`` quickly.
+    pub fn to_comparison(&self) -> crate::density::comparison::Densities<T> {
+        self.clone().into()
+    }
+
+    /// Compare your ``Density``s with various ``Density``s.
     ///
     /// # Remarks
     ///
-    /// Titles of ``Density`` types involved in a ``Comparison`` are presented as legend.
+    /// Titles of ``Density``s involved in a ``Densities`` are presented as legends.
     ///
     /// # Examples
     ///
+    /// Compare many ``Density``s by gathering all first (in some ``IntoIterator``).
     /// ```no_run
+    /// use preexplorer::prelude::*;
+    /// let first_den = pre::Density::new((0..10)).title("legend").to_owned();
+    /// let many_dens = (0..5).map(|_| pre::Density::new((0..10)));
+    /// let mut densities = first_den.compare_with(many_dens);
+    /// densities.title("Main title");
     /// ```
     pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<T>
     where
@@ -72,15 +100,11 @@ where
         comp.add_many(others);
         comp
     }
-
-    pub fn to_comparison(self) -> crate::density::comparison::Densities<T> {
-        self.into()
-    }
 }
 
 impl<T> Configurable for Density<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -92,17 +116,9 @@ where
 
 impl<T> Saveable for Density<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
     fn plotable_data(&self) -> String {
-
         let mut raw_data = String::new();
         for value in self.realizations.clone() {
             raw_data.push_str(&format!("{}\n", value));
@@ -113,15 +129,14 @@ where
 
 impl<T> Plotable for Density<T>
 where
-    T: PartialOrd + Display + Copy,
+    T: PartialOrd + Display + Clone,
 {
-    /// Write simple gnuplot script for this type of data.
+    /// Construct a suitable plot script for the struct.
     ///
-    /// # Remark
+    /// # Remarks
     ///
     /// Only works for real numbers.
     fn plot_script(&self) -> String {
-
         let mut gnuplot_script = self.opening_plot_script();
 
         gnuplot_script += "set zeroaxis\n";
@@ -134,12 +149,12 @@ where
         let mut realizations = self.realizations.clone().into_iter();
         match realizations.next() {
             Some(value) => {
-                min = value;
+                min = value.clone();
                 max = value;
                 length += 1;
                 for val in realizations {
                     if val < min {
-                        min = val;
+                        min = val.clone();
                     }
                     if val > max {
                         max = val;

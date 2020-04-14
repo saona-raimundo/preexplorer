@@ -1,5 +1,5 @@
-use std::ffi::OsStr;
 use crate::constants::DATA_DIR;
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
@@ -7,7 +7,7 @@ pub(crate) struct SaveConfiguration {
     path_buf: PathBuf,
     header: bool,
     date: chrono::DateTime<chrono::Local>,
-    id: Option<String>,  
+    id: Option<String>,
 }
 
 impl SaveConfiguration {
@@ -31,10 +31,9 @@ impl SaveConfiguration {
             self.path_buf.set_file_name(&id);
         }
         self.id = Some(id);
-        
+
         self
     }
-    
 
     pub(crate) fn get_extension(&self) -> Option<&OsStr> {
         self.path_buf.extension()
@@ -53,9 +52,9 @@ impl SaveConfiguration {
     }
     pub(crate) fn get_checked_id(&self) -> &String {
         match &self.id {
-             Some(id) => id,
-             None => panic!("Uninitialized id. Consider giving an id before processing."),
-         }
+            Some(id) => id,
+            None => panic!("Uninitialized id. Consider giving an id before processing."),
+        }
     }
 }
 
@@ -68,6 +67,11 @@ impl Default for SaveConfiguration {
         let date = chrono::Local::now();
         let id = None;
 
-        SaveConfiguration { path_buf, header, date, id }
+        SaveConfiguration {
+            path_buf,
+            header,
+            date,
+            id,
+        }
     }
 }

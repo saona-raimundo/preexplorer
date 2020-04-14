@@ -1,5 +1,8 @@
+//! Errors from the crate. 
+
 use failure::Fail;
 
+/// Error from writting while saving files (data or plot scripts). 
 #[derive(Fail, Debug)]
 #[fail(display = "Failed while saving or plotting.")]
 pub struct SavingError {

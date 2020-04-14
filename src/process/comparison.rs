@@ -1,26 +1,38 @@
+//! Comparison of indexed sequences of values.
+//!
+//! # Examples
+//!
+//! Quick plot.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
+//! pre::Processes::new(many_pros).plot("my_identifier").unwrap();
+//! ```
+//!
+
 // Structs
 use crate::errors::SavingError;
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-/// See ``Process`` documentation for further use.
+/// Comparison counter part of ``Process`` struct.
 ///
 #[derive(Debug, PartialEq)]
 pub struct Processes<T, S>
 where
-    T: Display,
-    S: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
-    pub(crate) data_set: Vec<crate::process::Process<T, S>>,
-    pub(crate) config: crate::configuration::Configuration,
+    data_set: Vec<crate::process::Process<T, S>>,
+    config: crate::configuration::Configuration,
 }
 
 impl<T, S> Processes<T, S>
 where
-    T: Display,
-    S: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
     pub fn new<I>(data_set: I) -> Processes<T, S>
     where
@@ -34,32 +46,31 @@ where
     }
 }
 
-impl<T, S> From<crate::process::Process<T, S>> for Processes<T, S> 
+impl<T, S> From<crate::process::Process<T, S>> for Processes<T, S>
 where
-    T: Display,
-    S: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
-    fn from(process: crate::process::Process<T, S>) -> Self { 
-        Processes::new(vec![process]) 
+    fn from(process: crate::process::Process<T, S>) -> Self {
+        Processes::new(vec![process])
     }
 }
 
 impl<T, S> crate::traits::Comparison<crate::process::Process<T, S>> for Processes<T, S>
 where
-    T: Display,
-    S: Display,
-    {
+    T: Display + Clone,
+    S: Display + Clone,
+{
     fn add(&mut self, other: crate::process::Process<T, S>) -> &mut Self {
         self.data_set.push(other);
         self
     }
 }
 
-
 impl<T, S> Configurable for Processes<T, S>
 where
-    T: Display,
-    S: Display,
+    T: Display + Clone,
+    S: Display + Clone,
 {
     fn configuration(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -74,11 +85,7 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-
-    /// Write simple gnuplot script for this type of data.
-    ///
     fn plot_script(&self) -> String {
-
         let id = self.get_checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
@@ -124,7 +131,6 @@ where
 
         gnuplot_script
     }
-
 }
 
 impl<T, S> Saveable for Processes<T, S>
@@ -140,19 +146,12 @@ where
         }
         raw_data
     }
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
-    fn save_with_id(&self, id: &String) -> Result<&Self, SavingError> {
+
+    fn save_with_id<U: Display>(&self, id: U) -> Result<&Self, SavingError> {
         for (counter, process) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             process.save_with_id(&inner_id)?;
         }
         Ok(self)
     }
-
 }

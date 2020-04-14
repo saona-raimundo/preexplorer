@@ -1,12 +1,14 @@
 use preexplorer::prelude::*;
 
-fn main() {
-    comparing_interations();
+fn main() -> failure::Fallible<()> {
+    comparing_many()?;
 
-    increasing_comparisons();
+    increasing_comparison()?;
+
+    Ok(())
 }
 
-fn comparing_interations() {
+fn comparing_many() -> failure::Fallible<()> {
     // Computing the data
 
     let data_1 = vec![0. as f32, 1., 2., 3., 4., 5.];
@@ -21,15 +23,20 @@ fn comparing_interations() {
 
     pre::Sequences::new(vec![seq_1, seq_2])
         .title("All together")
-        .plot("1")
-        .unwrap();
+        .plot("1")?;
+
+    Ok(())
 }
 
-fn increasing_comparisons() {
+fn increasing_comparison() -> failure::Fallible<()> {
     // First Sequence
 
     let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    let mut main_plot = data_1.preexplore().title("First").to_owned().to_comparison();
+    let mut main_plot = data_1
+        .preexplore()
+        .title("First")
+        .to_owned()
+        .to_comparison();
 
     // Another sequence
 
@@ -42,7 +49,7 @@ fn increasing_comparisons() {
 
     let data_3 = vec![0.1, 1.5, 7., 5.];
     let group_of_plottings = vec![data_3.preexplore().title("Third").to_owned()];
-    
+
     main_plot.add_many(group_of_plottings);
 
     // Change some settings
@@ -51,5 +58,7 @@ fn increasing_comparisons() {
 
     // Plot everything
 
-    main_plot.plot("my_id").unwrap();
+    main_plot.plot("my_id")?;
+
+    Ok(())
 }

@@ -1,27 +1,59 @@
+//! Generic multi-dimensional data.
+//!
+//! # Remarks
+//!
+//! It should be used with the ``plot_later`` command, writting the perfect
+//! plot script by interacting with gnuplot directly.
+//!
+//! # Examples
+//!
+//! Save data and plot script for posterior analysis.
+//! ```no_run
+//! # use preexplorer::prelude::*;
+//! # use ndarray::array;
+//! let data = array![
+//!     [1, 2, 3, 4, 5],
+//!     [2, 5, 6, 7, 8],
+//!     [3, 11, 12, 13, 14],
+//! ];
+//! let dim = 5;
+//!
+//! pre::Data::new(data.iter(), dim)
+//!     .plot_later("my_identifier")
+//!     .unwrap();
+//! ```
+
 // Structs
 use crate::errors::SavingError;
 
 // Traits
-pub use crate::traits::{Configurable, Saveable, Plotable};
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-/// Missing documentation.
+/// Generic multi-dimensional data.
 ///
 #[derive(Debug, PartialEq, Clone)]
 pub struct Data<T>
 where
     T: Display,
 {
-    pub(crate) data: Vec<T>,
-    pub(crate) config: crate::configuration::Configuration,
-    pub(crate) dim: usize,
+    data: Vec<T>,
+    config: crate::configuration::Configuration,
+    dim: usize,
 }
 
 impl<T> Data<T>
 where
     T: Display,
 {
-    pub fn new<I>(data: I, dim: usize) -> Self 
+    /// Create a new ``Data``.
+    ///
+    /// The parameter ``dim`` represents the dimension of the data.
+    /// Consecutive values are read as part of the same data point,
+    /// meaning that a set of data {x = (x_1, x_2, ..., x_d)}
+    /// should be given in an ``IntoIterator`` that gives the values in
+    /// the following order: x_1, x_2, ..., x_d, y_1, y_2, ..., y_d, etc.
+    pub fn new<I>(data: I, dim: usize) -> Self
     where
         I: IntoIterator<Item = T>,
     {
@@ -48,15 +80,7 @@ impl<T> Saveable for Data<T>
 where
     T: Display + Clone,
 {
-    /// Saves the data under ``data`` directory, and writes a basic plot_script to be used after execution.
-    ///
-    /// # Remark
-    ///
-    /// It is inteded for when one only wants to save the data, and not call any plotting
-    /// during the Rust program execution. Posterior plotting can easily be done with the
-    /// quick template gnuplot script saved under ``plots`` directory.
     fn plotable_data(&self) -> String {
-
         let mut raw_data = String::new();
 
         let mut counter = 0;
@@ -77,35 +101,26 @@ impl<T> Plotable for Data<T>
 where
     T: Display + Clone,
 {
-
-    /// Plots the data by: saving it in hard-disk, writting a plot script for gnuplot and calling it.
-    ///
-    /// # Remark
-    ///
-    /// The plot will be executed asyncroniously and idependently of the Rust program.
-    ///
+    /// Call ``plot_later`` and retunrs error, since generic data
+    /// should be plotted by hand interacting with gnuplot.
     fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
-        
         self.plot_later(id)?;
 
         let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.get_plot_path());
-        Err(std::io::Error::new(
-            std::io::ErrorKind::Other, 
-            message
-        ).into())
+        Err(std::io::Error::new(std::io::ErrorKind::Other, message).into())
     }
 
-    /// Write simple gnuplot script for this type of data.
-    ///
+    /// Basic plot script with the instructions to search for the perfect
+    /// plot in internet.
     fn plot_script(&self) -> String {
-
         let mut gnuplot_script = self.opening_plot_script();
 
-        gnuplot_script += "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
+        gnuplot_script +=
+            "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
         gnuplot_script += "\n# To get the plot, run the following command:";
         gnuplot_script += &format!("\n# gnuplot {:?} \n\n", self.get_plot_path());
         gnuplot_script += &format!("plot {:?} \n", self.get_data_path());
-        
+
         gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script

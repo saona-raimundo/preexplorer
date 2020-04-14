@@ -1,9 +1,8 @@
-use std::ffi::OsStr;
 use crate::constants::PLOT_DIR;
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
-
-pub(crate) mod style;
+pub mod style;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct PlotConfiguration {
@@ -44,7 +43,7 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set title \"{}\"\n", title);
             }
             None => {
-                gnuplot_script += &format!("set title \"\"\n");
+                gnuplot_script += "set title \"\"\n";
             }
         }
 
@@ -53,7 +52,7 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set xlabel \"{}\"\n", labelx);
             }
             None => {
-                gnuplot_script += &format!("set xlabel \"\"\n");
+                gnuplot_script += "set xlabel \"\"\n";
             }
         }
 
@@ -62,7 +61,7 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set ylabel \"{}\"\n", labely);
             }
             None => {
-                gnuplot_script += &format!("set ylabel \"\"\n");
+                gnuplot_script += "set ylabel \"\"\n";
             }
         }
 
@@ -93,7 +92,7 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set xtics {}\n", ticsx);
             }
             None => {
-                gnuplot_script += &format!("unset xtics\n");
+                gnuplot_script += "unset xtics\n";
             }
         }
 
@@ -102,7 +101,7 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set ytics {}\n", ticsy);
             }
             None => {
-                gnuplot_script += &format!("unset ytics\n");
+                gnuplot_script += "unset ytics\n";
             }
         }
 
@@ -111,7 +110,6 @@ impl PlotConfiguration {
 
     pub(crate) fn ending_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
-
 
         if let Some(pause) = &self.get_pause() {
             gnuplot_script += &format!("pause {}", pause);
@@ -156,21 +154,21 @@ impl PlotConfiguration {
         self.dashtype = Some(dashtype);
         self
     }
-    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self 
+    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self
     where
         T: Into<Option<String>>,
     {
         self.ticsx = ticsx.into();
         self
     }
-    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self 
+    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self
     where
         T: Into<Option<String>>,
     {
         self.ticsy = ticsy.into();
         self
     }
-    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self 
+    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self
     where
         T: Into<Option<f64>>,
     {
@@ -184,7 +182,7 @@ impl PlotConfiguration {
         } else {
             self.path_buf.set_file_name(id);
         }
-        
+
         self
     }
 
@@ -223,19 +221,15 @@ impl PlotConfiguration {
     pub(crate) fn get_dashtype(&self) -> Option<usize> {
         self.dashtype
     }
-    pub(crate) fn get_ticsx(&self) -> Option<&String> 
-    {
+    pub(crate) fn get_ticsx(&self) -> Option<&String> {
         self.ticsx.as_ref()
     }
-    pub(crate) fn get_ticsy(&self) -> Option<&String> 
-    {
+    pub(crate) fn get_ticsy(&self) -> Option<&String> {
         self.ticsy.as_ref()
     }
-    pub(crate) fn get_pause(&self) -> Option<f64> 
-    {
+    pub(crate) fn get_pause(&self) -> Option<f64> {
         self.pause
     }
-
 }
 
 impl Default for PlotConfiguration {
@@ -267,9 +261,9 @@ impl Default for PlotConfiguration {
             labely,
             style,
             dashtype,
-            ticsx, 
-            ticsy, 
-            pause, 
+            ticsx,
+            ticsy,
+            pause,
         }
     }
 }
