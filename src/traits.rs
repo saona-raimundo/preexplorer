@@ -743,7 +743,7 @@ pub trait Plotable: Configurable + Saveable {
     /// ```
     fn plot_later(&mut self, id: &str) -> Result<&mut Self, SavingError> {
         self.id(id);
-        self.write_plot_script()?;
+        self.write_plot_script(self.plot_script())?;
         self.save()?;
 
         Ok(self)
@@ -766,7 +766,43 @@ pub trait Plotable: Configurable + Saveable {
     ///     .unwrap();
     /// ```
     fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
-        self.plot_later(id)?;
+        self.id(id);
+        let gnuplot_script = self.plot_script();
+        self.plot_with_script(id, gnuplot_script)?;
+        Ok(self)
+    }
+
+    /// Plot with a custom script. 
+    /// In other words:
+    /// 1. Assign id.
+    /// 2. Save the data.
+    /// 3. Save the custom plot script.
+    /// 4. Run (asynchronous) the plot script.  
+    /// 
+    /// # Remarks
+    /// 
+    /// This is useful when you found a particular gnuplot script you want to plot your data
+    /// with and want to do it directly from Rust. Then, you must hard-code your script in 
+    /// Rust (copy-paste from internet, most of the times). 
+    ///
+    /// Note that you will have to write the full path to the data in the gnuplot format, 
+    /// see the example for more.
+    /// 
+    /// # Examples
+    ///
+    /// Quickest plot.
+    /// ```no_run
+    /// # use preexplorer::prelude::*;
+    /// let mut seq = (0..10).preexplore();
+    /// seq.plot_with_script("my_identifier", "
+    /// plot \"target/preexplorer/data/my_identifier.txt\" with linespoints linecolor 3
+    /// pause 3
+    /// ").unwrap();
+    /// ```
+    fn plot_with_script<S: Display>(&mut self, id: &str, script: S) -> Result<&mut Self, SavingError> {
+        self.id(id);
+        self.save()?;
+        self.write_plot_script(script)?;
 
         let gnuplot_file = self.get_plot_path();
         std::process::Command::new("gnuplot")
@@ -775,16 +811,16 @@ pub trait Plotable: Configurable + Saveable {
         Ok(self)
     }
 
-    /// Write plot script in the machine for posterior running.
+    /// Write plot script given by ``plot_script`` in the machine for posterior running.
     ///
     /// # Remarks
     ///
     /// The method ``plot_later`` might be more useful.
-    fn write_plot_script(&self) -> Result<&Self, SavingError> {
+    fn write_plot_script<S: Display>(&self, gnuplot_script: S) -> Result<&Self, SavingError> {
         let path = self.get_plot_path().parent().unwrap();
         std::fs::create_dir_all(path)?;
         let gnuplot_file = self.get_plot_path();
-        let gnuplot_script = self.plot_script();
+        let gnuplot_script = gnuplot_script.to_string();
 
         std::fs::write(gnuplot_file, gnuplot_script)?;
         Ok(self)

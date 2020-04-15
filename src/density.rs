@@ -1,4 +1,5 @@
-//! Histogram type of plotting: point cloud, density and cummulative distribution.
+//! Histogram type of plotting: point cloud, density or probability density function
+//! (pdf) and cummulative density function (cdf).
 //!
 //! # Examples
 //!
@@ -64,6 +65,9 @@ where
         let realizations: Vec<T> = realizations.into_iter().collect();
         let mut config = crate::configuration::Configuration::default();
         config.style(crate::configuration::plot::style::Style::Histeps);
+        config.custom("cdf", "true");
+        config.custom("pdf", "true");
+        config.custom("cloud", "true");
 
         Density {
             realizations,
@@ -99,6 +103,80 @@ where
         let mut comp: Densities<T> = self.into();
         comp.add_many(others);
         comp
+    }
+
+    /// Controls the plotting of the cummulative density function (cdf). 
+    /// If true, it will appear in the plotting, otherwise it will not.
+    /// 
+    /// # Default
+    /// 
+    /// The default value is true. 
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut den = pre::Density::new((0..10));
+    /// assert_eq!(den.get_cdf(), true);
+    /// den.cdf(false);
+    /// assert_eq!(den.get_cdf(), false);
+    /// ```
+    pub fn cdf(&mut self, cdf: bool) -> &mut Self {
+    	self.configuration().custom("cdf", cdf.to_string());
+    	self
+    }
+
+    /// Controls the plotting of the probability density function (pdf). 
+    /// If true, it will appear in the plotting, otherwise it will not.
+    /// 
+    /// # Default
+    /// 
+    /// The default value is true. 
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut den = pre::Density::new((0..10));
+    /// assert_eq!(den.get_pdf(), true);
+    /// den.pdf(false);
+    /// assert_eq!(den.get_pdf(), false);
+    /// ```
+    pub fn pdf(&mut self, pdf: bool) -> &mut Self {
+    	self.configuration().custom("pdf", pdf.to_string());
+    	self
+    }
+
+    /// Controls the plotting of the point cloud. 
+    /// If true, it will appear in the plotting, otherwise it will not.
+    /// 
+    /// # Default
+    /// 
+    /// The default value is true. 
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut den = pre::Density::new((0..10));
+    /// assert_eq!(den.get_cloud(), true);
+    /// den.cloud(false);
+    /// assert_eq!(den.get_cloud(), false);
+    /// ```
+    pub fn cloud(&mut self, cloud: bool) -> &mut Self {
+    	self.configuration().custom("cloud", cloud.to_string());
+    	self
+    }
+
+    pub fn get_cloud(&self) -> bool {
+    	match self.configuration_as_ref().get_custom("cloud") {
+    		Some(cloud) => std::str::FromStr::from_str(cloud).unwrap(),
+    		None => unreachable!(),
+    	}
+    }
+
+    pub fn get_pdf(&self) -> bool {
+    	match self.configuration_as_ref().get_custom("pdf") {
+    		Some(pdf) => std::str::FromStr::from_str(pdf).unwrap(),
+    		None => unreachable!(),
+    	}
+    }
+    pub fn get_cdf(&self) -> bool {
+    	match self.configuration_as_ref().get_custom("cdf") {
+    		Some(cdf) => std::str::FromStr::from_str(cdf).unwrap(),
+    		None => unreachable!(),
+    	}
     }
 }
 
@@ -178,16 +256,35 @@ where
                     Some(dashtype) => dashtype,
                     None => 1,
                 };
-                gnuplot_script += &format!(
-                    "plot {:?} using 1:(0.25*rand(0)-.35), \\\n",
-                    self.get_data_path(),
-                );
-                gnuplot_script += &format!(
-                    "\t \"\" using (hist($1,width)):(1./(width*len)) smooth frequency with {} dashtype {}, \\\n",
-                    self.get_style(),
-                    dashtype,
-                );
-                gnuplot_script += "\t \"\" using 1:(1.) smooth cnorm \n";
+
+                gnuplot_script += "plot ";
+                if self.get_cloud() {
+                	gnuplot_script += &format!(
+	                    "{:?} using 1:(0.25*rand(0)-.35)",
+	                    self.get_data_path(),
+	                );
+                }
+                if self.get_pdf() {
+                	if self.get_cloud() {
+                		gnuplot_script += ", \\\n\t ";
+                	}
+                	gnuplot_script += &format!(
+                    	"{:?} using (hist($1,width)):(1./(width*len)) smooth frequency with {} dashtype {}",
+                    	self.get_data_path(),
+                    	self.get_style(),
+                    	dashtype,
+                    );
+                }
+                if self.get_cdf() {
+                	if self.get_cloud() || self.get_pdf() {
+                		gnuplot_script += ", \\\n\t ";
+                	}
+                	gnuplot_script += &format!(
+                    	"{:?} using 1:(1.) smooth cnorm",
+                    	self.get_data_path(),
+                    );
+                }
+                gnuplot_script += "\n";
             }
             None => {
                 std::io::Error::new(
