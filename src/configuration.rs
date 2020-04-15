@@ -15,6 +15,8 @@ use std::path::Path;
 pub mod plot;
 pub mod save;
 
+pub use plot::*;
+
 /// Configuration for all basic options included.
 ///
 /// See the documentation of ``Configurable`` trait for all methods.
@@ -235,7 +237,54 @@ mod tests {
     use crate::prelude::*;
 
     #[test]
-    fn check_id() {
+    fn custom() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_custom("new"), None);
+
+        config.custom("new", "new_option");
+        assert_eq!(config.get_custom("new"), Some(&String::from("new_option")));
+    }
+
+    #[test]
+    fn dashtype() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_dashtype(), None);
+
+        config.dashtype(2);
+        assert_eq!(config.get_dashtype(), Some(2));
+    }
+
+    #[test]
+    fn extensions() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_data_extension().unwrap().to_str(), Some("txt"));
+        assert_eq!(config.get_plot_extension().unwrap().to_str(), Some("gnu"));
+
+        config.data_extension("my");
+        assert_eq!(config.get_data_extension().unwrap().to_str(), Some("my"));
+        config.plot_extension("my2");
+        assert_eq!(config.get_plot_extension().unwrap().to_str(), Some("my2"));
+    }
+
+    #[test]
+    fn date() {
+        let mut config = Configuration::default();
+        use chrono::{DateTime, Local};
+        let _date: &DateTime<Local> = config.get_date();
+        config.date(Local::now());
+    }
+
+    #[test]
+    fn header() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_header(), true);
+
+        config.header(false);
+        assert_eq!(config.get_header(), false);
+    }
+
+    #[test]
+    fn id() {
         let mut config = Configuration::default();
 
         config.id(1.to_string());
@@ -246,53 +295,54 @@ mod tests {
     }
 
     #[test]
-    fn check_logx() {
+    fn labels() {
         let mut config = Configuration::default();
-
-        assert_eq!(config.get_logx(), None);
-
-        config.logx(10.);
-
-        assert_eq!(config.get_logx(), Some(10.));
-    }
-
-    #[test]
-    fn check_set_logy() {
-        let mut config = Configuration::default();
-
-        assert_eq!(config.get_logx(), None);
-
-        config.logy(10.);
-
-        assert_eq!(config.get_logy(), Some(10.));
-    }
-
-    #[test]
-    fn check_set_labelx() {
-        let mut config = Configuration::default();
-
         assert_eq!(config.get_labelx(), None);
 
-        let labelx = String::from("try");
-        config.labelx(labelx.clone());
-
-        assert_eq!(config.get_labelx(), Some(&labelx));
+        let label = String::from("try");
+        config.labelx(label.clone());
+        assert_eq!(config.get_labelx(), Some(&label));
+        let label = String::from("try2");
+        config.xlabel(label.clone());
+        assert_eq!(config.get_xlabel(), Some(&label));
+        let label = String::from("try3");
+        config.labely(label.clone());
+        assert_eq!(config.get_labely(), Some(&label));
+        let label = String::from("try4");
+        config.ylabel(label.clone());
+        assert_eq!(config.get_ylabel(), Some(&label));
     }
 
     #[test]
-    fn check_set_labely() {
+    fn log_axis() {
         let mut config = Configuration::default();
+        assert_eq!(config.get_logx(), None);
+        assert_eq!(config.get_logy(), None);
+        assert_eq!(config.get_xlog(), None);
+        assert_eq!(config.get_ylog(), None);
 
-        assert_eq!(config.get_labely(), None);
-
-        let labely = String::from("try");
-        config.labely(labely.clone());
-
-        assert_eq!(config.get_labely(), Some(&labely));
+        config.logx(10.);
+        assert_eq!(config.get_logx(), Some(10.));
+        config.logy(9);
+        assert_eq!(config.get_logy(), Some(9.));
+        config.xlog(8);
+        assert_eq!(config.get_xlog(), Some(8.));
+        config.ylog(7);
+        assert_eq!(config.get_ylog(), Some(7.));
     }
 
     #[test]
-    fn check_paths() {
+    fn pause() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_pause(), Some(-1.0));
+
+        config.pause(2);
+        assert_eq!(config.get_pause(), Some(2.0));
+    }
+
+
+    #[test]
+    fn paths() {
         let mut config = Configuration::default();
 
         assert_eq!(config.get_id(), None);
@@ -334,5 +384,66 @@ mod tests {
             config.get_data_path().file_name().unwrap().to_str(),
             Some("testing.txt")
         );
+    }
+
+    #[test]
+    fn ranges() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_rangex(), None);
+        assert_eq!(config.get_rangey(), None);
+        assert_eq!(config.get_xrange(), None);
+        assert_eq!(config.get_yrange(), None);
+
+
+        config.rangex(1, 2);
+        assert_eq!(config.get_rangex(), Some((1., 2.)));
+        config.rangey(3, 4.5);
+        assert_eq!(config.get_rangey(), Some((3., 4.5)));
+        config.xrange(3, -1.0);
+        assert_eq!(config.get_xrange(), Some((3.0, -1.0)));
+        config.yrange(4, 3);
+        assert_eq!(config.get_yrange(), Some((4.0, 3.0)));
+    }
+
+    #[test]
+    fn style() {
+    	use crate::Style;
+        let mut config = Configuration::default();
+        assert_eq!(config.get_style(), &Style::Default);
+
+        config.style("linespoints");
+        assert_eq!(config.get_style(), &Style::Linespoints);
+        config.style(9);
+        assert_eq!(config.get_style(), &Style::Boxes);
+    }
+
+    #[test]
+    fn tics() {
+        let mut config = Configuration::default();
+        assert_eq!(config.get_ticsx(), Some(&"".to_string()));
+        assert_eq!(config.get_ticsy(), Some(&"".to_string()));
+        assert_eq!(config.get_xtics(), Some(&"".to_string()));
+        assert_eq!(config.get_ytics(), Some(&"".to_string()));
+
+        config.ticsx("try1");
+        assert_eq!(config.get_ticsx(), Some(&"try1".to_string()));
+        config.ticsy(9);
+        assert_eq!(config.get_ticsy(), Some(&"9".to_string()));
+        config.xtics(4);
+        assert_eq!(config.get_xtics(), Some(&"4".to_string()));
+        config.ytics("try2");
+        assert_eq!(config.get_ytics(), Some(&"try2".to_string()));
+    }
+
+    #[test]
+    fn title() {
+    	
+        let mut config = Configuration::default();
+        assert_eq!(config.get_title(), None);
+
+        config.title("try");
+        assert_eq!(config.get_title(), Some(&"try".to_string()));
+        config.title(9);
+        assert_eq!(config.get_title(), Some(&"9".to_string()));
     }
 }

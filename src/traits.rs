@@ -446,7 +446,8 @@ pub trait Configurable {
         self
     }
 
-    /// Control tics in the x axis. See gnuplot documentation for a correct format.
+    /// Control tics in the x axis. Passing ``""`` shows no tics. 
+    /// See gnuplot documentation for a correct format.
     ///
     /// # Examples
     ///
@@ -457,6 +458,14 @@ pub trait Configurable {
     /// seq.ticsx("0, 1.35, 10");
     /// assert_eq!(seq.get_ticsx().unwrap().as_str(), "0, 1.35, 10");
     /// ```
+    ///
+    /// Showing no tics.
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut seq = (0..10).preexplore();
+    /// seq.ticsx("");
+    /// assert_eq!(seq.get_ticsx().unwrap().as_str(), "");
+    /// ```
     fn ticsx<T, S>(&mut self, ticsx: T) -> &mut Self
     where
         T: Into<Option<S>>,
@@ -466,7 +475,8 @@ pub trait Configurable {
         self
     }
 
-    /// Control tics in the y axis. See gnuplot documentation for a correct format.
+    /// Control tics in the y axis. Passing ``""`` shows no tics. 
+    /// See gnuplot documentation for a correct format.
     ///
     /// # Examples
     ///
@@ -476,6 +486,14 @@ pub trait Configurable {
     /// let mut seq = (0..10).preexplore();
     /// seq.ticsy("0, 1.35, 10");
     /// assert_eq!(seq.get_ticsy().unwrap().as_str(), "0, 1.35, 10");
+    /// ```
+    ///
+    /// Showing no tics.
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut seq = (0..10).preexplore();
+    /// seq.ticsy("");
+    /// assert_eq!(seq.get_ticsx().unwrap().as_str(), "");
     /// ```
     fn ticsy<T, S>(&mut self, ticsy: T) -> &mut Self
     where
@@ -513,7 +531,17 @@ pub trait Configurable {
     }
 
     /// Control the time for which the plot is in the screen. The unit is seconds.
-    /// Any negative number means "until a key is pressed".
+    /// Any negative number means "until a key is pressed". To have no pause, pass 
+    /// ``0``, instead of ``None``. 
+    /// 
+    /// # Default
+    /// 
+    /// The default value is -1. 
+    /// ```no_run
+    /// # use preexplorer::prelude::*;
+    /// let seq = (0..10).preexplore();
+    /// assert_eq!(seq.get_pause(), Some(-1.0));
+    /// ```
     ///
     /// # Examples
     ///
@@ -524,6 +552,15 @@ pub trait Configurable {
     /// seq.pause(2);
     /// assert_eq!(seq.get_pause(), Some(2.0));
     /// seq.plot("two_seconds_test").unwrap();
+    /// ```
+    /// 
+    /// This plot will have no pause before closing.
+    /// ```no_run
+    /// # use preexplorer::prelude::*;
+    /// let mut seq = (0..10).preexplore();
+    /// seq.pause(0);
+    /// assert_eq!(seq.get_pause(), Some(0.0));
+    /// seq.plot("silent_plot").unwrap();
     /// ```
     fn pause<T, S>(&mut self, pause: T) -> &mut Self
     where

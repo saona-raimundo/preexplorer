@@ -20,7 +20,6 @@ This is the crate for you!
 
 - Easy plotting
 - Easy comparison
-- Extensible options
 - Implementable traits
 - Extensive documentation
 
@@ -40,16 +39,15 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 
 
 
-# To do 
+# Future
 
 - [ ] New Structs for error plotting
   - [ ] SequenceWithError 
   - [ ] ProcessWithError
-- [ ] test all methods in the Configurable trait 
-- More customization
-  - Audio
-    - audify()
-    - sonify()
+- [ ] More senses
+  - [ ] Audio
+    - [ ] audify()
+    - [ ] sonify()
 
 # Q & A
 
@@ -57,6 +55,8 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
    Because of Rust explicit typing: comparisons need to save an explicit type. 
 2. Are there n-dimensional variants?
    No, it is out of scope. Please implement your own plot script for that. You can do so easily based in the Data struct. 
+3. How to deactivate some options, e.g. tics?
+   What would represent the empty value instead of None. This happens because of inferring type errors in Rust.
 
 # Disclaimer
 

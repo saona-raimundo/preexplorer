@@ -4,6 +4,8 @@ use std::path::{Path, PathBuf};
 
 pub mod style;
 
+pub use style::*;
+
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub(crate) struct PlotConfiguration {
     path_buf: PathBuf,
@@ -16,7 +18,7 @@ pub(crate) struct PlotConfiguration {
     rangey: Option<(f64, f64)>,
     ticsx: Option<String>,
     ticsy: Option<String>,
-    style: crate::configuration::plot::style::Style,
+    style: Style,
     dashtype: Option<usize>,
     pause: Option<f64>,
 }
@@ -146,7 +148,7 @@ impl PlotConfiguration {
         self.rangey = Some(rangey);
         self
     }
-    pub(crate) fn style(&mut self, style: crate::configuration::plot::style::Style) -> &mut Self {
+    pub(crate) fn style(&mut self, style: Style) -> &mut Self {
         self.style = style;
         self
     }
@@ -244,7 +246,7 @@ impl Default for PlotConfiguration {
         let labely = None;
         let rangex = None;
         let rangey = None;
-        let style = crate::configuration::plot::style::Style::Default;
+        let style = Style::Default;
         let dashtype = None;
         let ticsx = Some(String::from(""));
         let ticsy = Some(String::from(""));
