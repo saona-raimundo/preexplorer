@@ -72,4 +72,4 @@ Last version:
   - Documentation added, specially triats.
   - New default plot for Density 
 
-For more, see [Changelog](https://github.com/rasa200/markovian/blob/master/Changelog.md).
+For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).
