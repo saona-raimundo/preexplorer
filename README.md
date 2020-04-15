@@ -1,20 +1,31 @@
 # preexplorer
-Easy plotter and saver of simple data. Handy tool for development stage or small computational projects. 
+Easy plotter and saver of simple data. Handy tool for development stage or small computational projects. Save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
 
-
-
-Handy way to save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
-if you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
-
-
-
-Rust is meant for computations and plotting is usually an iterative process, done best in tools like [gnuplot](http://www.gnuplot.info/). That is way we separate both steps: compute in Rust, save the data, find the best plot with [gnuplot](http://www.gnuplot.info/). 
+If you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
 
 # Purpose
 
 Do you have a costly process in Rust and want to save the data for postprocessing?
 Would you like to still have a basic glance to check it and leave fine-tuning of the plot for later?
 This is the crate for you!
+
+# Work flow
+
+1. Compute your thing in Rust
+2. Pass the results to a suitable struct from ``preexplorer``, or use the ``preexplore`` method.
+3. Use the method ``plot`` or ``plot_later``. 
+
+In both cases, after ``cargo run``, your data is saved and a suitable first script for gnuplot to plot it is saved too. If you used ``plot``, you will get a plot by gnuplot that you can save. 
+
+To get the plot again, run from the console
+
+``gnuplot target\\preexplorer\\plots\\my_identifier.gnu``,
+
+where ``my_identifier`` is the name you gave in rust. That is the location of the script for gnuplot.
+
+Want a different plot? Change this file according to your needs and run again. 
+
+Want to use gnuplot as an interactive plotting engine? Run ``gnuplot`` in the console, copy and paste the script and keep going with your favorite gnuplot commands.
 
 # Main features
 
@@ -26,10 +37,6 @@ This is the crate for you!
 # Examples
 
 For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
-
-# Warning
-
-For now, this crate is Windows only, because of extensions in file name. Help wanted.
 
 # Installation
 
@@ -68,8 +75,7 @@ There is no connection with the gnuplot project.
 
 Last version:
 
-- 0.2.1
-  - Documentation added, specially triats.
-  - New default plot for Density 
+- 0.2.2
+  - Documentation improved.
 
 For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).

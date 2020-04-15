@@ -28,7 +28,8 @@
 //! use preexplorer::prelude::*;
 //! (0..100).map(|i| i * i)
 //!     .preexplore()
-//!     .plot("My first plot")
+//! 	.title("My computations")
+//!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
 //!
@@ -40,10 +41,32 @@
 //! let simulation_results: Vec<f64> = (0..100).map(|_| thread_rng().sample(Exp1)).collect();
 //! pre::Density::new(simulation_results)
 //!     .title("Empirical Exponential 1")
-//!     .plot("My first empirical distribution")
+//!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
-
+//! 
+//! Save some data (mostly numerical: matrices, simulation results and related errors, etc).
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! let my_data = vec![0., 1.1, 0.001, 2., 2.3, 0.01, 3., 1.7, 0.02]; // Some data
+//! let dimension = 2;
+//! pre::Data::new(my_data, dimension)
+//!     .title("My title")
+//!     .plot_later("my_identifier")
+//!     .unwrap();
+//! ```
+//! 
+//! Plot some function in a grid. 
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! use ndarray::Array;
+//! let grid = Array::linspace(0., 1., 20);
+//! let values = grid.iter().map(|x| x * x);
+//! (grid.iter(), values).preexplore()
+//!     .title("My title")
+//!     .plot_later("my_identifier")
+//!     .unwrap();
+//! ```
 
 /// Generic multi-dimensional data. Not automatically ploted.
 pub mod data;
