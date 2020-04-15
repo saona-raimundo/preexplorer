@@ -61,3 +61,15 @@ For now, this crate is Windows only, because of extensions in file name. Help wa
 # Disclaimer
 
 There is no connection with the gnuplot project.
+
+
+
+# Changelog
+
+Last version:
+
+- 0.2.1
+  - Documentation added, specially triats.
+  - New default plot for Density 
+
+For more, see [Changelog](https://github.com/rasa200/markovian/blob/master/Changelog.md).
