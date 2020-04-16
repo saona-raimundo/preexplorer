@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.3
+
+- 
+
+## 0.2.2
+
+- Documentation improved.
+
 ## 0.2.1
 
 - Documentation added, specially triats.

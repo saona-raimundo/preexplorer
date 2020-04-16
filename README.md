@@ -46,8 +46,10 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
-- [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/)
-- [ ] 
+- [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
+- [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/) 
+- [ ] derive macros?
+  - [ ] Configurable?
 
 # Future
 
@@ -78,7 +80,7 @@ There is no connection with the gnuplot project.
 
 Last version:
 
-- 0.2.2
-  - Documentation improved.
+- 0.2.3
+  - Update dependencies. 
 
 For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).

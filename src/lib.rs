@@ -28,7 +28,7 @@
 //! use preexplorer::prelude::*;
 //! (0..100).map(|i| i * i)
 //!     .preexplore()
-//! 	.title("My computations")
+//!     .title("My computations")
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
