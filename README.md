@@ -44,7 +44,10 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 - Add ``preexplorer = "0.2"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
+# To do
 
+- [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/)
+- [ ] 
 
 # Future
 
