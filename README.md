@@ -47,6 +47,9 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 # To do
 
 - [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
+  - [ ] errors should implement correctly the `Error` trait!!
+- [ ] Update the crate structure
+  - [ ] More ergonomic crate and documentation
 - [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/) 
 - [ ] derive macros?
   - [ ] Configurable?
