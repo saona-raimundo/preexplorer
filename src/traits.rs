@@ -778,7 +778,7 @@ pub trait Plotable: Configurable + Saveable {
     ///     .plot_later("my_identifier")
     ///     .unwrap();
     /// ```
-    fn plot_later(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+    fn plot_later<S: Display>(&mut self, id: S) -> Result<&mut Self, SavingError> {
         self.id(id);
         self.write_plot_script(self.plot_script())?;
         self.save()?;
@@ -802,8 +802,9 @@ pub trait Plotable: Configurable + Saveable {
     ///     .plot("my_identifier")
     ///     .unwrap();
     /// ```
-    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
-        self.id(id);
+    fn plot<S: Display>(&mut self, id: S) -> Result<&mut Self, SavingError> {
+        let id = id.to_string();
+        self.id(id.clone());
         let gnuplot_script = self.plot_script();
         self.plot_with_script(id, gnuplot_script)?;
         Ok(self)
@@ -836,7 +837,7 @@ pub trait Plotable: Configurable + Saveable {
     /// pause 3
     /// ").unwrap();
     /// ```
-    fn plot_with_script<S: Display>(&mut self, id: &str, script: S) -> Result<&mut Self, SavingError> {
+    fn plot_with_script<S: Display, T: Display>(&mut self, id: S, script: T) -> Result<&mut Self, SavingError> {
         self.id(id);
         self.save()?;
         self.write_plot_script(script)?;

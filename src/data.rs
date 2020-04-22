@@ -103,7 +103,7 @@ where
 {
     /// Call ``plot_later`` and retunrs error, since generic data
     /// should be plotted by hand interacting with gnuplot.
-    fn plot(&mut self, id: &str) -> Result<&mut Self, SavingError> {
+    fn plot<S: Display>(&mut self, id: S) -> Result<&mut Self, SavingError> {
         self.plot_later(id)?;
 
         let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.get_plot_path());

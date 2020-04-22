@@ -46,6 +46,8 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
+- [ ] Add `extern crate crate_name;` in examples for explicit dependences. 
+- [ ] Correct first two examples in the documentation
 - [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
   - [ ] errors should implement correctly the `Error` trait!!
 - [ ] Update the crate structure
@@ -85,5 +87,6 @@ Last version:
 
 - 0.2.3
   - Update dependencies. 
+  - More general input for id's. 
 
 For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).
