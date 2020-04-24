@@ -46,6 +46,12 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
+- [ ] Implement (for ease of use)
+  - [ ] Add
+  - [ ] AddAssign
+- [ ] Add images by
+  - [ ] ``<img src="https://rust-ndarray.github.io/ndarray/images/axis_iter_3_4_5.svg" height="250px">``
+- [ ] Read API guidelines about getter and setter methods. 
 - [ ] Add `extern crate crate_name;` in examples for explicit dependences. 
 - [ ] Correct first two examples in the documentation
 - [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
