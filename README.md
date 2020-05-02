@@ -52,26 +52,6 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 - Add ``preexplorer = "0.2"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
-# To do
-
-- [ ] Include [getset](https://docs.rs/getset/0.1.0/getset/)
-- [ ] Add command line to base_gnuplot_script
-- [ ] Implement (for ease of use)
-  - [ ] Add
-  - [ ] AddAssign
-- [ ] Add images by
-  - [ ] ``<img src="https://rust-ndarray.github.io/ndarray/images/axis_iter_3_4_5.svg" height="250px">``
-- [ ] Add `extern crate crate_name;` in examples for explicit dependences. 
-- [ ] Correct first two examples in the documentation
-- [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
-  - [ ] errors should implement correctly the `Error` trait!!
-- [ ] Update the crate structure
-  - [ ] More ergonomic crate and documentation
-- [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/) 
-  - [ ] setter and getter methods?
-- [ ] derive macros?
-  - [ ] Configurable?
-
 # Future
 
 - [ ] New Structs for error plotting
@@ -104,5 +84,6 @@ Last version:
 - 0.2.3
   - Update dependencies. 
   - More general input for id's. 
+  - Improved documentation.
 
 For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).

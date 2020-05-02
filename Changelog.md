@@ -2,7 +2,9 @@
 
 ## 0.2.3
 
-- 
+- Update dependencies. 
+- More general input for id's. 
+- Documentation improved: now images in rustdoc.
 
 ## 0.2.2
 
