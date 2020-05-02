@@ -1,4 +1,12 @@
 # preexplorer
+
+[![Download](https://img.shields.io/crates/d/preexplorer)](https://crates.io/crates/preexplorer)
+[![License](https://img.shields.io/crates/l/preexplorer)](https://github.com/rasa200/preexplorer)
+[![Docs](https://docs.rs/preexplorer/badge.svg)](https://docs.rs/preexplorer/)
+[![Crate](https://img.shields.io/crates/v/preexplorer.svg)](https://crates.io/crates/preexplorer)
+
+
+
 Easy plotter and saver of simple data. Handy tool for development stage or small computational projects. Save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
 
 If you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
@@ -46,12 +54,13 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # To do
 
+- [ ] Include [getset](https://docs.rs/getset/0.1.0/getset/)
+- [ ] Add command line to base_gnuplot_script
 - [ ] Implement (for ease of use)
   - [ ] Add
   - [ ] AddAssign
 - [ ] Add images by
   - [ ] ``<img src="https://rust-ndarray.github.io/ndarray/images/axis_iter_3_4_5.svg" height="250px">``
-- [ ] Read API guidelines about getter and setter methods. 
 - [ ] Add `extern crate crate_name;` in examples for explicit dependences. 
 - [ ] Correct first two examples in the documentation
 - [ ] Move to [thiserror](https://github.com/dtolnay/thiserror) and [anyhow](https://github.com/dtolnay/anyhow) 
@@ -59,6 +68,7 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 - [ ] Update the crate structure
   - [ ] More ergonomic crate and documentation
 - [ ] [Rust API guidelines](https://rust-lang.github.io/api-guidelines/) 
+  - [ ] setter and getter methods?
 - [ ] derive macros?
   - [ ] Configurable?
 

@@ -32,6 +32,7 @@
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
+//! <img src="https://rust-ndarray.github.io/ndarray/images/axis_iter_3_4_5.svg" height="250px">
 //!
 //! Check numerical simulations.
 //! ```no-run
