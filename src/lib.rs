@@ -32,7 +32,6 @@
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
-//! <img src="https://user-images.githubusercontent.com/37874270/80872430-36391780-8cb2-11ea-9b84-7cb1d95f4f58.png" height="200px">
 //!
 //! Check numerical simulations.
 //! ```no_run
@@ -45,7 +44,6 @@
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
-//! <img src="https://user-images.githubusercontent.com/37874270/80872547-e27afe00-8cb2-11ea-9c9a-006d6793f133.png" height="200px">
 //! 
 //! Save some data (mostly numerical: matrices, simulation results and related errors, etc).
 //! ```no_run
@@ -69,7 +67,6 @@
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
-//! <img src="https://user-images.githubusercontent.com/37874270/80872600-27069980-8cb3-11ea-9f3f-4a60e5c4d06a.png" height="200px">
 
 /// Generic multi-dimensional data. Not automatically ploted.
 pub mod data;
