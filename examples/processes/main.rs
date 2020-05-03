@@ -1,12 +1,12 @@
 use preexplorer::prelude::*;
 
-fn main() -> failure::Fallible<()> {
+fn main() -> anyhow::Result<()> {
     let times = vec![1., 10., 100.];
     let values = vec![1, 2, 4];
     let plotting = (times, values)
         .preexplore()
-        .title("My Title")
-        .logx(2) // Will be forgotten in the comparison plot
+        .set_title("My Title")
+        .set_logx(2) // Will be forgotten in the comparison plot
         .to_owned();
 
     let times = vec![1., 10., 100.];

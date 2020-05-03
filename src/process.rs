@@ -92,10 +92,10 @@ where
     /// Compare many ``Process``es by gathering all first (in some ``IntoIterator``).
     /// ```no_run
     /// use preexplorer::prelude::*;
-    /// let first_pro = ((0..10), (0..10)).preexplore().title("legend").to_owned();
+    /// let first_pro = ((0..10), (0..10)).preexplore().set_title("legend").to_owned();
     /// let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
     /// let mut processes = first_pro.compare_with(many_pros);
-    /// processes.title("Main title");
+    /// processes.set_title("Main title");
     /// ```
     pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<T, S>
     where
@@ -112,10 +112,10 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -142,15 +142,15 @@ where
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        let dashtype = match self.get_dashtype() {
+        let dashtype = match self.dashtype() {
             Some(dashtype) => dashtype,
             None => 1,
         };
 
         gnuplot_script += &format!(
             "plot {:?} using 1:2 with {} dashtype {}\n",
-            self.get_data_path(),
-            self.get_style(),
+            self.data_path(),
+            self.style(),
             dashtype,
         );
         gnuplot_script += &self.ending_plot_script();

@@ -79,11 +79,4 @@ There is no connection with the gnuplot project.
 
 # Changelog
 
-Last version:
-
-- 0.2.3
-  - Update dependencies. 
-  - More general input for id's. 
-  - Improved documentation.
-
-For more, see [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).
+See [Changelog](https://github.com/rasa200/preexplorer/blob/master/Changelog.md).

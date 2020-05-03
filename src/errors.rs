@@ -1,23 +1,12 @@
-//! Errors from the crate. 
+//! Errors from the crate.
 
-use failure::Fail;
+use thiserror::Error;
 
-/// Error from writting while saving files (data or plot scripts). 
-#[derive(Fail, Debug)]
-#[fail(display = "Failed while saving or plotting.")]
-pub struct SavingError {
-    #[cause]
-    pub(crate) cause: std::io::Error,
-}
-
-impl SavingError {
-    pub fn new(e: std::io::Error) -> Self {
-        SavingError { cause: e }
-    }
-}
-
-impl From<std::io::Error> for SavingError {
-    fn from(e: std::io::Error) -> Self {
-        SavingError { cause: e }
-    }
+/// Error from writting while saving files (data or plot scripts).
+#[derive(Error, Debug)]
+pub enum PreexplorerError {
+    #[error("Saving error.")]
+    Saving(#[from] std::io::Error),
+    #[error("Plotting error.")]
+    Plotting(std::io::Error),
 }

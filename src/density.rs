@@ -54,7 +54,7 @@ where
     /// use rand::prelude::*;
     /// let simulation_results: Vec<f64> = (0..100).map(|_| thread_rng().sample(Exp1)).collect();
     /// pre::Density::new(simulation_results)
-    ///     .title("Empirical Exponential 1")
+    ///     .set_title("Empirical Exponential 1")
     ///     .plot("my_identifier")
     ///     .unwrap();
     /// ```
@@ -64,10 +64,10 @@ where
     {
         let realizations: Vec<T> = realizations.into_iter().collect();
         let mut config = crate::configuration::Configuration::default();
-        config.style(crate::configuration::plot::style::Style::Histeps);
-        config.custom("cdf", "true");
-        config.custom("pdf", "true");
-        config.custom("cloud", "true");
+        config.set_style(crate::configuration::plot::style::Style::Histeps);
+        config.set_custom("cdf", "true");
+        config.set_custom("pdf", "true");
+        config.set_custom("cloud", "true");
 
         Density {
             realizations,
@@ -91,10 +91,10 @@ where
     /// Compare many ``Density``s by gathering all first (in some ``IntoIterator``).
     /// ```no_run
     /// use preexplorer::prelude::*;
-    /// let first_den = pre::Density::new((0..10)).title("legend").to_owned();
+    /// let first_den = pre::Density::new((0..10)).set_title("legend").to_owned();
     /// let many_dens = (0..5).map(|_| pre::Density::new((0..10)));
     /// let mut densities = first_den.compare_with(many_dens);
-    /// densities.title("Main title");
+    /// densities.set_title("Main title");
     /// ```
     pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<T>
     where
@@ -105,78 +105,78 @@ where
         comp
     }
 
-    /// Controls the plotting of the cummulative density function (cdf). 
+    /// Controls the plotting of the cummulative density function (cdf).
     /// If true, it will appear in the plotting, otherwise it will not.
-    /// 
+    ///
     /// # Default
-    /// 
-    /// The default value is true. 
+    ///
+    /// The default value is true.
     /// ```
     /// # use preexplorer::prelude::*;
     /// let mut den = pre::Density::new((0..10));
-    /// assert_eq!(den.get_cdf(), true);
-    /// den.cdf(false);
-    /// assert_eq!(den.get_cdf(), false);
+    /// assert_eq!(den.cdf(), true);
+    /// den.set_cdf(false);
+    /// assert_eq!(den.cdf(), false);
     /// ```
-    pub fn cdf(&mut self, cdf: bool) -> &mut Self {
-    	self.configuration().custom("cdf", cdf.to_string());
-    	self
+    pub fn set_cdf(&mut self, cdf: bool) -> &mut Self {
+        self.configuration_mut().set_custom("cdf", cdf.to_string());
+        self
     }
 
-    /// Controls the plotting of the probability density function (pdf). 
+    /// Controls the plotting of the probability density function (pdf).
     /// If true, it will appear in the plotting, otherwise it will not.
-    /// 
+    ///
     /// # Default
-    /// 
-    /// The default value is true. 
+    ///
+    /// The default value is true.
     /// ```
     /// # use preexplorer::prelude::*;
     /// let mut den = pre::Density::new((0..10));
-    /// assert_eq!(den.get_pdf(), true);
-    /// den.pdf(false);
-    /// assert_eq!(den.get_pdf(), false);
+    /// assert_eq!(den.pdf(), true);
+    /// den.set_pdf(false);
+    /// assert_eq!(den.pdf(), false);
     /// ```
-    pub fn pdf(&mut self, pdf: bool) -> &mut Self {
-    	self.configuration().custom("pdf", pdf.to_string());
-    	self
+    pub fn set_pdf(&mut self, pdf: bool) -> &mut Self {
+        self.configuration_mut().set_custom("pdf", pdf.to_string());
+        self
     }
 
-    /// Controls the plotting of the point cloud. 
+    /// Controls the plotting of the point cloud.
     /// If true, it will appear in the plotting, otherwise it will not.
-    /// 
+    ///
     /// # Default
-    /// 
-    /// The default value is true. 
+    ///
+    /// The default value is true.
     /// ```
     /// # use preexplorer::prelude::*;
     /// let mut den = pre::Density::new((0..10));
-    /// assert_eq!(den.get_cloud(), true);
-    /// den.cloud(false);
-    /// assert_eq!(den.get_cloud(), false);
+    /// assert_eq!(den.cloud(), true);
+    /// den.set_cloud(false);
+    /// assert_eq!(den.cloud(), false);
     /// ```
-    pub fn cloud(&mut self, cloud: bool) -> &mut Self {
-    	self.configuration().custom("cloud", cloud.to_string());
-    	self
+    pub fn set_cloud(&mut self, cloud: bool) -> &mut Self {
+        self.configuration_mut().set_custom("cloud", cloud.to_string());
+        self
     }
 
-    pub fn get_cloud(&self) -> bool {
-    	match self.configuration_as_ref().get_custom("cloud") {
-    		Some(cloud) => std::str::FromStr::from_str(cloud).unwrap(),
-    		None => unreachable!(),
-    	}
+    pub fn cloud(&self) -> bool {
+        match self.configuration().custom("cloud") {
+            Some(cloud) => std::str::FromStr::from_str(cloud).unwrap(),
+            None => unreachable!(),
+        }
     }
 
-    pub fn get_pdf(&self) -> bool {
-    	match self.configuration_as_ref().get_custom("pdf") {
-    		Some(pdf) => std::str::FromStr::from_str(pdf).unwrap(),
-    		None => unreachable!(),
-    	}
+    pub fn pdf(&self) -> bool {
+        match self.configuration().custom("pdf") {
+            Some(pdf) => std::str::FromStr::from_str(pdf).unwrap(),
+            None => unreachable!(),
+        }
     }
-    pub fn get_cdf(&self) -> bool {
-    	match self.configuration_as_ref().get_custom("cdf") {
-    		Some(cdf) => std::str::FromStr::from_str(cdf).unwrap(),
-    		None => unreachable!(),
-    	}
+    pub fn cdf(&self) -> bool {
+        match self.configuration().custom("cdf") {
+            Some(cdf) => std::str::FromStr::from_str(cdf).unwrap(),
+            None => unreachable!(),
+        }
     }
 }
 
@@ -184,10 +184,10 @@ impl<T> Configurable for Density<T>
 where
     T: PartialOrd + Display + Clone,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -252,37 +252,33 @@ where
                 gnuplot_script += &format!("width = ({} - {}) / nbins #width\n\n", max, min);
                 gnuplot_script += "# function used to map a value to the intervals\n";
                 gnuplot_script += "hist(x,width) = width * floor(x/width)\n\n";
-                let dashtype = match self.get_dashtype() {
+                let dashtype = match self.dashtype() {
                     Some(dashtype) => dashtype,
                     None => 1,
                 };
 
                 gnuplot_script += "plot ";
-                if self.get_cloud() {
-                	gnuplot_script += &format!(
-	                    "{:?} using 1:(0.25*rand(0)-.35)",
-	                    self.get_data_path(),
-	                );
+                if self.cloud() {
+                    gnuplot_script +=
+                        &format!("{:?} using 1:(0.25*rand(0)-.35)", self.data_path(),);
                 }
-                if self.get_pdf() {
-                	if self.get_cloud() {
-                		gnuplot_script += ", \\\n\t ";
-                	}
-                	gnuplot_script += &format!(
+                if self.pdf() {
+                    if self.cloud() {
+                        gnuplot_script += ", \\\n\t ";
+                    }
+                    gnuplot_script += &format!(
                     	"{:?} using (hist($1,width)):(1./(width*len)) smooth frequency with {} dashtype {}",
-                    	self.get_data_path(),
-                    	self.get_style(),
+                    	self.data_path(),
+                    	self.style(),
                     	dashtype,
                     );
                 }
-                if self.get_cdf() {
-                	if self.get_cloud() || self.get_pdf() {
-                		gnuplot_script += ", \\\n\t ";
-                	}
-                	gnuplot_script += &format!(
-                    	"{:?} using 1:(1.) smooth cnorm",
-                    	self.get_data_path(),
-                    );
+                if self.cdf() {
+                    if self.cloud() || self.pdf() {
+                        gnuplot_script += ", \\\n\t ";
+                    }
+                    gnuplot_script +=
+                        &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
                 }
                 gnuplot_script += "\n";
             }

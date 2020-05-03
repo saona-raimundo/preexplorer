@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- More intuitive and idiomatic crate structure.
+- Idiomatic implementation of Setter and Getter methods.
+- Moved from failure to thiserror crate.
+
 ## 0.2.4
 
 - Documentation bug: rustdoc and images.

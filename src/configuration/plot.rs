@@ -1,12 +1,17 @@
+// Structs
 use crate::constants::PLOT_DIR;
 use std::ffi::OsStr;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
+
+// Traits
+use getset::{Getters};
 
 pub mod style;
 
 pub use style::*;
 
-#[derive(Debug, PartialOrd, PartialEq, Clone)]
+#[derive(Getters, Debug, PartialOrd, PartialEq, Clone)]
+#[getset(get = "pub")]
 pub(crate) struct PlotConfiguration {
     path_buf: PathBuf,
     title: Option<String>,
@@ -24,7 +29,7 @@ pub(crate) struct PlotConfiguration {
 }
 
 impl PlotConfiguration {
-    pub(crate) fn extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
+    pub(crate) fn set_extension<S: AsRef<OsStr>>(&mut self, extension: S) -> &mut Self {
         self.path_buf.set_extension(extension);
         self
     }
@@ -40,7 +45,7 @@ impl PlotConfiguration {
     pub(crate) fn opening_plot_script_comparison(&self) -> String {
         let mut gnuplot_script = String::new();
 
-        match self.get_title() {
+        match self.title() {
             Some(title) => {
                 gnuplot_script += &format!("set title \"{}\"\n", title);
             }
@@ -49,7 +54,7 @@ impl PlotConfiguration {
             }
         }
 
-        match self.get_labelx() {
+        match self.labelx() {
             Some(labelx) => {
                 gnuplot_script += &format!("set xlabel \"{}\"\n", labelx);
             }
@@ -58,7 +63,7 @@ impl PlotConfiguration {
             }
         }
 
-        match self.get_labely() {
+        match self.labely() {
             Some(labely) => {
                 gnuplot_script += &format!("set ylabel \"{}\"\n", labely);
             }
@@ -67,14 +72,14 @@ impl PlotConfiguration {
             }
         }
 
-        if let Some(logx) = &self.get_logx() {
+        if let Some(logx) = &self.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
             } else {
                 gnuplot_script += &format!("set logscale x {}\n", logx);
             }
         }
-        if let Some(logy) = &self.get_logy() {
+        if let Some(logy) = &self.logy() {
             if *logy <= 0.0 {
                 gnuplot_script += "set logscale y\n";
             } else {
@@ -82,14 +87,14 @@ impl PlotConfiguration {
             }
         }
 
-        if let Some(rangex) = &self.get_rangex() {
+        if let Some(rangex) = &self.rangex() {
             gnuplot_script += &format!("set xrange [{}:{}]\n", rangex.0, rangex.1);
         }
-        if let Some(rangey) = &self.get_rangey() {
+        if let Some(rangey) = &self.rangey() {
             gnuplot_script += &format!("set yrange [{}:{}]\n", rangey.0, rangey.1);
         }
 
-        match self.get_ticsx() {
+        match self.ticsx() {
             Some(ticsx) => {
                 gnuplot_script += &format!("set xtics {}\n", ticsx);
             }
@@ -98,7 +103,7 @@ impl PlotConfiguration {
             }
         }
 
-        match self.get_ticsy() {
+        match self.ticsy() {
             Some(ticsy) => {
                 gnuplot_script += &format!("set ytics {}\n", ticsy);
             }
@@ -113,71 +118,71 @@ impl PlotConfiguration {
     pub(crate) fn ending_plot_script(&self) -> String {
         let mut gnuplot_script = String::new();
 
-        if let Some(pause) = &self.get_pause() {
+        if let Some(pause) = &self.pause() {
             gnuplot_script += &format!("pause {}", pause);
         }
 
         gnuplot_script
     }
 
-    pub(crate) fn title(&mut self, title: String) -> &mut Self {
+    pub(crate) fn set_title(&mut self, title: String) -> &mut Self {
         self.title = Some(title);
         self
     }
-    pub(crate) fn logx(&mut self, logx: f64) -> &mut Self {
+    pub(crate) fn set_logx(&mut self, logx: f64) -> &mut Self {
         self.logx = Some(logx);
         self
     }
-    pub(crate) fn logy(&mut self, logy: f64) -> &mut Self {
+    pub(crate) fn set_logy(&mut self, logy: f64) -> &mut Self {
         self.logy = Some(logy);
         self
     }
-    pub(crate) fn labelx(&mut self, labelx: String) -> &mut Self {
+    pub(crate) fn set_labelx(&mut self, labelx: String) -> &mut Self {
         self.labelx = Some(labelx);
         self
     }
-    pub(crate) fn labely(&mut self, labely: String) -> &mut Self {
+    pub(crate) fn set_labely(&mut self, labely: String) -> &mut Self {
         self.labely = Some(labely);
         self
     }
-    pub(crate) fn rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
+    pub(crate) fn set_rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
         self.rangex = Some(rangex);
         self
     }
-    pub(crate) fn rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
+    pub(crate) fn set_rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
         self.rangey = Some(rangey);
         self
     }
-    pub(crate) fn style(&mut self, style: Style) -> &mut Self {
+    pub(crate) fn set_style(&mut self, style: Style) -> &mut Self {
         self.style = style;
         self
     }
-    pub(crate) fn dashtype(&mut self, dashtype: usize) -> &mut Self {
+    pub(crate) fn set_dashtype(&mut self, dashtype: usize) -> &mut Self {
         self.dashtype = Some(dashtype);
         self
     }
-    pub(crate) fn ticsx<T>(&mut self, ticsx: T) -> &mut Self
+    pub(crate) fn set_ticsx<T>(&mut self, ticsx: T) -> &mut Self
     where
         T: Into<Option<String>>,
     {
         self.ticsx = ticsx.into();
         self
     }
-    pub(crate) fn ticsy<T>(&mut self, ticsy: T) -> &mut Self
+    pub(crate) fn set_ticsy<T>(&mut self, ticsy: T) -> &mut Self
     where
         T: Into<Option<String>>,
     {
         self.ticsy = ticsy.into();
         self
     }
-    pub(crate) fn pause<T>(&mut self, pause: T) -> &mut Self
+    pub(crate) fn set_pause<T>(&mut self, pause: T) -> &mut Self
     where
         T: Into<Option<f64>>,
     {
         self.pause = pause.into();
         self
     }
-    pub(crate) fn id<S: AsRef<OsStr>>(&mut self, id: S) -> &mut Self {
+    pub(crate) fn set_id<S: AsRef<OsStr>>(&mut self, id: S) -> &mut Self {
         if let Some(extension) = self.path_buf.clone().extension() {
             self.path_buf.set_file_name(id);
             self.path_buf.set_extension(extension);
@@ -187,50 +192,8 @@ impl PlotConfiguration {
 
         self
     }
-
-    //////////////////////////////////////////////////////////
-    // Getting
-    pub(crate) fn get_extension(&self) -> Option<&OsStr> {
+    pub(crate) fn extension(&self) -> Option<&OsStr> {
         self.path_buf.extension()
-    }
-    pub(crate) fn get_path(&self) -> &Path {
-        self.path_buf.as_path()
-    }
-    pub(crate) fn get_title(&self) -> Option<&String> {
-        self.title.as_ref()
-    }
-    pub(crate) fn get_logx(&self) -> Option<f64> {
-        self.logx
-    }
-    pub(crate) fn get_logy(&self) -> Option<f64> {
-        self.logy
-    }
-    pub(crate) fn get_labelx(&self) -> Option<&String> {
-        self.labelx.as_ref()
-    }
-    pub(crate) fn get_labely(&self) -> Option<&String> {
-        self.labely.as_ref()
-    }
-    pub(crate) fn get_rangex(&self) -> Option<(f64, f64)> {
-        self.rangex
-    }
-    pub(crate) fn get_rangey(&self) -> Option<(f64, f64)> {
-        self.rangey
-    }
-    pub(crate) fn get_style(&self) -> &crate::configuration::plot::style::Style {
-        &self.style
-    }
-    pub(crate) fn get_dashtype(&self) -> Option<usize> {
-        self.dashtype
-    }
-    pub(crate) fn get_ticsx(&self) -> Option<&String> {
-        self.ticsx.as_ref()
-    }
-    pub(crate) fn get_ticsy(&self) -> Option<&String> {
-        self.ticsy.as_ref()
-    }
-    pub(crate) fn get_pause(&self) -> Option<f64> {
-        self.pause
     }
 }
 

@@ -24,7 +24,7 @@
 //! ```
 
 // Structs
-use crate::errors::SavingError;
+use crate::errors::PreexplorerError;
 
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
@@ -67,11 +67,11 @@ impl<T> Configurable for Data<T>
 where
     T: Display,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
 
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -103,11 +103,13 @@ where
 {
     /// Call ``plot_later`` and retunrs error, since generic data
     /// should be plotted by hand interacting with gnuplot.
-    fn plot<S: Display>(&mut self, id: S) -> Result<&mut Self, SavingError> {
+    fn plot<S: Display>(&mut self, id: S) -> Result<&mut Self, PreexplorerError> {
         self.plot_later(id)?;
 
-        let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.get_plot_path());
-        Err(std::io::Error::new(std::io::ErrorKind::Other, message).into())
+        let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.plot_path());
+        Err(PreexplorerError::Plotting(
+            std::io::Error::new(std::io::ErrorKind::Other, message).into(),
+        ))
     }
 
     /// Basic plot script with the instructions to search for the perfect
@@ -118,8 +120,8 @@ where
         gnuplot_script +=
             "\n# Visit http://www.gnuplotting.org and search for the correct plotting command!\n";
         gnuplot_script += "\n# To get the plot, run the following command:";
-        gnuplot_script += &format!("\n# gnuplot {:?} \n\n", self.get_plot_path());
-        gnuplot_script += &format!("plot {:?} \n", self.get_data_path());
+        gnuplot_script += &format!("\n# gnuplot {:?} \n\n", self.plot_path());
+        gnuplot_script += &format!("plot {:?} \n", self.data_path());
 
         gnuplot_script += &self.ending_plot_script();
 

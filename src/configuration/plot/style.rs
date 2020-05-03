@@ -1,12 +1,12 @@
-//! Styles for plotting in gnuplot. 
+//! Styles for plotting in gnuplot.
 
 use core::fmt::Display;
 
-/// A small collection of all possible styles. 
-/// 
+/// A small collection of all possible styles.
+///
 /// # Remarks
-/// 
-/// There are ``From<>`` implementations for ease of use. 
+///
+/// There are ``From<>`` implementations for ease of use.
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Style {
     Default,

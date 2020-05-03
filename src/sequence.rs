@@ -83,10 +83,10 @@ where
     /// Compare many ``Sequence``s by gathering all first (in some ``IntoIterator``).
     /// ```no_run
     /// use preexplorer::prelude::*;
-    /// let first_seq = (0..10).preexplore().title("legend").to_owned();
+    /// let first_seq = (0..10).preexplore().set_title("legend").to_owned();
     /// let many_seqs = (0..5).map(|_| (0..10).preexplore());
     /// let mut sequences = first_seq.compare_with(many_seqs);
-    /// sequences.title("Main title");
+    /// sequences.set_title("Main title");
     /// ```
     pub fn compare_with<J>(self, others: J) -> crate::sequence::comparison::Sequences<T>
     where
@@ -102,10 +102,10 @@ impl<T> Configurable for Sequence<T>
 where
     T: Display + Clone,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -132,14 +132,14 @@ where
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        let dashtype = match self.get_dashtype() {
+        let dashtype = match self.dashtype() {
             Some(dashtype) => dashtype,
             None => 1,
         };
         gnuplot_script += &format!(
             "plot {:?} with {} dashtype {} \n",
-            self.get_data_path(),
-            self.get_style(),
+            self.data_path(),
+            self.style(),
             dashtype,
         );
         gnuplot_script += &self.ending_plot_script();
@@ -157,11 +157,11 @@ mod tests {
     fn set_style() {
         let data = 0..2;
         let mut seq = Sequence::new(data);
-        seq.style("points");
+        seq.set_style("points");
 
         assert_eq!(
             &crate::configuration::plot::style::Style::Points,
-            seq.get_style()
+            seq.style()
         );
     }
 }

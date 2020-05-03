@@ -11,7 +11,7 @@
 //!
 
 // Structs
-use crate::errors::SavingError;
+use crate::errors::PreexplorerError;
 
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
@@ -66,10 +66,10 @@ impl<T> Configurable for Sequences<T>
 where
     T: Display + Clone,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -87,7 +87,7 @@ where
         raw_data
     }
 
-    fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, SavingError> {
+    fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, PreexplorerError> {
         for (counter, sequence) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             sequence.save_with_id(&inner_id)?;
@@ -102,32 +102,32 @@ where
     T: Display + Clone,
 {
     fn plot_script(&self) -> String {
-        let id = self.get_checked_id();
+        let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
         gnuplot_script += "plot ";
 
-        let style = self.get_style();
+        let style = self.style();
         let mut dashtype_counter = 0;
 
         for (counter, sequence) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
-            let mut inner_path = self.get_data_path().to_path_buf();
-            if let Some(extension) = self.get_data_extension() {
+            let mut inner_path = self.data_path().to_path_buf();
+            if let Some(extension) = self.data_extension() {
                 inner_path.set_file_name(&inner_id);
                 inner_path.set_extension(extension);
             } else {
                 inner_path.set_file_name(&id);
             }
-            let legend = match sequence.get_title() {
+            let legend = match sequence.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
             let sequence_style = match style {
-                crate::configuration::plot::style::Style::Default => sequence.get_style(),
+                crate::configuration::plot::style::Style::Default => sequence.style(),
                 _ => style,
             };
-            let dashtype = match sequence.get_dashtype() {
+            let dashtype = match sequence.dashtype() {
                 Some(dashtype) => dashtype,
                 None => {
                     dashtype_counter += 1;

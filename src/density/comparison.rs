@@ -11,7 +11,7 @@
 //!
 
 // Structs
-use crate::errors::SavingError;
+use crate::errors::PreexplorerError;
 
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
@@ -67,10 +67,10 @@ impl<T> Configurable for Densities<T>
 where
     T: PartialOrd + Display + Clone,
 {
-    fn configuration(&mut self) -> &mut crate::configuration::Configuration {
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
-    fn configuration_as_ref(&self) -> &crate::configuration::Configuration {
+    fn configuration(&self) -> &crate::configuration::Configuration {
         &self.config
     }
 }
@@ -88,7 +88,7 @@ where
         raw_data
     }
 
-    fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, SavingError> {
+    fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, PreexplorerError> {
         for (counter, density) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             density.save_with_id(&inner_id)?;
@@ -103,7 +103,7 @@ where
     T: PartialOrd + Display + Clone,
 {
     fn plot_script(&self) -> String {
-        let id = self.get_checked_id();
+        let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
         // Treat each data to a prob distr funct
@@ -159,27 +159,27 @@ where
         }
 
         gnuplot_script += "plot ";
-        let style = self.get_style();
+        let style = self.style();
         let mut dashtype_counter = 0;
 
         for (counter, density) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
-            let mut inner_path = self.get_data_path().to_path_buf();
-            if let Some(extension) = self.get_data_extension() {
+            let mut inner_path = self.data_path().to_path_buf();
+            if let Some(extension) = self.data_extension() {
                 inner_path.set_file_name(&inner_id);
                 inner_path.set_extension(extension);
             } else {
                 inner_path.set_file_name(&id);
             }
-            let legend = match density.get_title() {
+            let legend = match density.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
             let distribution_style = match style {
-                crate::configuration::plot::style::Style::Default => density.get_style(),
+                crate::configuration::plot::style::Style::Default => density.style(),
                 _ => style,
             };
-            let dashtype = match density.get_dashtype() {
+            let dashtype = match density.dashtype() {
                 Some(dashtype) => dashtype,
                 None => {
                     dashtype_counter += 1;
