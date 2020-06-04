@@ -57,7 +57,7 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 - [ ] New Structs for error plotting
   - [ ] SequenceWithError 
   - [ ] ProcessWithError
-- [ ] More senses
+- [ ] More senses involved in exploration
   - [ ] Audio
     - [ ] audify()
     - [ ] sonify()

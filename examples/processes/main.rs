@@ -12,8 +12,7 @@ fn main() -> anyhow::Result<()> {
     let times = vec![1., 10., 100.];
     let values = vec![1, 4, 8];
 
-    plotting
-        .compare_with(vec![(times, values).preexplore()])
+    (plotting + (times, values).preexplore())
         .plot("my_serie_name")?;
 
     Ok(())

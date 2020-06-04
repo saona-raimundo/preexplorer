@@ -32,25 +32,18 @@ fn increasing_comparison() -> anyhow::Result<()> {
     // First Sequence
 
     let data_1 = vec![0., 1., 2., 3., 4., 5.];
-    let mut main_plot = data_1
+    let mut main_plot: pre::Sequences<_> = data_1
         .preexplore()
         .set_title("First")
         .to_owned()
-        .to_comparison();
+        .into();
 
     // Another sequence
 
     let data_2 = vec![0., 1.4, 10., 4.];
     let plot2 = data_2.preexplore().set_title("Second").to_owned();
 
-    main_plot.add(plot2);
-
-    // Add many
-
-    let data_3 = vec![0.1, 1.5, 7., 5.];
-    let group_of_plottings = vec![data_3.preexplore().set_title("Third").to_owned()];
-
-    main_plot.add_many(group_of_plottings);
+    main_plot += plot2;
 
     // Change some settings
 

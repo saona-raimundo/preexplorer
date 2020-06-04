@@ -1,3 +1,6 @@
+use preexplorer::prelude::*;
+
 fn main() {
-    unimplemented!();
+	println!("{:?}", (vec![1, 2, 3]).preexplore());
+
 }

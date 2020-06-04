@@ -16,6 +16,7 @@ use crate::errors::PreexplorerError;
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::{Add, AddAssign};
 
 /// Comparison counter part of ``Density`` struct.
 ///
@@ -44,7 +45,7 @@ where
     }
 }
 
-impl<T> From<crate::density::Density<T>> for Densities<T>
+impl<T> From<crate::Density<T>> for Densities<T>
 where
     T: PartialOrd + Display + Clone,
 {
@@ -53,13 +54,45 @@ where
     }
 }
 
-impl<T> crate::traits::Comparison<crate::density::Density<T>> for Densities<T>
+impl<T> Add<crate::Density<T>> for Densities<T>  
 where
     T: PartialOrd + Display + Clone,
 {
-    fn add(&mut self, other: crate::density::Density<T>) -> &mut Self {
-        self.data_set.push(other);
+    type Output = Self;
+
+    fn add(mut self, other: crate::Density<T>) -> Self { 
+        self += other;
         self
+    }
+}
+
+impl<T> Add for Densities<T>  
+where
+    T: PartialOrd + Display + Clone,
+{
+    type Output = Self;
+
+    fn add(mut self, other: Self) -> Self { 
+        self += other;
+        self
+    }
+}
+
+impl<T> AddAssign<crate::Density<T>> for Densities<T>  
+where
+    T: PartialOrd + Display + Clone,
+{
+    fn add_assign(&mut self, other: crate::Density<T>) { 
+        self.data_set.push(other);
+    }
+}
+
+impl<T> AddAssign for Densities<T>  
+where
+    T: PartialOrd + Display + Clone,
+{
+    fn add_assign(&mut self, mut other: Self) { 
+        self.data_set.append(&mut other.data_set);
     }
 }
 

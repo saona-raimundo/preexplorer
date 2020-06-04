@@ -16,6 +16,7 @@ use crate::errors::PreexplorerError;
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::{Add, AddAssign};
 
 /// Comparison counter part of ``Process`` struct.
 ///
@@ -46,7 +47,7 @@ where
     }
 }
 
-impl<T, S> From<crate::process::Process<T, S>> for Processes<T, S>
+impl<T, S> From<crate::Process<T, S>> for Processes<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
@@ -56,14 +57,49 @@ where
     }
 }
 
-impl<T, S> crate::traits::Comparison<crate::process::Process<T, S>> for Processes<T, S>
+impl<T, S> Add<crate::Process<T, S>> for Processes<T, S>  
 where
     T: Display + Clone,
     S: Display + Clone,
 {
-    fn add(&mut self, other: crate::process::Process<T, S>) -> &mut Self {
-        self.data_set.push(other);
+    type Output = Self;
+
+    fn add(mut self, other: crate::Process<T, S>) -> Self { 
+        self += other;
         self
+    }
+}
+
+impl<T, S> Add for Processes<T, S>  
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    type Output = Self;
+
+    fn add(mut self, other: Self) -> Self { 
+        self += other;
+        self
+    }
+}
+
+impl<T, S> AddAssign<crate::Process<T, S>> for Processes<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    fn add_assign(&mut self, other: crate::Process<T, S>) { 
+        self.data_set.push(other);
+    }
+}
+
+impl<T, S> AddAssign for Processes<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    fn add_assign(&mut self, mut other: Self) { 
+        self.data_set.append(&mut other.data_set);
     }
 }
 

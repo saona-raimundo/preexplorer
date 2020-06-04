@@ -2,7 +2,9 @@
 
 ## 0.3.1
 
-- More intuitive and idiomatic crate structure.
+- More intuitive and idiomatic crate structure: 
+  - Add and AddAssign traits.
+  - From/Into traits.
 - Idiomatic implementation of Setter and Getter methods.
 - Moved from failure to thiserror crate.
 

@@ -879,17 +879,3 @@ pub trait Plotable: Configurable + Saveable {
         self.configuration().ending_plot_script()
     }
 }
-
-/// Basic functions for comparisons of basic structs.
-pub trait Comparison<T>: From<T> {
-    /// Add a basic struct to the comparison.
-    fn add(&mut self, other: T) -> &mut Self;
-
-    /// Add many basic structs to the comparison.
-    fn add_many<J: IntoIterator<Item = T>>(&mut self, others: J) -> &mut Self {
-        for other in others {
-            self.add(other);
-        }
-        self
-    }
-}

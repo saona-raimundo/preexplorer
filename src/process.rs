@@ -25,8 +25,9 @@
 //! ```
 
 // Traits
-pub use crate::traits::{Comparison, Configurable, Plotable, Saveable};
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
 /// Compare various ``Process``es.
 pub mod comparison;
@@ -75,35 +76,19 @@ where
             config,
         }
     }
+}
 
-    /// Convert to ``Processes`` quickly.
-    pub fn to_comparison(&self) -> crate::process::comparison::Processes<T, S> {
-        self.clone().into()
-    }
+impl<T, S> Add for Process<T, S>  
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    type Output = crate::Processes<T, S>;
 
-    /// Compare your ``Process`` with various ``Process``es.
-    ///
-    /// # Remarks
-    ///
-    /// Titles of ``Process``es involved in a ``Processes`` are presented as legends.
-    ///
-    /// # Examples
-    ///
-    /// Compare many ``Process``es by gathering all first (in some ``IntoIterator``).
-    /// ```no_run
-    /// use preexplorer::prelude::*;
-    /// let first_pro = ((0..10), (0..10)).preexplore().set_title("legend").to_owned();
-    /// let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
-    /// let mut processes = first_pro.compare_with(many_pros);
-    /// processes.set_title("Main title");
-    /// ```
-    pub fn compare_with<K>(self, others: K) -> crate::process::comparison::Processes<T, S>
-    where
-        K: IntoIterator<Item = crate::process::Process<T, S>>,
-    {
-        let mut comp: Processes<T, S> = self.into();
-        comp.add_many(others);
-        comp
+    fn add(self, other: crate::Process<T, S>) -> crate::Processes<T, S> { 
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
     }
 }
 

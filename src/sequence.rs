@@ -25,7 +25,8 @@
 //! ```
 
 // Traits
-pub use crate::traits::{Comparison, Configurable, Plotable, Saveable};
+use core::ops::Add;
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
 /// Compare various ``Sequence``s.
@@ -66,35 +67,18 @@ where
 
         Sequence { data, config }
     }
+}
 
-    /// Convert to ``Sequences`` quickly.
-    pub fn to_comparison(&self) -> crate::sequence::comparison::Sequences<T> {
-        self.clone().into()
-    }
+impl<T> Add for Sequence<T>  
+where
+    T: Display + Clone,
+{
+    type Output = crate::Sequences<T>;
 
-    /// Compare your ``Sequence`` with various ``Sequence``s.
-    ///
-    /// # Remarks
-    ///
-    /// Titles of ``Sequence``s involved in a ``Sequences`` are presented as legends.
-    ///
-    /// # Examples
-    ///
-    /// Compare many ``Sequence``s by gathering all first (in some ``IntoIterator``).
-    /// ```no_run
-    /// use preexplorer::prelude::*;
-    /// let first_seq = (0..10).preexplore().set_title("legend").to_owned();
-    /// let many_seqs = (0..5).map(|_| (0..10).preexplore());
-    /// let mut sequences = first_seq.compare_with(many_seqs);
-    /// sequences.set_title("Main title");
-    /// ```
-    pub fn compare_with<J>(self, others: J) -> crate::sequence::comparison::Sequences<T>
-    where
-        J: IntoIterator<Item = crate::sequence::Sequence<T>>,
-    {
-        let mut comp: Sequences<T> = self.into();
-        comp.add_many(others);
-        comp
+    fn add(self, other: crate::Sequence<T>) -> crate::Sequences<T> { 
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
     }
 }
 

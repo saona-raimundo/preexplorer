@@ -93,7 +93,7 @@ mod configuration;
 /// Errors wrapper from writting data.
 pub mod errors;
 /// Traits for easy use or self implmentation.
-pub mod traits;
+mod traits;
 
 
 

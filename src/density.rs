@@ -20,7 +20,8 @@
 //! ```
 
 // Traits
-pub use crate::traits::{Comparison, Configurable, Plotable, Saveable};
+use core::ops::Add;
+pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
 // Structs
@@ -73,36 +74,6 @@ where
             realizations,
             config,
         }
-    }
-
-    /// Convert to ``Densities`` quickly.
-    pub fn to_comparison(&self) -> crate::density::comparison::Densities<T> {
-        self.clone().into()
-    }
-
-    /// Compare your ``Density``s with various ``Density``s.
-    ///
-    /// # Remarks
-    ///
-    /// Titles of ``Density``s involved in a ``Densities`` are presented as legends.
-    ///
-    /// # Examples
-    ///
-    /// Compare many ``Density``s by gathering all first (in some ``IntoIterator``).
-    /// ```no_run
-    /// use preexplorer::prelude::*;
-    /// let first_den = pre::Density::new((0..10)).set_title("legend").to_owned();
-    /// let many_dens = (0..5).map(|_| pre::Density::new((0..10)));
-    /// let mut densities = first_den.compare_with(many_dens);
-    /// densities.set_title("Main title");
-    /// ```
-    pub fn compare_with<J>(self, others: J) -> crate::density::comparison::Densities<T>
-    where
-        J: IntoIterator<Item = crate::density::Density<T>>,
-    {
-        let mut comp: Densities<T> = self.into();
-        comp.add_many(others);
-        comp
     }
 
     /// Controls the plotting of the cummulative density function (cdf).
@@ -177,6 +148,19 @@ where
             Some(cdf) => std::str::FromStr::from_str(cdf).unwrap(),
             None => unreachable!(),
         }
+    }
+}
+
+impl<T> Add for Density<T>  
+where
+    T: PartialOrd + Display + Clone,
+{
+    type Output = crate::Densities<T>;
+
+    fn add(self, other: crate::Density<T>) -> crate::Densities<T> { 
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
     }
 }
 
