@@ -141,54 +141,14 @@ where
 
         // Treat each data to a prob distr funct
 
-        for (counter, density) in self.data_set.iter().enumerate() {
-            // Values for the histogram
-
-            let n = 20;
-            let (mut min, mut max, mut length);
-            length = 0;
-
+        for density in self.data_set.iter() {
             let mut realizations = density.realizations.clone().into_iter();
-            match realizations.next() {
-                Some(value) => {
-                    min = value.clone();
-                    max = value;
-                    length += 1;
-                    for val in realizations {
-                        // let val = val.into();
-                        if val < min {
-                            min = val.clone();
-                        }
-                        if val > max {
-                            max = val;
-                        }
-                        length += 1;
-                    }
-
-                    // Gnuplot section
-
-                    gnuplot_script += &format!("nbins_{} = {}.0 #number of bins\n", counter, n);
-                    gnuplot_script += &format!("max_{} = {} #max value\n", counter, max);
-                    gnuplot_script += &format!("min_{} = {} #min value\n", counter, min);
-                    gnuplot_script +=
-                        &format!("len_{} = {}.0 #number of values\n", counter, length);
-                    gnuplot_script += &format!(
-                        "width_{} = ({} - {}) / nbins_{} #width\n\n",
-                        counter, max, min, counter
-                    );
-                    gnuplot_script += "# function used to map a value to the intervals\n";
-                    gnuplot_script += &format!(
-                        "hist_{}(x,width_{}) = width_{} * floor(x/width_{}) + width_{} / 2.0\n\n",
-                        counter, counter, counter, counter, counter
-                    );
-                }
-                None => {
-                    std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "No data to plot: There are no realizations, so no script can be prepared.",
-                    );
-                }
-            }
+            if let None = realizations.next() {
+                std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "No data to plot: There are no realizations, so no script can be prepared.",
+                );
+            } 
         }
 
         gnuplot_script += "plot ";
@@ -221,12 +181,9 @@ where
             };
 
             gnuplot_script += &format!(
-                "{:?} using (hist_{}($1,width_{})):(1.0/(width_{}*len_{})) smooth frequency with {} title \"{}\" dashtype {}, ",
+                "{:?} using 1:({}) smooth kdensity with {} title \"{}\" dashtype {}, ",
                 inner_path,
-                counter,
-                counter,
-                counter,
-                counter,
+                1. / density.realizations.len() as f64,
                 distribution_style,
                 legend,
                 dashtype,

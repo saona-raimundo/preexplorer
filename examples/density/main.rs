@@ -5,7 +5,6 @@ fn main() -> anyhow::Result<()> {
 
     pre::Density::new(values)
         .set_title("My empirical density")
-        .set_logx(2)
         .plot("my identifier")?;
 
     Ok(())

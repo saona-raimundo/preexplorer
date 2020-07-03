@@ -1,5 +1,6 @@
-- [ ] Density graphs are not correct:
-  - It is not an empirical distribution: 
-    - it does not integrate to one, 
-    - specially if there are less than 20 classes.
-  - Can you have a dynamically chosen number of buckets?
+- [ ] Heatmaps:
+  - It is a recurrent plotting
+  - [ ] Do comparisons by grid-plotting.
+- [ ] Check out: 
+  - https://serialmentor.com/dataviz/
+  - https://serialmentor.com/

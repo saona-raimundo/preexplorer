@@ -45,7 +45,7 @@
 //!     .plot("my_identifier")
 //!     .unwrap();
 //! ```
-//! <img src="https://user-images.githubusercontent.com/37874270/80872547-e27afe00-8cb2-11ea-9c9a-006d6793f133.png" height="200px">
+//! <img src="https://user-images.githubusercontent.com/37874270/86490968-88a5bb80-bd69-11ea-913b-9124f33629c0.png" height="200px">
 //!
 //! Save some data (mostly numerical: matrices, simulation results and related errors, etc).
 //! ```no_run

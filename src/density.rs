@@ -65,7 +65,6 @@ where
     {
         let realizations: Vec<T> = realizations.into_iter().collect();
         let mut config = crate::configuration::Configuration::default();
-        config.set_style(crate::configuration::plot::style::Style::Histeps);
         config.set_custom("cdf", "true");
         config.set_custom("pdf", "true");
         config.set_custom("cloud", "true");
@@ -202,40 +201,21 @@ where
         let mut gnuplot_script = self.opening_plot_script();
 
         gnuplot_script += "set zeroaxis\n";
+        
         // Values for the histogram
 
-        let n = 20;
-        let (mut min, mut max, mut length);
-        length = 0;
+        let mut length = 0;
 
         let mut realizations = self.realizations.clone().into_iter();
         match realizations.next() {
-            Some(value) => {
-                min = value.clone();
-                max = value;
-                length += 1;
-                for val in realizations {
-                    if val < min {
-                        min = val.clone();
-                    }
-                    if val > max {
-                        max = val;
-                    }
-                    length += 1;
-                }
+            Some(_) => {
+                length += 1 + realizations.len();
 
                 // Gnuplot scrpit
 
                 gnuplot_script +=
                     "# Warning: this script only works when the data are real numbers. \n\n";
 
-                gnuplot_script += &format!("nbins = {}.0 #number of bins\n", n);
-                gnuplot_script += &format!("max = {} #max value\n", max);
-                gnuplot_script += &format!("min = {} #min value\n", min);
-                gnuplot_script += &format!("len = {}.0 #number of values\n", length);
-                gnuplot_script += &format!("width = ({} - {}) / nbins #width\n\n", max, min);
-                gnuplot_script += "# function used to map a value to the intervals\n";
-                gnuplot_script += "hist(x,width) = width * floor(x/width)\n\n";
                 let dashtype = match self.dashtype() {
                     Some(dashtype) => dashtype,
                     None => 1,
@@ -251,8 +231,9 @@ where
                         gnuplot_script += ", \\\n\t ";
                     }
                     gnuplot_script += &format!(
-                    	"{:?} using (hist($1,width)):(1./(width*len)) smooth frequency with {} dashtype {}",
+                    	"{:?} using 1:({}) smooth kdensity with {} dashtype {}", 
                     	self.data_path(),
+                        1. / length as f64,
                     	self.style(),
                     	dashtype,
                     );
