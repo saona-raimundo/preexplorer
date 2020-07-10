@@ -34,7 +34,7 @@ pub mod comparison;
 #[derive(Debug, PartialEq, Clone)]
 pub struct Density<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     realizations: Vec<T>,
     config: crate::configuration::Configuration,
@@ -42,7 +42,7 @@ where
 
 impl<T> Density<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     /// Create a new ``Density``.
     ///
@@ -152,7 +152,7 @@ where
 
 impl<T> Add for Density<T>  
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     type Output = crate::Densities<T>;
 
@@ -165,7 +165,7 @@ where
 
 impl<T> Configurable for Density<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -177,7 +177,7 @@ where
 
 impl<T> Saveable for Density<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
@@ -190,7 +190,7 @@ where
 
 impl<T> Plotable for Density<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     /// Construct a suitable plot script for the struct.
     ///

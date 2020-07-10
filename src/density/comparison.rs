@@ -23,7 +23,7 @@ use core::ops::{Add, AddAssign};
 #[derive(Debug, PartialEq)]
 pub struct Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     data_set: Vec<crate::density::Density<T>>,
     config: crate::configuration::Configuration,
@@ -31,7 +31,7 @@ where
 
 impl<T> Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     pub fn new<K>(data_set: K) -> Densities<T>
     where
@@ -47,7 +47,7 @@ where
 
 impl<T> From<crate::Density<T>> for Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn from(density: crate::density::Density<T>) -> Self {
         Densities::new(vec![density])
@@ -56,7 +56,7 @@ where
 
 impl<T> Add<crate::Density<T>> for Densities<T>  
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     type Output = Self;
 
@@ -68,7 +68,7 @@ where
 
 impl<T> Add for Densities<T>  
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     type Output = Self;
 
@@ -80,7 +80,7 @@ where
 
 impl<T> AddAssign<crate::Density<T>> for Densities<T>  
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn add_assign(&mut self, other: crate::Density<T>) { 
         self.data_set.push(other);
@@ -89,7 +89,7 @@ where
 
 impl<T> AddAssign for Densities<T>  
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn add_assign(&mut self, mut other: Self) { 
         self.data_set.append(&mut other.data_set);
@@ -98,7 +98,7 @@ where
 
 impl<T> Configurable for Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -110,7 +110,7 @@ where
 
 impl<T> Saveable for Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
@@ -133,7 +133,7 @@ where
 
 impl<T> Plotable for Densities<T>
 where
-    T: PartialOrd + Display + Clone,
+    T: Display + Clone,
 {
     fn plot_script(&self) -> String {
         let id = self.checked_id();

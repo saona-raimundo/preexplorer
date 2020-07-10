@@ -1,6 +1,7 @@
 - [ ] Heatmaps:
   - It is a recurrent plotting
-  - [ ] Do comparisons by grid-plotting.
+  - [ ] Comparison
+    - Do comparisons by grid-plotting.
 - [ ] Check out: 
   - https://serialmentor.com/dataviz/
   - https://serialmentor.com/
