@@ -1,12 +1,16 @@
 # Changelog
 
-## 0.3.1
+## 0.3.2
 
-- Drop the trait bound PartialOrd for Density, as it is not needed anymore.
-- Change Density plotting: instead of (incorrect) binning, use smooth kdensity from gnuplot.
 - More intuitive and idiomatic crate structure: 
   - Add and AddAssign traits.
   - From/Into traits.
+- Drop the trait bound PartialOrd for Density, as it is not needed anymore.
+- Change Density plotting: instead of (incorrect) binning, use smooth kdensity from gnuplot.
+
+
+## 0.3.1
+
 - Idiomatic implementation of Setter and Getter methods.
 - Moved from failure to thiserror crate.
 

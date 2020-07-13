@@ -1,6 +1,6 @@
 [package]
 name = "preexplorer"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Raimundo Saona <rasa200@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
