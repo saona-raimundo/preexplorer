@@ -2,6 +2,7 @@
 
 ## 0.3.1
 
+- Drop the trait bound PartialOrd for Density, as it is not needed anymore.
 - Change Density plotting: instead of (incorrect) binning, use smooth kdensity from gnuplot.
 - More intuitive and idiomatic crate structure: 
   - Add and AddAssign traits.

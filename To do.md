@@ -1,4 +1,8 @@
-- [ ] Heatmaps:
+- [ ] SequenceError
+  - Proper statistical analysis
+- [ ] ProcessError
+  - Proper statistical analysis
+- [ ] Heatmaps
   - It is a recurrent plotting
   - [ ] Comparison
     - Do comparisons by grid-plotting.

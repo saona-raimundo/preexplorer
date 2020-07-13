@@ -20,12 +20,12 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 chrono = "0.4"
-thiserror = "1.0.16"
-getset = "0.1.0"
+thiserror = "1.0"
+getset = "0.1"
 
 [dev-dependencies]
 ndarray = "0.13"
-rand = "0.7.3"
-itertools = "0.9.0"
-rand_distr = "0.2.2"
-anyhow = "1.0.28"
+rand = "0.7"
+itertools = "0.9"
+rand_distr = "0.2"
+anyhow = "1.0"
