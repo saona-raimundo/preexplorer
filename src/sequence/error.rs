@@ -1,4 +1,4 @@
-//! Most basic explorable structure: a sequence of values.
+//! A sequence of values with a given error.
 //!
 //! # Remarks
 //!
@@ -27,31 +27,24 @@
 // Traits
 use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
-use core::fmt::Display;
 
-/// Compare various ``Sequence``s.
+// Structs
+use average::Variance;
+
+/// Compare various ``SequenceError``s.
 pub mod comparison;
-/// Sequence of values with an associated error.
-pub mod error;
 
-pub use comparison::Sequences;
-pub use error::{SequenceError, SequenceErrors};
+pub use comparison::SequenceErrors;
 
-/// Sequence of values.
+/// Sequence of values with a given error.
 #[derive(Debug, PartialEq, Clone)]
-pub struct Sequence<T>
-where
-    T: Display + Clone,
-{
-    data: Vec<T>,
+pub struct SequenceError {
+    data: Vec<(f64, f64)>,
     config: crate::configuration::Configuration,
 }
 
-impl<T> Sequence<T>
-where
-    T: Display + Clone,
-{
-    /// Create a new ``Sequence``.
+impl SequenceError {
+    /// Create a new ``SequenceError``.
     ///
     /// # Examples
     ///
@@ -59,36 +52,36 @@ where
     /// ```
     /// use preexplorer::prelude::*;
     /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::Sequence::new(data);
+    /// let seq = pre::SequenceError::new(data);
     /// ```
-    pub fn new<I>(data: I) -> Sequence<T>
+    pub fn new<I, J>(data: I) -> SequenceError
     where
-        I: IntoIterator<Item = T>,
+        I: IntoIterator<Item = J>,
+        J: IntoIterator<Item = f64>,
     {
-        let data: Vec<T> = data.into_iter().collect();
+        let data: Vec<(f64, f64)> = data.into_iter()
+            .map(|j| {
+                let v: Variance = j.into_iter().collect();
+                (v.mean(), v.error())
+            })
+            .collect();
         let config = crate::configuration::Configuration::default();
 
-        Sequence { data, config }
+        SequenceError { data, config }
     }
 }
 
-impl<T> Add for Sequence<T>  
-where
-    T: Display + Clone,
-{
-    type Output = crate::Sequences<T>;
+impl Add for SequenceError {
+    type Output = crate::SequenceErrors;
 
-    fn add(self, other: crate::Sequence<T>) -> crate::Sequences<T> { 
+    fn add(self, other: crate::SequenceError) -> crate::SequenceErrors { 
         let mut cmp = self.into();
         cmp += other;
         cmp
     }
 }
 
-impl<T> Configurable for Sequence<T>
-where
-    T: Display + Clone,
-{
+impl Configurable for SequenceError {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
     }
@@ -97,25 +90,19 @@ where
     }
 }
 
-impl<T> Saveable for Sequence<T>
-where
-    T: Display + Clone,
-{
+impl Saveable for SequenceError {
     fn plotable_data(&self) -> String {
         let mut plotable_data = String::new();
 
-        for (counter, value) in self.data.clone().into_iter().enumerate() {
-            plotable_data.push_str(&format!("{}\t{}\n", counter, value));
+        for (counter, (value, error)) in self.data.clone().into_iter().enumerate() {
+            plotable_data.push_str(&format!("{}\t{}\t{}\n", counter, value, error));
         }
 
         plotable_data
     }
 }
 
-impl<T> Plotable for Sequence<T>
-where
-    T: Display + Clone,
-{
+impl Plotable for SequenceError {
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
@@ -124,7 +111,7 @@ where
             None => 1,
         };
         gnuplot_script += &format!(
-            "plot {:?} with {} dashtype {} \n",
+            "plot {:?} using 1:2 with {} dashtype {}, \"\" using 1:2:3 with yerrorbars \n",
             self.data_path(),
             self.style(),
             dashtype,
@@ -142,8 +129,8 @@ mod tests {
 
     #[test]
     fn set_style() {
-        let data = 0..2;
-        let mut seq = Sequence::new(data);
+        let data = vec![vec![0., 1.], vec![0., 1., 2.], vec![3., 4., 5.]];
+        let mut seq = SequenceError::new(data);
         seq.set_style("points");
 
         assert_eq!(

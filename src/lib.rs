@@ -82,8 +82,8 @@ mod sequence;
 
 pub use self::data::Data;
 pub use self::density::{Densities, Density};
-pub use self::process::{Process, Processes};
-pub use self::sequence::{Sequence, Sequences};
+pub use self::process::{Process, Processes, ProcessError, ProcessErrors};
+pub use self::sequence::{Sequence, Sequences, SequenceError, SequenceErrors};
 pub use self::configuration::Configuration;
 pub use self::constants::{DATA_DIR, PLOT_DIR};
 pub use self::traits::*;

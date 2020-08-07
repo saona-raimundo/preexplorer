@@ -29,30 +29,29 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
+// Structs
+use average::Variance;
+
 /// Compare various ``Process``es.
 pub mod comparison;
-/// Process of values with an associated error.
-pub mod error;
 
-pub use comparison::Processes;
-pub use error::{ProcessError, ProcessErrors};
+pub use comparison::ProcessErrors;
+
 
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]
-pub struct Process<T, S>
+pub struct ProcessError<T>
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
     domain: Vec<T>,
-    image: Vec<S>,
+    image: Vec<(f64, f64)>,
     config: crate::configuration::Configuration,
 }
 
-impl<T, S> Process<T, S>
+impl<T> ProcessError<T>
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
     /// Create a new ``Process``.
     ///
@@ -64,16 +63,21 @@ where
     /// let data = (0..10).map(|i| i * i + 1);
     /// let seq = pre::Process::new((0..10), data);
     /// ```
-    pub fn new<I, J>(domain: I, image: J) -> Process<T, S>
+    pub fn new<I, J, K>(domain: I, image: J) -> ProcessError<T>
     where
         I: IntoIterator<Item = T>,
-        J: IntoIterator<Item = S>,
+        J: IntoIterator<Item = K>,
+        K: IntoIterator<Item = f64>,
     {
         let domain: Vec<T> = domain.into_iter().collect();
-        let image: Vec<S> = image.into_iter().collect();
+        let image: Vec<(f64, f64)> = image.into_iter()
+            .map(|k| {
+                let v: Variance = k.into_iter().collect();
+                (v.mean(), v.error())
+            }).collect();
         let config = crate::configuration::Configuration::default();
 
-        Process {
+        ProcessError {
             domain,
             image,
             config,
@@ -81,24 +85,22 @@ where
     }
 }
 
-impl<T, S> Add for Process<T, S>  
+impl<T> Add for ProcessError<T>  
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
-    type Output = crate::Processes<T, S>;
+    type Output = crate::ProcessErrors<T>;
 
-    fn add(self, other: crate::Process<T, S>) -> crate::Processes<T, S> { 
+    fn add(self, other: crate::ProcessError<T>) -> crate::ProcessErrors<T> { 
         let mut cmp = self.into();
         cmp += other;
         cmp
     }
 }
 
-impl<T, S> Configurable for Process<T, S>
+impl<T> Configurable for ProcessError<T>
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -108,24 +110,22 @@ where
     }
 }
 
-impl<T, S> Saveable for Process<T, S>
+impl<T> Saveable for ProcessError<T>
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
-        for (time, value) in self.domain.clone().into_iter().zip(self.image.clone()) {
-            raw_data.push_str(&format!("{}\t{}\n", time, value));
+        for (time, (value, error)) in self.domain.clone().into_iter().zip(self.image.clone()) {
+            raw_data.push_str(&format!("{}\t{}\t{}\n", time, value, error));
         }
         raw_data
     }
 }
 
-impl<T, S> Plotable for Process<T, S>
+impl<T> Plotable for ProcessError<T>
 where
     T: Display + Clone,
-    S: Display + Clone,
 {
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
@@ -136,7 +136,7 @@ where
         };
 
         gnuplot_script += &format!(
-            "plot {:?} using 1:2 with {} dashtype {}\n",
+            "plot {:?} using 1:2 with {} dashtype {}, \"\" using 1:($2+$3):($2-$3) with filledcurves fs transparent solid 0.5 linecolor rgb \"dark-grey\"\n",
             self.data_path(),
             self.style(),
             dashtype,
