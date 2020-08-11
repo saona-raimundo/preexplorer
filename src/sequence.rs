@@ -33,9 +33,15 @@ use core::fmt::Display;
 pub mod comparison;
 /// Sequence of values with an associated error.
 pub mod error;
+/// Sequence of violin plots.
+pub mod violin;
+/// Sequence of histograms.
+pub mod bin;
 
 pub use comparison::Sequences;
 pub use error::{SequenceError, SequenceErrors};
+pub use violin::{SequenceViolin};
+pub use bin::{SequenceBin};
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
