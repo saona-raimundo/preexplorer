@@ -1,0 +1,190 @@
+//! Indexed collection of values.
+//!
+//! # Remarks
+//!
+//! With the ``prelude`` module, we can easily convert a tuple of ``IntoIterator``s
+//! into ``Heatmap`` for ease of use. The same can be achieved with the
+//! ``new`` method.
+//!
+//! # Examples
+//!
+//! Quick plot.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
+//! ```
+//!
+//! Compare ``Heatmap``es.
+//! ```no_run
+//! use preexplorer::prelude::*;
+//! pre::Heatmapes::new(vec![
+//!     ((0..10), (0..10)).preexplore(),
+//!     ((0..10), (0..10)).preexplore(),
+//!     ])
+//!     .plot("my_identifier").unwrap();
+//! ```
+
+// Traits
+pub use crate::traits::{Configurable, Plotable, Saveable};
+use core::fmt::Display;
+use core::ops::Add;
+
+/// Compare various ``Heatmap``s.
+pub mod comparison;
+// /// Heatmap of values with an associated error.
+// pub mod error;
+// /// Heatmap of violin plots.
+// pub mod violin;
+// /// Heatmap of histograms.
+// pub mod bin;
+
+pub use comparison::Heatmaps;
+// pub use error::{HeatmapError, HeatmapErrors};
+// pub use violin::{HeatmapViolin};
+// pub use bin::{HeatmapBin};
+
+/// Indexed sequence of values.
+#[derive(Debug, PartialEq, Clone)]
+pub struct Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    xs: Vec<T>,
+    ys: Vec<S>,
+    values: Vec<U>,
+    config: crate::configuration::Configuration,
+}
+
+impl<T, S, U> Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    /// Create a new ``Heatmap``.
+    ///
+    /// # Panics
+    ///
+    /// The number of values must be equal to the dimension of the grid.
+    ///
+    /// # Examples
+    ///
+    /// From a complicated computation.
+    /// ```
+    /// # use itertools::iproduct;
+    /// use preexplorer::prelude::*;
+    /// let values = iproduct!(0..10, 0..5).map(|(x, y)| x + y);
+    /// let heatmap = pre::Heatmap::new(0..10, 0..5, values);
+    /// ```
+    pub fn new<I, J, K>(xs: I, ys: J, values: K) -> Heatmap<T, S, U>
+    where
+        I: IntoIterator<Item = T>,
+        J: IntoIterator<Item = S>,
+        K: IntoIterator<Item = U>,
+    {
+        let xs: Vec<T> = xs.into_iter().collect();
+        let ys: Vec<S> = ys.into_iter().collect();
+        let values: Vec<U> = values.into_iter().collect();
+
+        debug_assert!(
+            xs.len() * ys.len() == values.len(),
+            "The numbers of values ({}) does not match the grid ({}x{})",
+            values.len(),
+            xs.len(),
+            ys.len()
+        );
+
+        let config = crate::configuration::Configuration::default();
+
+        Heatmap {
+            xs,
+            ys,
+            values,
+            config,
+        }
+    }
+}
+
+impl<T, S, U> Add for Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    type Output = crate::Heatmaps<T, S, U>;
+
+    fn add(self, other: crate::Heatmap<T, S, U>) -> crate::Heatmaps<T, S, U> {
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
+    }
+}
+
+impl<T, S, U> Configurable for Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
+        &mut self.config
+    }
+    fn configuration(&self) -> &crate::configuration::Configuration {
+        &self.config
+    }
+}
+
+impl<T, S, U> Saveable for Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    fn plotable_data(&self) -> String {
+        let mut plotable_data = String::new();
+        for i in 0..self.xs.len() {
+            for j in 0..self.ys.len() {
+                plotable_data.push_str(&format!(
+                    "{}\t{}\t{}\n",
+                    self.xs[i],
+                    self.ys[j],
+                    self.values[i * self.ys.len() + j]
+                ));
+            }
+        }
+        plotable_data
+    }
+}
+
+impl<T, S, U> Plotable for Heatmap<T, S, U>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+    U: Display + Clone,
+{
+    fn plot_script(&self) -> String {
+        let mut gnuplot_script = self.opening_plot_script();
+
+        gnuplot_script += &format!("plot {:?} using 1:2:3 with image\n", self.data_path(),);
+        gnuplot_script += &self.ending_plot_script();
+
+        gnuplot_script
+    }
+}
+
+impl<T> From<ndarray::Array2<T>> for Heatmap<usize, usize, T>
+where
+    T: Display + Clone,
+{
+    fn from(array: ndarray::Array2<T>) -> Self {
+        let shape = array.shape();
+
+        let xs: Vec<usize> = (0..shape[0]).collect();
+        let ys: Vec<usize> = (0..shape[1]).collect();
+        let values = array.into_raw_vec();
+
+        Heatmap::new(xs, ys, values)
+    }
+}

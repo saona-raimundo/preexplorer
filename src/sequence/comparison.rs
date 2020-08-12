@@ -53,48 +53,47 @@ where
     }
 }
 
-impl<T> Add<crate::Sequence<T>> for Sequences<T>  
+impl<T> Add<crate::Sequence<T>> for Sequences<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: crate::Sequence<T>) -> Self { 
+    fn add(mut self, other: crate::Sequence<T>) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> Add for Sequences<T>  
+impl<T> Add for Sequences<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: Self) -> Self { 
+    fn add(mut self, other: Self) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> AddAssign<crate::Sequence<T>> for Sequences<T>  
+impl<T> AddAssign<crate::Sequence<T>> for Sequences<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, other: crate::Sequence<T>) { 
+    fn add_assign(&mut self, other: crate::Sequence<T>) {
         self.data_set.push(other);
     }
 }
 
-impl<T> AddAssign for Sequences<T>  
+impl<T> AddAssign for Sequences<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, mut other: Self) { 
+    fn add_assign(&mut self, mut other: Self) {
         self.data_set.append(&mut other.data_set);
     }
 }
-
 
 impl<T> Configurable for Sequences<T>
 where

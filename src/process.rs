@@ -29,19 +29,19 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
+/// Process of histograms.
+pub mod bin;
 /// Compare various ``Process``es.
 pub mod comparison;
 /// Process of values with an associated error.
 pub mod error;
 /// Process of violin plots.
 pub mod violin;
-/// Process of histograms.
-pub mod bin;
 
+pub use bin::ProcessBin;
 pub use comparison::Processes;
 pub use error::{ProcessError, ProcessErrors};
-pub use violin::{ProcessViolin};
-pub use bin::{ProcessBin};
+pub use violin::ProcessViolin;
 
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -87,14 +87,14 @@ where
     }
 }
 
-impl<T, S> Add for Process<T, S>  
+impl<T, S> Add for Process<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
 {
     type Output = crate::Processes<T, S>;
 
-    fn add(self, other: crate::Process<T, S>) -> crate::Processes<T, S> { 
+    fn add(self, other: crate::Process<T, S>) -> crate::Processes<T, S> {
         let mut cmp = self.into();
         cmp += other;
         cmp

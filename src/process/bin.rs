@@ -83,14 +83,14 @@ where
     }
 }
 
-// impl<T, S> Add for ProcessBin<T, S>  
+// impl<T, S> Add for ProcessBin<T, S>
 // where
 //     T: Display + Clone,
 //     S: Display + Clone,
 // {
 //     type Output = crate::ProcessBines<T, S>;
 
-//     fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBines<T, S> { 
+//     fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBines<T, S> {
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
@@ -150,7 +150,6 @@ where
         }
         gnuplot_script += &format!("{}]\n", self.image[self.image.len() - 1].len()); // Last time
 
-
         gnuplot_script += &format!("\
 # Plotting each histogram
 do for [i=0:{}] {{
@@ -182,9 +181,7 @@ mod tests {
     #[test]
     fn set_style() {
         let domain = 0..2;
-        let image = (0..2).map(|i| -> Vec<u64> {
-            (0..4).map(|j| j + i).collect()
-        });
+        let image = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let binwidth = 1;
         let mut seq = ProcessBin::new(domain, image, binwidth);
         seq.set_style("points");

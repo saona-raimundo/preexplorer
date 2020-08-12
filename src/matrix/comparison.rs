@@ -6,7 +6,7 @@
 //! ```no_run
 //! use preexplorer::prelude::*;
 //! let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
-//! pre::Processes::new(many_pros).plot("my_identifier").unwrap();
+//! pre::Heatmaps::new(many_pros).plot("my_identifier").unwrap();
 //! ```
 //!
 
@@ -18,62 +18,67 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Process`` struct.
+/// Comparison counter part of ``Heatmap`` struct.
 ///
 #[derive(Debug, PartialEq)]
-pub struct Processes<T, S>
+pub struct Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
-    data_set: Vec<crate::process::Process<T, S>>,
+    data_set: Vec<crate::Heatmap<T, S, U>>,
     config: crate::configuration::Configuration,
 }
 
-impl<T, S> Processes<T, S>
+impl<T, S, U> Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
-    pub fn new<I>(data_set: I) -> Processes<T, S>
+    pub fn new<I>(data_set: I) -> Heatmaps<T, S, U>
     where
-        I: IntoIterator<Item = crate::process::Process<T, S>>,
+        I: IntoIterator<Item = crate::Heatmap<T, S, U>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<crate::process::Process<T, S>>>();
-        Processes { data_set, config }
+            .collect::<Vec<crate::Heatmap<T, S, U>>>();
+        Heatmaps { data_set, config }
     }
 }
 
-impl<T, S> From<crate::Process<T, S>> for Processes<T, S>
+impl<T, S, U> From<crate::Heatmap<T, S, U>> for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
-    fn from(process: crate::process::Process<T, S>) -> Self {
-        Processes::new(vec![process])
+    fn from(heatmap: crate::Heatmap<T, S, U>) -> Self {
+        Heatmaps::new(vec![heatmap])
     }
 }
 
-impl<T, S> Add<crate::Process<T, S>> for Processes<T, S>
+impl<T, S, U> Add<crate::Heatmap<T, S, U>> for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: crate::Process<T, S>) -> Self {
+    fn add(mut self, other: crate::Heatmap<T, S, U>) -> Self {
         self += other;
         self
     }
 }
 
-impl<T, S> Add for Processes<T, S>
+impl<T, S, U> Add for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     type Output = Self;
 
@@ -83,30 +88,33 @@ where
     }
 }
 
-impl<T, S> AddAssign<crate::Process<T, S>> for Processes<T, S>
+impl<T, S, U> AddAssign<crate::Heatmap<T, S, U>> for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
-    fn add_assign(&mut self, other: crate::Process<T, S>) {
+    fn add_assign(&mut self, other: crate::Heatmap<T, S, U>) {
         self.data_set.push(other);
     }
 }
 
-impl<T, S> AddAssign for Processes<T, S>
+impl<T, S, U> AddAssign for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     fn add_assign(&mut self, mut other: Self) {
         self.data_set.append(&mut other.data_set);
     }
 }
 
-impl<T, S> Configurable for Processes<T, S>
+impl<T, S, U> Configurable for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -116,10 +124,11 @@ where
     }
 }
 
-impl<T, S> Plotable for Processes<T, S>
+impl<T, S, U> Plotable for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     fn plot_script(&self) -> String {
         let id = self.checked_id();
@@ -129,7 +138,7 @@ where
         let style = self.style();
         let mut dashtype_counter = 0;
 
-        for (counter, process) in self.data_set.iter().enumerate() {
+        for (counter, heatmap) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             let mut inner_path = self.data_path().to_path_buf();
             if let Some(extension) = self.data_extension() {
@@ -138,15 +147,15 @@ where
             } else {
                 inner_path.set_file_name(&id);
             }
-            let legend = match process.title() {
+            let legend = match heatmap.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
-            let process_style = match style {
-                crate::configuration::plot::style::Style::Default => process.style(),
+            let heatmap_style = match style {
+                crate::configuration::plot::style::Style::Default => heatmap.style(),
                 _ => style,
             };
-            let dashtype = match process.dashtype() {
+            let dashtype = match heatmap.dashtype() {
                 Some(dashtype) => dashtype,
                 None => {
                     dashtype_counter += 1;
@@ -156,7 +165,7 @@ where
 
             gnuplot_script += &format!(
                 "{:?} using 1:2 with {} title \"{}\" dashtype {}, ",
-                inner_path, process_style, legend, dashtype,
+                inner_path, heatmap_style, legend, dashtype,
             );
             if counter < self.data_set.len() - 1 {
                 gnuplot_script += "\\\n";
@@ -169,24 +178,25 @@ where
     }
 }
 
-impl<T, S> Saveable for Processes<T, S>
+impl<T, S, U> Saveable for Heatmaps<T, S, U>
 where
     T: Display + Clone,
     S: Display + Clone,
+    U: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
-        for process in self.data_set.iter() {
-            raw_data += &process.plotable_data();
+        for heatmap in self.data_set.iter() {
+            raw_data += &heatmap.plotable_data();
             raw_data += "\n";
         }
         raw_data
     }
 
-    fn save_with_id<U: Display>(&self, id: U) -> Result<&Self, PreexplorerError> {
-        for (counter, process) in self.data_set.iter().enumerate() {
+    fn save_with_id<W: Display>(&self, id: W) -> Result<&Self, PreexplorerError> {
+        for (counter, heatmap) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
-            process.save_with_id(&inner_id)?;
+            heatmap.save_with_id(&inner_id)?;
         }
         Ok(self)
     }

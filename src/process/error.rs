@@ -37,7 +37,6 @@ pub mod comparison;
 
 pub use comparison::ProcessErrors;
 
-
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProcessError<T>
@@ -70,11 +69,13 @@ where
         K: IntoIterator<Item = f64>,
     {
         let domain: Vec<T> = domain.into_iter().collect();
-        let image: Vec<(f64, f64)> = image.into_iter()
+        let image: Vec<(f64, f64)> = image
+            .into_iter()
             .map(|k| {
                 let v: Variance = k.into_iter().collect();
                 (v.mean(), v.error())
-            }).collect();
+            })
+            .collect();
         let config = crate::configuration::Configuration::default();
 
         ProcessError {
@@ -85,13 +86,13 @@ where
     }
 }
 
-impl<T> Add for ProcessError<T>  
+impl<T> Add for ProcessError<T>
 where
     T: Display + Clone,
 {
     type Output = crate::ProcessErrors<T>;
 
-    fn add(self, other: crate::ProcessError<T>) -> crate::ProcessErrors<T> { 
+    fn add(self, other: crate::ProcessError<T>) -> crate::ProcessErrors<T> {
         let mut cmp = self.into();
         cmp += other;
         cmp

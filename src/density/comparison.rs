@@ -54,44 +54,44 @@ where
     }
 }
 
-impl<T> Add<crate::Density<T>> for Densities<T>  
+impl<T> Add<crate::Density<T>> for Densities<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: crate::Density<T>) -> Self { 
+    fn add(mut self, other: crate::Density<T>) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> Add for Densities<T>  
+impl<T> Add for Densities<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: Self) -> Self { 
+    fn add(mut self, other: Self) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> AddAssign<crate::Density<T>> for Densities<T>  
+impl<T> AddAssign<crate::Density<T>> for Densities<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, other: crate::Density<T>) { 
+    fn add_assign(&mut self, other: crate::Density<T>) {
         self.data_set.push(other);
     }
 }
 
-impl<T> AddAssign for Densities<T>  
+impl<T> AddAssign for Densities<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, mut other: Self) { 
+    fn add_assign(&mut self, mut other: Self) {
         self.data_set.append(&mut other.data_set);
     }
 }
@@ -148,7 +148,7 @@ where
                     std::io::ErrorKind::Other,
                     "No data to plot: There are no realizations, so no script can be prepared.",
                 );
-            } 
+            }
         }
 
         gnuplot_script += "plot ";

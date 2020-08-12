@@ -25,23 +25,23 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
+/// Sequence of histograms.
+pub mod bin;
 /// Compare various ``Sequence``s.
 pub mod comparison;
 /// Sequence of values with an associated error.
 pub mod error;
 /// Sequence of violin plots.
 pub mod violin;
-/// Sequence of histograms.
-pub mod bin;
 
+pub use bin::SequenceBin;
 pub use comparison::Sequences;
 pub use error::{SequenceError, SequenceErrors};
-pub use violin::{SequenceViolin};
-pub use bin::{SequenceBin};
+pub use violin::SequenceViolin;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -78,13 +78,13 @@ where
     }
 }
 
-impl<T> Add for Sequence<T>  
+impl<T> Add for Sequence<T>
 where
     T: Display + Clone,
 {
     type Output = crate::Sequences<T>;
 
-    fn add(self, other: crate::Sequence<T>) -> crate::Sequences<T> { 
+    fn add(self, other: crate::Sequence<T>) -> crate::Sequences<T> {
         let mut cmp = self.into();
         cmp += other;
         cmp

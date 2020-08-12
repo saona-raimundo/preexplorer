@@ -50,10 +50,10 @@ where
     T: Display + Clone,
 {
     /// Create a new ``SequenceBin``.
-    /// 
+    ///
     /// # Remarks
-    /// 
-    /// Fixed binwidth for consistency and plotting constant values. If this value were omitted in the gnuplot script, then there 
+    ///
+    /// Fixed binwidth for consistency and plotting constant values. If this value were omitted in the gnuplot script, then there
     /// would be no histogram for constant data, for example, the histogram of realizations 0, 0, 0 is not a single bin centered in zero
     /// because the width is ill defined.
     ///
@@ -75,17 +75,21 @@ where
         let config = crate::configuration::Configuration::default();
         let binwidth: f64 = binwidth.into();
 
-        SequenceBin { data, binwidth, config }
+        SequenceBin {
+            data,
+            binwidth,
+            config,
+        }
     }
 }
 
-// impl<T> Add for SequenceBin<T>  
+// impl<T> Add for SequenceBin<T>
 // where
 //     T: Display + Clone,
 // {
 //     type Output = crate::SequenceBins<T>;
 
-//     fn add(self, other: crate::SequenceBin<T>) -> crate::SequenceBins<T> { 
+//     fn add(self, other: crate::SequenceBin<T>) -> crate::SequenceBins<T> {
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
@@ -167,9 +171,7 @@ mod tests {
 
     #[test]
     fn set_style() {
-        let data = (0..2).map(|i| -> Vec<u64> {
-            (0..4).map(|j| j + i).collect()
-        });
+        let data = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let binwidth = 1;
         let mut seq = SequenceBin::new(data, binwidth);
         seq.set_style("points");

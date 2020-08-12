@@ -2,7 +2,9 @@
 
 ## 0.3.3 [ongoing]
 
-- 
+- Implement statistical data representation
+  - Sequence and Process variants of: bin, error and violin plots.
+- Implement heatmap
 
 ## 0.3.2
 

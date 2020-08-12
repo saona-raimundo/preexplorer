@@ -83,14 +83,14 @@ where
     }
 }
 
-// impl<T, S> Add for ProcessViolin<T, S>  
+// impl<T, S> Add for ProcessViolin<T, S>
 // where
 //     T: Display + Clone,
 //     S: Display + Clone,
 // {
 //     type Output = crate::ProcessViolines<T, S>;
 
-//     fn add(self, other: crate::ProcessViolin<T, S>) -> crate::ProcessViolines<T, S> { 
+//     fn add(self, other: crate::ProcessViolin<T, S>) -> crate::ProcessViolines<T, S> {
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
@@ -186,23 +186,23 @@ replot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] - $2/renormalize):1
             self.image.len() - 1,
             self.data_path().display(),
         );
-//         gnuplot_script += &format!("\
-// # Plotting each histogram
-// do for [i=0:{}] {{
-//     set table '{}'.'partial_plot'.i
-//     plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
-//     unset table
-// }}
-// # Plotting the serie of histograms
-// set style fill transparent solid 0.5
-// plot for [i=0:{}] '{}'.'partial_plot'.i using (TIMES[i+1]):1:(TIMES[i+1]):(TIMES[i+1]+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
-// ",
-//             self.image.len() - 1,
-//             self.data_path().display(),
-//             self.data_path(),
-//             self.image.len() - 1,
-//             self.data_path().display(),
-//         );
+        //         gnuplot_script += &format!("\
+        // # Plotting each histogram
+        // do for [i=0:{}] {{
+        //     set table '{}'.'partial_plot'.i
+        //     plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins
+        //     unset table
+        // }}
+        // # Plotting the serie of histograms
+        // set style fill transparent solid 0.5
+        // plot for [i=0:{}] '{}'.'partial_plot'.i using (TIMES[i+1]):1:(TIMES[i+1]):(TIMES[i+1]+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
+        // ",
+        //             self.image.len() - 1,
+        //             self.data_path().display(),
+        //             self.data_path(),
+        //             self.image.len() - 1,
+        //             self.data_path().display(),
+        //         );
         gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
@@ -217,9 +217,7 @@ mod tests {
     #[test]
     fn set_style() {
         let domain = 0..2;
-        let image = (0..2).map(|i| -> Vec<u64> {
-            (0..4).map(|j| j + i).collect()
-        });
+        let image = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let binwidth = 1;
         let mut seq = ProcessViolin::new(domain, image, binwidth);
         seq.set_style("points");

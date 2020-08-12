@@ -1,13 +1,16 @@
 use preexplorer::prelude::*;
 
 fn main() -> anyhow::Result<()> {
-    let data: Vec<Vec<f64>> = (0..10).map(|i| {
-	    	(0..10).map(|j| {
-	    		// Some computation
-	    		(i as f64).sin() * j as f64
-	    	}).collect()
-	    })
-    	.collect();
+    let data: Vec<Vec<f64>> = (0..10)
+        .map(|i| {
+            (0..10)
+                .map(|j| {
+                    // Some computation
+                    (i as f64).sin() * j as f64
+                })
+                .collect()
+        })
+        .collect();
 
     pre::SequenceError::new(data)
         .set_title("Numerical results with variable error")

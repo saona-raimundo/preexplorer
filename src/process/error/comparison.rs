@@ -54,25 +54,25 @@ where
     }
 }
 
-impl<T> Add<crate::ProcessError<T>> for ProcessErrors<T>  
+impl<T> Add<crate::ProcessError<T>> for ProcessErrors<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: crate::ProcessError<T>) -> Self { 
+    fn add(mut self, other: crate::ProcessError<T>) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> Add for ProcessErrors<T>  
+impl<T> Add for ProcessErrors<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: Self) -> Self { 
+    fn add(mut self, other: Self) -> Self {
         self += other;
         self
     }
@@ -82,7 +82,7 @@ impl<T> AddAssign<crate::ProcessError<T>> for ProcessErrors<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, other: crate::ProcessError<T>) { 
+    fn add_assign(&mut self, other: crate::ProcessError<T>) {
         self.data_set.push(other);
     }
 }
@@ -91,7 +91,7 @@ impl<T> AddAssign for ProcessErrors<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, mut other: Self) { 
+    fn add_assign(&mut self, mut other: Self) {
         self.data_set.append(&mut other.data_set);
     }
 }

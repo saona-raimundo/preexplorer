@@ -1,5 +1,15 @@
+- cargo test
+- Comparisons
+  - Hetmaps!!!!!!!!!!!!!!!!!!!!!!!
+    - Multiplot, gridplot in gnuplot
+  - SequenceBins
+  - SequenceViolins
+  - ProcessBins
+  - ProcessViolins
+- Interoperability 
+  - SequenceViolin/SequenceError <-> with Densities
+    - Carefull with the configuration!!
 - Statistical analysis
-
   - SequenceError
 
     - [x] Plotting 
@@ -17,28 +27,15 @@
   - SequenceViolin
 
     - [x] Violin
-    - SequenceBin
-      - [x] Bin
-  - ProgressBin
+  - SequenceBin
     - [x] Bin
-  - ProgressViolin
+  - ProcessBin
+    - [x] Bin
+  - ProcessViolin
     - [x] Violin
   - Heatmaps
-      - [ ] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
-      - [ ] [doc](http://www.bersch.net/gnuplot-doc/image.html)
-      - [ ] Constructor
-          - [ ] new(xs: I, ys: J, zs: K)
-          - [ ] From<Array2>
-  - [ ] Clean the source file
-  - [ ] From Densities
-- Examples
-  - [x] SequenceError
-  - [x] ProcessError
-  - [x] SequenceViolin
-  - [x] SequenceBin
-  - [x] ProcessViolin
-  - [x] ProcessBin
-  - [ ] Heatmap
+      - [x] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
+- [ ] Clean the source file
 - Tests
   - [x] SequenceError
   - [ ] Process
@@ -49,10 +46,6 @@
   - Module level
   - Describe choices and data saved!
   - Images
-
-  - [ ] Comparison
-    - Do comparisons by grid-plotting.
-  - [gnuplot examples](http://gnuplot.sourceforge.net/demo_5.4/heatmaps.html)
 - [ ] Check out: 
   - https://serialmentor.com/dataviz/
   - https://serialmentor.com/
