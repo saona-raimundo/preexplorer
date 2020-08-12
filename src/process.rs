@@ -33,9 +33,12 @@ use core::ops::Add;
 pub mod comparison;
 /// Process of values with an associated error.
 pub mod error;
+/// Process of histograms.
+pub mod bin;
 
 pub use comparison::Processes;
 pub use error::{ProcessError, ProcessErrors};
+pub use bin::{ProcessBin};
 
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -114,11 +117,11 @@ where
     S: Display + Clone,
 {
     fn plotable_data(&self) -> String {
-        let mut raw_data = String::new();
+        let mut plotable_data = String::new();
         for (time, value) in self.domain.clone().into_iter().zip(self.image.clone()) {
-            raw_data.push_str(&format!("{}\t{}\n", time, value));
+            plotable_data.push_str(&format!("{}\t{}\n", time, value));
         }
-        raw_data
+        plotable_data
     }
 }
 

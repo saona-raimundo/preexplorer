@@ -36,26 +36,23 @@ use core::fmt::Display;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
-pub struct SequenceBin<T>
+pub struct ProcessBin<T, S>
 where
     T: Display + Clone,
+    S: Display + Clone,
 {
-    data: Vec<Vec<T>>,
+    domain: Vec<T>,
+    image: Vec<Vec<S>>,
     binwidth: f64,
     config: crate::configuration::Configuration,
 }
 
-impl<T> SequenceBin<T>
+impl<T, S> ProcessBin<T, S>
 where
     T: Display + Clone,
+    S: Display + Clone,
 {
-    /// Create a new ``SequenceBin``.
-    /// 
-    /// # Remarks
-    /// 
-    /// Fixed binwidth for consistency and plotting constant values. If this value were omitted in the gnuplot script, then there 
-    /// would be no histogram for constant data, for example, the histogram of realizations 0, 0, 0 is not a single bin centered in zero
-    /// because the width is ill defined.
+    /// Create a new ``ProcessBin``.
     ///
     /// # Examples
     ///
@@ -63,38 +60,47 @@ where
     /// ```
     /// use preexplorer::prelude::*;
     /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::SequenceBin::new(data);
+    /// let seq = pre::ProcessBin::new((0..10), data);
     /// ```
-    pub fn new<I, J, S>(data: I, binwidth: S) -> SequenceBin<T>
+    pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessBin<T, S>
     where
-        I: IntoIterator<Item = J>,
-        J: IntoIterator<Item = T>,
-        S: Into<f64>,
+        I: IntoIterator<Item = T>,
+        J: IntoIterator<Item = K>,
+        K: IntoIterator<Item = S>,
+        U: Into<f64>,
     {
-        let data: Vec<Vec<T>> = data.into_iter().map(|j| j.into_iter().collect()).collect();
+        let domain: Vec<T> = domain.into_iter().collect();
+        let image: Vec<Vec<S>> = image.into_iter().map(|j| j.into_iter().collect()).collect();
         let config = crate::configuration::Configuration::default();
         let binwidth: f64 = binwidth.into();
 
-        SequenceBin { data, binwidth, config }
+        ProcessBin {
+            domain,
+            image,
+            binwidth,
+            config,
+        }
     }
 }
 
-// impl<T> Add for SequenceBin<T>  
+// impl<T, S> Add for ProcessBin<T, S>  
 // where
 //     T: Display + Clone,
+//     S: Display + Clone,
 // {
-//     type Output = crate::SequenceBins<T>;
+//     type Output = crate::ProcessBines<T, S>;
 
-//     fn add(self, other: crate::SequenceBin<T>) -> crate::SequenceBins<T> { 
+//     fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBines<T, S> { 
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
 //     }
 // }
 
-impl<T> Configurable for SequenceBin<T>
+impl<T, S> Configurable for ProcessBin<T, S>
 where
     T: Display + Clone,
+    S: Display + Clone,
 {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {
         &mut self.config
@@ -104,36 +110,43 @@ where
     }
 }
 
-impl<T> Saveable for SequenceBin<T>
+impl<T, S> Saveable for ProcessBin<T, S>
 where
     T: Display + Clone,
+    S: Display + Clone,
 {
     fn plotable_data(&self) -> String {
         let mut plotable_data = String::new();
 
-        for (counter, values) in self.data.clone().into_iter().enumerate() {
+        for (time, values) in self.domain.clone().into_iter().zip(self.image.clone()) {
             for value in values {
-                plotable_data.push_str(&format!("{}\t{}\n", counter, value));
+                plotable_data.push_str(&format!("{}\t{}\n", time, value));
             }
             // Separate datasets
             plotable_data.push_str("\n\n");
         }
-
         plotable_data
     }
 }
 
-impl<T> Plotable for SequenceBin<T>
+impl<T, S> Plotable for ProcessBin<T, S>
 where
     T: Display + Clone,
+    S: Display + Clone,
 {
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
         gnuplot_script += &format!("BINWIDTH = {}\n", self.binwidth);
-        gnuplot_script += &format!("array DataPoints[{}]\n", self.data.len());
-        for i in 1..=self.data.len() {
-            gnuplot_script += &format!("DataPoints[{}] = {}\n", i, self.data[i-1].len());
+        gnuplot_script += &format!("array TIMES[{}] = [", self.domain.len());
+        for i in 0..self.domain.len() - 1 {
+            gnuplot_script += &format!("{}, ", self.domain[i]);
+        }
+        gnuplot_script += &format!("{}]\n", self.domain[self.domain.len() - 1]); // Last time
+
+        gnuplot_script += &format!("array DataPoints[{}]\n", self.image.len());
+        for i in 1..=self.image.len() {
+            gnuplot_script += &format!("DataPoints[{}] = {}\n", i, self.image[i-1].len());
         }
         gnuplot_script += &format!("\
 # Plotting each histogram
@@ -144,12 +157,12 @@ do for [i=0:{}] {{
 }}
 # Plotting the serie of histograms
 set style fill solid 0.5
-plot for [i=0:{}] '{}'.'partial_plot'.i using (i):1:(i):(i+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
+plot for [i=0:{}] '{}'.'partial_plot'.i using (TIMES[i]):1:(TIMES[i]):(TIMES[i]+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
 ",
-            self.data.len() - 1,
+            self.image.len() - 1,
             self.data_path().display(),
             self.data_path(),
-            self.data.len() - 1,
+            self.image.len() - 1,
             self.data_path().display(),
         );
         gnuplot_script += &self.ending_plot_script();
@@ -165,11 +178,12 @@ mod tests {
 
     #[test]
     fn set_style() {
-        let data = (0..2).map(|i| -> Vec<u64> {
+        let domain = 0..2;
+        let image = (0..2).map(|i| -> Vec<u64> {
             (0..4).map(|j| j + i).collect()
         });
         let binwidth = 1;
-        let mut seq = SequenceBin::new(data, binwidth);
+        let mut seq = ProcessBin::new(domain, image, binwidth);
         seq.set_style("points");
 
         assert_eq!(
