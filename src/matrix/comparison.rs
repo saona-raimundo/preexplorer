@@ -134,9 +134,13 @@ where
         let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
-        gnuplot_script += "plot ";
-        let style = self.style();
-        let mut dashtype_counter = 0;
+        let rows = (self.data_set.len() as f64).sqrt().ceil();
+        let columns = (self.data_set.len() as f64 / rows).ceil();
+        let overall_title = match self.title() {
+        	Some(title) => title,
+        	None => "",
+        };
+        gnuplot_script += &format!("set multiplot layout {},{} rowsfirst downwards title \"{}\"\n", rows, columns, overall_title);
 
         for (counter, heatmap) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
@@ -151,25 +155,11 @@ where
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
-            let heatmap_style = match style {
-                crate::configuration::plot::style::Style::Default => heatmap.style(),
-                _ => style,
-            };
-            let dashtype = match heatmap.dashtype() {
-                Some(dashtype) => dashtype,
-                None => {
-                    dashtype_counter += 1;
-                    dashtype_counter
-                }
-            };
 
             gnuplot_script += &format!(
-                "{:?} using 1:2 with {} title \"{}\" dashtype {}, ",
-                inner_path, heatmap_style, legend, dashtype,
+                "set title \"{}\"\nplot {:?} using 1:2:3 with image\n",
+                legend, inner_path,
             );
-            if counter < self.data_set.len() - 1 {
-                gnuplot_script += "\\\n";
-            }
         }
         gnuplot_script += "\n";
         gnuplot_script += &self.ending_plot_script();

@@ -182,8 +182,8 @@ where
         let shape = array.shape();
 
         let xs: Vec<usize> = (0..shape[0]).collect();
-        let ys: Vec<usize> = (0..shape[1]).collect();
-        let values = array.into_raw_vec();
+        let ys: Vec<usize> = (0..shape[1]).rev().collect();
+        let values: Vec<T> = array.t().iter().cloned().collect();
 
         Heatmap::new(xs, ys, values)
     }

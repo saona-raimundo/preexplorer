@@ -1,7 +1,5 @@
 - cargo test
 - Comparisons
-  - Hetmaps!!!!!!!!!!!!!!!!!!!!!!!
-    - Multiplot, gridplot in gnuplot
   - SequenceBins
   - SequenceViolins
   - ProcessBins
