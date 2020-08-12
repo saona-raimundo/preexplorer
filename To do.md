@@ -20,17 +20,15 @@
     - SequenceBin
       - [x] Bin
   - ProgressBin
-    - [ ] Bin
-      - [ ] How to do the gnuplotscript?
-        - [ ] How to recover the time?
+    - [x] Bin
   - ProgressViolin
-    - [ ] Violin
-    - Heatmaps
-        - [ ] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
-        - [ ] [doc](http://www.bersch.net/gnuplot-doc/image.html)
-        - [ ] Constructor
-            - [ ] new(xs: I, ys: J, zs: K)
-            - [ ] From<Array2>
+    - [x] Violin
+  - Heatmaps
+      - [ ] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
+      - [ ] [doc](http://www.bersch.net/gnuplot-doc/image.html)
+      - [ ] Constructor
+          - [ ] new(xs: I, ys: J, zs: K)
+          - [ ] From<Array2>
   - [ ] Clean the source file
   - [ ] From Densities
 - Examples
@@ -38,8 +36,8 @@
   - [x] ProcessError
   - [x] SequenceViolin
   - [x] SequenceBin
-  - [ ] ProcessViolin
-  - [ ] ProcessBin
+  - [x] ProcessViolin
+  - [x] ProcessBin
   - [ ] Heatmap
 - Tests
   - [x] SequenceError

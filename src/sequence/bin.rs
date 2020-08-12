@@ -131,10 +131,12 @@ where
         let mut gnuplot_script = self.opening_plot_script();
 
         gnuplot_script += &format!("BINWIDTH = {}\n", self.binwidth);
-        gnuplot_script += &format!("array DataPoints[{}]\n", self.data.len());
-        for i in 1..=self.data.len() {
-            gnuplot_script += &format!("DataPoints[{}] = {}\n", i, self.data[i-1].len());
+        gnuplot_script += &format!("array DataPoints[{}] = [", self.data.len());
+        for i in 0..self.data.len() - 1 {
+            gnuplot_script += &format!("{}, ", self.data[i].len());
         }
+        gnuplot_script += &format!("{}]\n", self.data[self.data.len() - 1].len());
+
         gnuplot_script += &format!("\
 # Plotting each histogram
 do for [i=0:{}] {{

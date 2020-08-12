@@ -33,11 +33,14 @@ use core::ops::Add;
 pub mod comparison;
 /// Process of values with an associated error.
 pub mod error;
+/// Process of violin plots.
+pub mod violin;
 /// Process of histograms.
 pub mod bin;
 
 pub use comparison::Processes;
 pub use error::{ProcessError, ProcessErrors};
+pub use violin::{ProcessViolin};
 pub use bin::{ProcessBin};
 
 /// Indexed sequence of values.
