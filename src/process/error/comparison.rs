@@ -5,8 +5,8 @@
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
-//! pre::Processes::new(many_pros).plot("my_identifier").unwrap();
+//! let many_pro_err = (0..5).map(|_| pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)));
+//! pre::ProcessErrors::new(many_pro_err).plot("my_identifier").unwrap();
 //! ```
 //!
 
@@ -127,7 +127,7 @@ where
                 inner_path.set_file_name(&inner_id);
                 inner_path.set_extension(extension);
             } else {
-                inner_path.set_file_name(&id);
+                inner_path.set_file_name(&inner_id);
             }
             let legend = match process.title() {
                 Some(leg) => String::from(leg),

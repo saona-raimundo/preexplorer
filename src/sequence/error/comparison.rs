@@ -1,12 +1,12 @@
-//! Comparison of sequences of values.
+//! Comparison of sequences of values with a given error.
 //!
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! let many_seqs = (0..5).map(|_| (0..10).preexplore());
-//! pre::Sequences::new(many_seqs).plot("my_identifier").unwrap();
+//! let many_seq_err = (0..5).map(|_| pre::SequenceError::new((0..10).map(|i| (i..10 + i))));
+//! pre::SequenceErrors::new(many_seq_err).plot("my_identifier").unwrap();
 //! ```
 //!
 

@@ -136,7 +136,7 @@ where
                 inner_path.set_file_name(&inner_id);
                 inner_path.set_extension(extension);
             } else {
-                inner_path.set_file_name(&id);
+                inner_path.set_file_name(&inner_id);
             }
             let legend = match process.title() {
                 Some(leg) => String::from(leg),

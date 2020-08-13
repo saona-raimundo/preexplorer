@@ -1,38 +1,33 @@
-//! Most basic explorable structure: a sequence of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
+//! Sequence of violin plots.
 //!
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
+//! let data = (0..10).map(|i| (i..10 + i));
+//! pre::SequenceViolin::new(data).plot("my_identifier").unwrap();
 //! ```
 //!
-//! Compare ``Sequence``s.
+//! Compare ``SequenceViolin``s.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
+//! pre::SequencViolins::new(vec![
+//!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
+//!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
 
 // Traits
-// use core::ops::Add;
+use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-// /// Compare various ``Sequence``s.
-// pub mod comparison;
+/// Compare various ``Sequence``s.
+pub mod comparison;
 
-// pub use comparison::Sequences;
+pub use comparison::SequenceViolins;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -70,18 +65,18 @@ where
     }
 }
 
-// impl<T> Add for SequenceViolin<T>
-// where
-//     T: Display + Clone,
-// {
-//     type Output = crate::SequenceViolins<T>;
+impl<T> Add for SequenceViolin<T>
+where
+    T: Display + Clone,
+{
+    type Output = crate::SequenceViolins<T>;
 
-//     fn add(self, other: crate::SequenceViolin<T>) -> crate::SequenceViolins<T> {
-//         let mut cmp = self.into();
-//         cmp += other;
-//         cmp
-//     }
-// }
+    fn add(self, other: crate::SequenceViolin<T>) -> crate::SequenceViolins<T> {
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
+    }
+}
 
 impl<T> Configurable for SequenceViolin<T>
 where
@@ -121,10 +116,6 @@ where
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        // let dashtype = match self.dashtype() {
-        //     Some(dashtype) => dashtype,
-        //     None => 1,
-        // };
         gnuplot_script += &format!("\
 renormalize = 2
 do for [i=0:{}] {{

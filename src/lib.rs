@@ -91,7 +91,7 @@ pub use self::process::{
     Process, ProcessBin, ProcessError, ProcessErrors, ProcessViolin, Processes,
 };
 pub use self::sequence::{
-    Sequence, SequenceBin, SequenceError, SequenceErrors, SequenceViolin, Sequences,
+    Sequence, Sequences, SequenceBin, SequenceError, SequenceErrors, SequenceViolin, SequenceViolins, 
 };
 pub use self::traits::*;
 

@@ -1,25 +1,20 @@
-//! Indexed collection of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert a tuple of ``IntoIterator``s
-//! into ``Process`` for ease of use. The same can be achieved with the
-//! ``new`` method.
+//! Indexed collection of values with a given error.
 //!
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
+//! let image = (0..10).map(|i| i..10 + i);
+//! pre::ProcessError::new((5..15), image).plot("my_identifier").unwrap();
 //! ```
 //!
 //! Compare ``Process``es.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::Processes::new(vec![
-//!     ((0..10), (0..10)).preexplore(),
-//!     ((0..10), (0..10)).preexplore(),
+//! pre::ProcessErrors::new(vec![
+//!     pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)),
+//!     pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
@@ -59,20 +54,21 @@ where
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::Process::new((0..10), data);
+    /// let data = (0..10).map(|i| i..10 + i);
+    /// let pro_err = pre::ProcessError::new((0..10), data);
     /// ```
-    pub fn new<I, J, K>(domain: I, image: J) -> ProcessError<T>
+    pub fn new<I, J, K, S>(domain: I, image: J) -> ProcessError<T>
     where
         I: IntoIterator<Item = T>,
         J: IntoIterator<Item = K>,
-        K: IntoIterator<Item = f64>,
+        K: IntoIterator<Item = S>,
+        S: Into<f64>,
     {
         let domain: Vec<T> = domain.into_iter().collect();
         let image: Vec<(f64, f64)> = image
             .into_iter()
             .map(|k| {
-                let v: Variance = k.into_iter().collect();
+                let v: Variance = k.into_iter().map(|s| s.into()).collect();
                 (v.mean(), v.error())
             })
             .collect();

@@ -41,7 +41,7 @@ pub mod violin;
 pub use bin::SequenceBin;
 pub use comparison::Sequences;
 pub use error::{SequenceError, SequenceErrors};
-pub use violin::SequenceViolin;
+pub use violin::{SequenceViolin, SequenceViolins};
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]

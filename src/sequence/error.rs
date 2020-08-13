@@ -1,25 +1,20 @@
 //! A sequence of values with a given error.
 //!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
+//! let data = (0..10).map(|i| (i..10 + i));
+//! let seq_err = pre::SequenceError::new(data).plot("my_identifier").unwrap();
 //! ```
 //!
-//! Compare ``Sequence``s.
+//! Compare ``SequenceError``s.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
+//! pre::SequenceErrors::new(vec![
+//!     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
+//!     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
@@ -44,7 +39,9 @@ pub struct SequenceError {
 }
 
 impl SequenceError {
-    /// Create a new ``SequenceError``.
+    /// Create a new ``SequenceError`` from data. 
+    /// Each dataset is processed so that the final plot shows the mean of the data set and 
+    /// an error bar of one standard deviation.
     ///
     /// # Examples
     ///
