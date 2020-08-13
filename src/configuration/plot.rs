@@ -4,7 +4,7 @@ use std::ffi::OsStr;
 use std::path::PathBuf;
 
 // Traits
-use getset::{Getters};
+use getset::Getters;
 
 pub mod style;
 

@@ -25,8 +25,8 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
+use core::ops::Add;
 
 // Structs
 use average::Variance;
@@ -59,7 +59,8 @@ impl SequenceError {
         I: IntoIterator<Item = J>,
         J: IntoIterator<Item = f64>,
     {
-        let data: Vec<(f64, f64)> = data.into_iter()
+        let data: Vec<(f64, f64)> = data
+            .into_iter()
             .map(|j| {
                 let v: Variance = j.into_iter().collect();
                 (v.mean(), v.error())
@@ -74,7 +75,7 @@ impl SequenceError {
 impl Add for SequenceError {
     type Output = crate::SequenceErrors;
 
-    fn add(self, other: crate::SequenceError) -> crate::SequenceErrors { 
+    fn add(self, other: crate::SequenceError) -> crate::SequenceErrors {
         let mut cmp = self.into();
         cmp += other;
         cmp

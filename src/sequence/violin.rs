@@ -70,13 +70,13 @@ where
     }
 }
 
-// impl<T> Add for SequenceViolin<T>  
+// impl<T> Add for SequenceViolin<T>
 // where
 //     T: Display + Clone,
 // {
 //     type Output = crate::SequenceViolins<T>;
 
-//     fn add(self, other: crate::SequenceViolin<T>) -> crate::SequenceViolins<T> { 
+//     fn add(self, other: crate::SequenceViolin<T>) -> crate::SequenceViolins<T> {
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
@@ -173,9 +173,7 @@ mod tests {
 
     #[test]
     fn set_style() {
-        let data = (0..2).map(|i| -> Vec<u64> {
-            (0..4).map(|j| j + i).collect()
-        });
+        let data = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let mut seq = SequenceViolin::new(data);
         seq.set_style("points");
 

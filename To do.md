@@ -1,8 +1,17 @@
+- cargo test
+- Comparisons
+  - SequenceBins
+  - SequenceViolins
+  - ProcessBins
+  - ProcessViolins
+- Interoperability 
+  - SequenceViolin/SequenceError <-> with Densities
+    - Carefull with the configuration!!
 - Add bins to Density
 - Statistical analysis
-- SequenceError
-  
-  - [x] Plotting 
+  - SequenceError
+
+    - [x] Plotting 
       - [x] yerrorbars (x:y:error with yerrorbars or w yerr)
       - [x] Trend Line of centers (x:y w lines)
     - [x] new
@@ -15,32 +24,17 @@
     - [x] trend 
     - [x] Check out: [gnuplot](http://gnuplot.sourceforge.net/demo_5.4/errorbars.html) 
   - SequenceViolin
-  
-  - [x] Violin
-    - SequenceBin
-      - [x] Bin
-  - ProgressBin
-    - [ ] Bin
-      - [ ] How to do the gnuplotscript?
-        - [ ] How to recover the time?
-  - ProgressViolin
-    - [ ] Violin
-    - Heatmaps
-        - [ ] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
-        - [ ] [doc](http://www.bersch.net/gnuplot-doc/image.html)
-        - [ ] Constructor
-            - [ ] new(xs: I, ys: J, zs: K)
-            - [ ] From<Array2>
-  - [ ] Clean the source file
-  - [ ] From Densities
-- Examples
-  - [x] SequenceError
-  - [x] ProcessError
-  - [x] SequenceViolin
-  - [x] SequenceBin
-  - [ ] ProcessViolin
-  - [ ] ProcessBin
-  - [ ] Heatmap
+
+    - [x] Violin
+  - SequenceBin
+    - [x] Bin
+  - ProcessBin
+    - [x] Bin
+  - ProcessViolin
+    - [x] Violin
+  - Heatmaps
+      - [x] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
+- [ ] Clean the source file
 - Tests
   - [x] SequenceError
   - [ ] Process
@@ -51,10 +45,6 @@
   - Module level
   - Describe choices and data saved!
   - Images
-
-  - [ ] Comparison
-    - Do comparisons by grid-plotting.
-  - [gnuplot examples](http://gnuplot.sourceforge.net/demo_5.4/heatmaps.html)
 - [ ] Check out: 
   - https://serialmentor.com/dataviz/
   - https://serialmentor.com/

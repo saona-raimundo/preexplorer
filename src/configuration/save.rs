@@ -3,7 +3,7 @@ use std::ffi::OsStr;
 use std::path::PathBuf;
 
 // Traits
-use getset::{Getters};
+use getset::Getters;
 
 #[derive(Getters, Debug, PartialOrd, PartialEq, Clone)]
 #[getset(get = "pub")]

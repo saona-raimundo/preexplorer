@@ -20,9 +20,9 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
 // Structs
 pub use comparison::Densities;
@@ -125,7 +125,8 @@ where
     /// assert_eq!(den.cloud(), false);
     /// ```
     pub fn set_cloud(&mut self, cloud: bool) -> &mut Self {
-        self.configuration_mut().set_custom("cloud", cloud.to_string());
+        self.configuration_mut()
+            .set_custom("cloud", cloud.to_string());
         self
     }
 
@@ -150,13 +151,13 @@ where
     }
 }
 
-impl<T> Add for Density<T>  
+impl<T> Add for Density<T>
 where
     T: Display + Clone,
 {
     type Output = crate::Densities<T>;
 
-    fn add(self, other: crate::Density<T>) -> crate::Densities<T> { 
+    fn add(self, other: crate::Density<T>) -> crate::Densities<T> {
         let mut cmp = self.into();
         cmp += other;
         cmp
@@ -201,7 +202,7 @@ where
         let mut gnuplot_script = self.opening_plot_script();
 
         gnuplot_script += "set zeroaxis\n";
-        
+
         // Values for the histogram
 
         let mut length = 0;
@@ -231,19 +232,18 @@ where
                         gnuplot_script += ", \\\n\t ";
                     }
                     gnuplot_script += &format!(
-                    	"{:?} using 1:({}) smooth kdensity with {} dashtype {}", 
-                    	self.data_path(),
+                        "{:?} using 1:({}) smooth kdensity with {} dashtype {}",
+                        self.data_path(),
                         1. / length as f64,
-                    	self.style(),
-                    	dashtype,
+                        self.style(),
+                        dashtype,
                     );
                 }
                 if self.cdf() {
                     if self.cloud() || self.pdf() {
                         gnuplot_script += ", \\\n\t ";
                     }
-                    gnuplot_script +=
-                        &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
+                    gnuplot_script += &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
                 }
                 gnuplot_script += "\n";
             }

@@ -83,7 +83,8 @@ impl crate::traits::Configurable for Configuration {
         f64: From<S>,
         f64: From<T>,
     {
-        self.plot_config.set_rangex((f64::from(left), f64::from(right)));
+        self.plot_config
+            .set_rangex((f64::from(left), f64::from(right)));
         self
     }
     fn set_rangey<S, T>(&mut self, down: S, up: T) -> &mut Self
@@ -91,7 +92,8 @@ impl crate::traits::Configurable for Configuration {
         f64: From<S>,
         f64: From<T>,
     {
-        self.plot_config.set_rangey((f64::from(down), f64::from(up)));
+        self.plot_config
+            .set_rangey((f64::from(down), f64::from(up)));
         self
     }
     fn set_style<S>(&mut self, style: S) -> &mut Self

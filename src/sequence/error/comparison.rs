@@ -15,8 +15,8 @@ use crate::errors::PreexplorerError;
 
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
-use core::ops::{Add, AddAssign};
 use core::fmt::Display;
+use core::ops::{Add, AddAssign};
 
 /// Comparison counter part of ``Sequence`` struct.
 ///
@@ -47,7 +47,7 @@ impl From<crate::sequence::SequenceError> for SequenceErrors {
 impl Add<crate::SequenceError> for SequenceErrors {
     type Output = Self;
 
-    fn add(mut self, other: crate::SequenceError) -> Self { 
+    fn add(mut self, other: crate::SequenceError) -> Self {
         self += other;
         self
     }
@@ -56,24 +56,23 @@ impl Add<crate::SequenceError> for SequenceErrors {
 impl Add for SequenceErrors {
     type Output = Self;
 
-    fn add(mut self, other: Self) -> Self { 
+    fn add(mut self, other: Self) -> Self {
         self += other;
         self
     }
 }
 
 impl AddAssign<crate::SequenceError> for SequenceErrors {
-    fn add_assign(&mut self, other: crate::SequenceError) { 
+    fn add_assign(&mut self, other: crate::SequenceError) {
         self.data_set.push(other);
     }
 }
 
 impl AddAssign for SequenceErrors {
-    fn add_assign(&mut self, mut other: Self) { 
+    fn add_assign(&mut self, mut other: Self) {
         self.data_set.append(&mut other.data_set);
     }
 }
-
 
 impl Configurable for SequenceErrors {
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration {

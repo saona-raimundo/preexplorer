@@ -75,17 +75,24 @@
 mod data;
 /// Histograms or realizations of the same variable. Empirical densities.
 mod density;
+/// (Squared) Matrices.
+mod matrix;
 /// Time-series, indexed by a subset of R.
 mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
 
-pub use self::data::Data;
-pub use self::density::{Densities, Density};
-pub use self::process::{Process, Processes, ProcessError, ProcessErrors, ProcessBin};
-pub use self::sequence::{Sequence, Sequences, SequenceError, SequenceErrors, SequenceViolin, SequenceBin};
 pub use self::configuration::Configuration;
 pub use self::constants::{DATA_DIR, PLOT_DIR};
+pub use self::data::Data;
+pub use self::density::{Densities, Density};
+pub use self::matrix::{Heatmap, Heatmaps};
+pub use self::process::{
+    Process, ProcessBin, ProcessError, ProcessErrors, ProcessViolin, Processes,
+};
+pub use self::sequence::{
+    Sequence, SequenceBin, SequenceError, SequenceErrors, SequenceViolin, Sequences,
+};
 pub use self::traits::*;
 
 /// Struct with all configurations for saving and ploting.
@@ -94,8 +101,6 @@ mod configuration;
 pub mod errors;
 /// Traits for easy use or self implmentation.
 mod traits;
-
-
 
 /// All you ussually need.
 pub mod prelude {

@@ -36,7 +36,7 @@ use core::fmt::Display;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
-pub struct ProcessBin<T, S>
+pub struct ProcessViolin<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
@@ -47,12 +47,12 @@ where
     config: crate::configuration::Configuration,
 }
 
-impl<T, S> ProcessBin<T, S>
+impl<T, S> ProcessViolin<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
 {
-    /// Create a new ``ProcessBin``.
+    /// Create a new ``ProcessViolin``.
     ///
     /// # Examples
     ///
@@ -60,9 +60,9 @@ where
     /// ```
     /// use preexplorer::prelude::*;
     /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::ProcessBin::new((0..10), data);
+    /// let seq = pre::ProcessViolin::new((0..10), data);
     /// ```
-    pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessBin<T, S>
+    pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessViolin<T, S>
     where
         I: IntoIterator<Item = T>,
         J: IntoIterator<Item = K>,
@@ -74,7 +74,7 @@ where
         let config = crate::configuration::Configuration::default();
         let binwidth: f64 = binwidth.into();
 
-        ProcessBin {
+        ProcessViolin {
             domain,
             image,
             binwidth,
@@ -83,21 +83,21 @@ where
     }
 }
 
-// impl<T, S> Add for ProcessBin<T, S>
+// impl<T, S> Add for ProcessViolin<T, S>
 // where
 //     T: Display + Clone,
 //     S: Display + Clone,
 // {
-//     type Output = crate::ProcessBines<T, S>;
+//     type Output = crate::ProcessViolines<T, S>;
 
-//     fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBines<T, S> {
+//     fn add(self, other: crate::ProcessViolin<T, S>) -> crate::ProcessViolines<T, S> {
 //         let mut cmp = self.into();
 //         cmp += other;
 //         cmp
 //     }
 // }
 
-impl<T, S> Configurable for ProcessBin<T, S>
+impl<T, S> Configurable for ProcessViolin<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
@@ -110,7 +110,7 @@ where
     }
 }
 
-impl<T, S> Saveable for ProcessBin<T, S>
+impl<T, S> Saveable for ProcessViolin<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
@@ -129,7 +129,7 @@ where
     }
 }
 
-impl<T, S> Plotable for ProcessBin<T, S>
+impl<T, S> Plotable for ProcessViolin<T, S>
 where
     T: Display + Clone,
     S: Display + Clone,
@@ -144,29 +144,65 @@ where
         }
         gnuplot_script += &format!("{}]\n", self.domain[self.domain.len() - 1]); // Last time
 
-        gnuplot_script += &format!("array DataPoints[{}] = [", self.image.len());
-        for i in 0..self.image.len() - 1 {
-            gnuplot_script += &format!("{}, ", self.image[i].len());
-        }
-        gnuplot_script += &format!("{}]\n", self.image[self.image.len() - 1].len()); // Last time
+        // gnuplot_script += &format!("array DataPoints[{}] = [", self.image.len());
+        // for i in 0..self.image.len() - 1 {
+        //     gnuplot_script += &format!("{}, ", self.image[i].len());
+        // }
+        // gnuplot_script += &format!("{}]\n", self.image[self.image.len() - 1].len()); // Last time
 
         gnuplot_script += &format!("\
-# Plotting each histogram
+renormalize = 2
 do for [i=0:{}] {{
-    set table '{}'.'partial_plot'.i
-    plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
+    # Computing some values
+    set table $_
+    plot {:?} index i using 2:(1) smooth kdensity
     unset table
+    renormalize = (renormalize < 2 * GPVAL_Y_MAX) ? 2 * GPVAL_Y_MAX : renormalize
+    # Plotting a greater domain
+    set table '{}'.'_partial_plot'.i
+    x_min = (GPVAL_X_MIN < GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH)? GPVAL_X_MIN : GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH
+    x_max = (GPVAL_X_MAX > GPVAL_X_MAX + 5 * GPVAL_KDENSITY_BANDWIDTH)? GPVAL_X_MAX : GPVAL_X_MAX + 5 * GPVAL_KDENSITY_BANDWIDTH
+    set xrange [x_min:x_max]
+    plot {:?} index i using 2:(1) smooth kdensity
+    unset table
+    # Clean the plotting
+    unset xrange
+    unset yrange
 }}
-# Plotting the serie of histograms
+
+# Plotting the violins
 set style fill transparent solid 0.5
-plot for [i=0:{}] '{}'.'partial_plot'.i using (TIMES[i+1]):1:(TIMES[i+1]):(TIMES[i+1]+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
+# Right side
+plot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] + $2/renormalize):1 with filledcurve x=TIMES[i+1] linecolor i
+# Left side
+replot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] - $2/renormalize):1 with filledcurve x=TIMES[i+1] linecolor i
 ",
             self.image.len() - 1,
+            self.data_path(),
             self.data_path().display(),
             self.data_path(),
             self.image.len() - 1,
             self.data_path().display(),
+            self.image.len() - 1,
+            self.data_path().display(),
         );
+        //         gnuplot_script += &format!("\
+        // # Plotting each histogram
+        // do for [i=0:{}] {{
+        //     set table '{}'.'partial_plot'.i
+        //     plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins
+        //     unset table
+        // }}
+        // # Plotting the serie of histograms
+        // set style fill transparent solid 0.5
+        // plot for [i=0:{}] '{}'.'partial_plot'.i using (TIMES[i+1]):1:(TIMES[i+1]):(TIMES[i+1]+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
+        // ",
+        //             self.image.len() - 1,
+        //             self.data_path().display(),
+        //             self.data_path(),
+        //             self.image.len() - 1,
+        //             self.data_path().display(),
+        //         );
         gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
@@ -183,7 +219,7 @@ mod tests {
         let domain = 0..2;
         let image = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let binwidth = 1;
-        let mut seq = ProcessBin::new(domain, image, binwidth);
+        let mut seq = ProcessViolin::new(domain, image, binwidth);
         seq.set_style("points");
 
         assert_eq!(

@@ -23,9 +23,9 @@ chrono = "0.4"
 thiserror = "1.0"
 getset = "0.1"
 average = "0.10.4"
+ndarray = "0.13"
 
 [dev-dependencies]
-ndarray = "0.13"
 rand = "0.7"
 itertools = "0.9"
 rand_distr = "0.2"
