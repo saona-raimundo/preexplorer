@@ -59,8 +59,9 @@ where
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::ProcessBin::new((0..10), data);
+    /// let image = (0..10).map(|i| (i..10 + i));
+    /// let binwidth = 1;
+    /// let pro_bin = pre::ProcessBin::new((0..10), image, binwidth);
     /// ```
     pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessBin<T, S>
     where

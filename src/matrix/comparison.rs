@@ -4,9 +4,10 @@
 //!
 //! Quick plot.
 //! ```no_run
+//! # use itertools::iproduct;
 //! use preexplorer::prelude::*;
-//! let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
-//! pre::Heatmaps::new(many_pros).plot("my_identifier").unwrap();
+//! let many_heatmaps = (0..5).map(|_| pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)));
+//! pre::Heatmaps::new(many_heatmaps).plot("my_identifier").unwrap();
 //! ```
 //!
 
@@ -137,10 +138,13 @@ where
         let rows = (self.data_set.len() as f64).sqrt().ceil();
         let columns = (self.data_set.len() as f64 / rows).ceil();
         let overall_title = match self.title() {
-        	Some(title) => title,
-        	None => "",
+            Some(title) => title,
+            None => "",
         };
-        gnuplot_script += &format!("set multiplot layout {},{} rowsfirst downwards title \"{}\"\n", rows, columns, overall_title);
+        gnuplot_script += &format!(
+            "set multiplot layout {},{} rowsfirst downwards title \"{}\"\n",
+            rows, columns, overall_title
+        );
 
         for (counter, heatmap) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);

@@ -36,7 +36,7 @@ pub struct Density<T>
 where
     T: Display + Clone,
 {
-    realizations: Vec<T>,
+    pub(crate) realizations: Vec<T>,
     config: crate::configuration::Configuration,
 }
 
@@ -268,10 +268,14 @@ where
                     gnuplot_script += &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
                 }
                 if self.bins() {
-                	if self.cloud() || self.pdf() || self.cdf() {
+                    if self.cloud() || self.pdf() || self.cdf() {
                         gnuplot_script += ", \\\n\t ";
                     }
-                    gnuplot_script += &format!("{:?} using 1:(1./{}) bins with boxes", self.data_path(), realizations.len());
+                    gnuplot_script += &format!(
+                        "{:?} using 1:(1./{}) bins with boxes",
+                        self.data_path(),
+                        realizations.len()
+                    );
                 }
                 gnuplot_script += "\n";
             }

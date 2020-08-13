@@ -62,8 +62,9 @@ where
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::SequenceBin::new(data);
+    /// let data = (0..10).map(|i| (i..10 + i));
+    /// let binwidth = 0.5;
+    /// let seq_bin = pre::SequenceBin::new(data, binwidth);
     /// ```
     pub fn new<I, J, S>(data: I, binwidth: S) -> SequenceBin<T>
     where

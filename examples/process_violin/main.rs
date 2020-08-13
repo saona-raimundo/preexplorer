@@ -14,9 +14,8 @@ fn main() -> anyhow::Result<()> {
                 .collect()
         })
         .collect();
-    let binwidth = 0.3;
 
-    pre::ProcessViolin::new(domain, image, binwidth)
+    pre::ProcessViolin::new(domain, image)
         .set_title("Numerical results through histograms")
         .set_xlabel("index")
         .set_ylabel("value")

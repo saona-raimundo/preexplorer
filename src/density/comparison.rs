@@ -5,7 +5,7 @@
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! let many_dens = (0..5).map(|_| pre::Density::new((0..10)));
+//! let many_dens = (0..5).map(|_| pre::Density::new(0..10));
 //! pre::Densities::new(many_dens).plot("my_identifier").unwrap();
 //! ```
 //!
@@ -20,12 +20,12 @@ use core::ops::{Add, AddAssign};
 
 /// Comparison counter part of ``Density`` struct.
 ///
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Densities<T>
 where
     T: Display + Clone,
 {
-    data_set: Vec<crate::density::Density<T>>,
+    pub(crate) data_set: Vec<crate::density::Density<T>>,
     config: crate::configuration::Configuration,
 }
 

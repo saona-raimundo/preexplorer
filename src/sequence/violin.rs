@@ -55,7 +55,7 @@ where
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| i * i + 1);
+    /// let data = (0..10).map(|i| (i..10 + i));
     /// let seq = pre::SequenceViolin::new(data);
     /// ```
     pub fn new<I, J>(data: I) -> SequenceViolin<T>
@@ -166,6 +166,25 @@ replot for [i=0:{}] '{}'.'_partial_plot'.i using (i - $2/renormalize):1 with fil
     }
 }
 
+impl<T> From<crate::Densities<T>> for SequenceViolin<T>
+where
+    T: Display + Clone,
+{
+    fn from(mut densities: crate::Densities<T>) -> Self {
+        let data: Vec<Vec<T>> = (0..densities.data_set.len())
+            .map(|i| {
+                densities.data_set[i]
+                    .realizations.clone()
+            })
+            .collect();
+        let mut seq_vio = SequenceViolin::new(data);
+        let config = seq_vio.configuration_mut();
+        *config = densities.configuration_mut().clone();
+        seq_vio
+
+    }
+}
+
 ///////////////////////////////////////////////
 #[cfg(test)]
 mod tests {
@@ -181,5 +200,16 @@ mod tests {
             &crate::configuration::plot::style::Style::Points,
             seq.style()
         );
+    }
+
+    #[test]
+    fn from_densitites() {
+        use crate::prelude::*;
+        let many_dens = (0..5).map(|_| pre::Density::new(0..10));
+        let mut densities: pre::Densities<u64> = pre::Densities::new(many_dens);
+        densities.set_title("My title");
+        let seq_err = pre::SequenceViolin::from(densities.clone());
+
+        assert_eq!(seq_err.title(), densities.title());
     }
 }

@@ -1,44 +1,28 @@
-- cargo test
 - Comparisons
   - SequenceBins
   - SequenceViolins
   - ProcessBins
   - ProcessViolins
-- Interoperability 
-  - SequenceViolin/SequenceError <-> with Densities
-    - Careful with the configuration!!
-- Statistical analysis
-  - SequenceError
-
-    - [x] Plotting 
-      - [x] yerrorbars (x:y:error with yerrorbars or w yerr)
-      - [x] Trend Line of centers (x:y w lines)
-    - [x] new
-      - [x] Iterator of iterators
-    - [x] Comparison
-      - [x] ... 
-  - ProcessError
-  
-  - [x] continuous yerrorbars (x:y:error with yerrorbars) or (x:y:error with filledc fs transparent solid 0.5 lc rgb "dark-grey")
-    - [x] trend 
-    - [x] Check out: [gnuplot](http://gnuplot.sourceforge.net/demo_5.4/errorbars.html) 
-  - SequenceViolin
-
-    - [x] Violin
-  - SequenceBin
-    - [x] Bin
-  - ProcessBin
-    - [x] Bin
-  - ProcessViolin
-    - [x] Violin
-  - Heatmaps
-      - [x] [simple](http://www.labbookpages.co.uk/software/gnuplot.html#heatmaps)
-- [ ] Clean the source file
+- Clean the source file
+  - [ ] SequenceError
+  - [ ] SequenceErrors
+  - [ ] ProcessError
+  - [ ] ProcessErrors
+  - [ ] SequenceViolin
+  - [ ] SequenceBin
+  - [ ] ProcessBin
+  - [ ] ProcessViolin
+  - [ ] Heatmaps
 - Tests
   - [x] SequenceError
   - [ ] Process
   - [ ] ProcessError
+  - [ ] ProcessErrors
   - [ ] SequenceViolin
+  - [ ] SequenceBin
+  - [ ] ProcessBin
+  - [ ] ProcessViolin
+  - [ ] Heatmaps
 - Documentation
   - Library level
   - Module level

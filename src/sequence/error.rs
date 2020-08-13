@@ -51,18 +51,19 @@ impl SequenceError {
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::SequenceError::new(data);
+    /// let data = (0..10).map(|i| (i..10 + i));
+    /// let seq_err = pre::SequenceError::new(data);
     /// ```
-    pub fn new<I, J>(data: I) -> SequenceError
+    pub fn new<I, J, T>(data: I) -> SequenceError
     where
         I: IntoIterator<Item = J>,
-        J: IntoIterator<Item = f64>,
+        J: IntoIterator<Item = T>,
+        T: Into<f64>,
     {
         let data: Vec<(f64, f64)> = data
             .into_iter()
             .map(|j| {
-                let v: Variance = j.into_iter().collect();
+                let v: Variance = j.into_iter().map(|t| t.into()).collect();
                 (v.mean(), v.error())
             })
             .collect();
@@ -123,9 +124,32 @@ impl Plotable for SequenceError {
     }
 }
 
+impl<T> From<crate::Densities<T>> for SequenceError
+where
+    T: Into<f64> + core::fmt::Display + Clone,
+{
+    fn from(mut densities: crate::Densities<T>) -> Self {
+        let data: Vec<Vec<f64>> = (0..densities.data_set.len())
+            .map(|i| {
+                densities.data_set[i]
+                    .realizations
+                    .iter()
+                    .map(|t| t.clone().into())
+                    .collect()
+            })
+            .collect();
+        let mut seq_err = SequenceError::new(data);
+        let config = seq_err.configuration_mut();
+        *config = densities.configuration_mut().clone();
+        seq_err
+
+    }
+}
+
 ///////////////////////////////////////////////
 #[cfg(test)]
 mod tests {
+    
     use super::*;
 
     #[test]
@@ -138,5 +162,16 @@ mod tests {
             &crate::configuration::plot::style::Style::Points,
             seq.style()
         );
+    }
+
+    #[test]
+    fn from_densitites() {
+        use crate::prelude::*;
+        let many_dens = (0..5).map(|_| pre::Density::new(0..10));
+        let mut densities: pre::Densities<u32> = pre::Densities::new(many_dens);
+        densities.set_title("My title");
+        let seq_err = pre::SequenceError::from(densities.clone());
+
+        assert_eq!(seq_err.title(), densities.title());
     }
 }

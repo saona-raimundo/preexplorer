@@ -10,16 +10,19 @@
 //!
 //! Quick plot.
 //! ```no_run
+//! # use itertools::iproduct;
 //! use preexplorer::prelude::*;
-//! ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
+//! let values = iproduct!(0..10, 0..5).map(|(x, y)| x + y);
+//! pre::Heatmap::new(0..10, 0..5, values).plot("my_identifier").unwrap();
 //! ```
 //!
 //! Compare ``Heatmap``es.
 //! ```no_run
+//! # use itertools::iproduct;
 //! use preexplorer::prelude::*;
-//! pre::Heatmapes::new(vec![
-//!     ((0..10), (0..10)).preexplore(),
-//!     ((0..10), (0..10)).preexplore(),
+//! pre::Heatmaps::new(vec![
+//!     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)),
+//!     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x * y)),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
@@ -31,17 +34,8 @@ use core::ops::Add;
 
 /// Compare various ``Heatmap``s.
 pub mod comparison;
-// /// Heatmap of values with an associated error.
-// pub mod error;
-// /// Heatmap of violin plots.
-// pub mod violin;
-// /// Heatmap of histograms.
-// pub mod bin;
 
 pub use comparison::Heatmaps;
-// pub use error::{HeatmapError, HeatmapErrors};
-// pub use violin::{HeatmapViolin};
-// pub use bin::{HeatmapBin};
 
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]

@@ -11,11 +11,7 @@ fn main() -> anyhow::Result<()> {
 
     // From a matrix
     let matrix = ndarray::arr2(&[[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
-    (heatmap + 
-        pre::Heatmap::from(matrix)
-            .set_title("second")
-            .to_owned()
-        )
+    (heatmap + pre::Heatmap::from(matrix).set_title("second").to_owned())
         .set_title("Overall title")
         .plot("my_identifier")?;
 
