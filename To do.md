@@ -6,8 +6,7 @@
   - ProcessViolins
 - Interoperability 
   - SequenceViolin/SequenceError <-> with Densities
-    - Carefull with the configuration!!
-- Add bins to Density
+    - Careful with the configuration!!
 - Statistical analysis
   - SequenceError
 

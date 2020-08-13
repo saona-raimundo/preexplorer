@@ -5,6 +5,7 @@
 - Implement statistical data representation
   - Sequence and Process variants of: bin, error and violin plots.
 - Implement heatmap
+- Add bins to Density
 
 ## 0.3.2
 

@@ -68,6 +68,7 @@ where
         config.set_custom("cdf", "true");
         config.set_custom("pdf", "true");
         config.set_custom("cloud", "true");
+        config.set_custom("bins", "true");
 
         Density {
             realizations,
@@ -130,6 +131,25 @@ where
         self
     }
 
+    /// Controls the plotting of bins representation of the density.
+    /// If true, it will appear in the plotting, otherwise it will not.
+    ///
+    /// # Default
+    ///
+    /// The default value is true.
+    /// ```
+    /// # use preexplorer::prelude::*;
+    /// let mut den = pre::Density::new((0..10));
+    /// assert_eq!(den.bins(), true);
+    /// den.set_bins(false);
+    /// assert_eq!(den.bins(), false);
+    /// ```
+    pub fn set_bins(&mut self, cloud: bool) -> &mut Self {
+        self.configuration_mut()
+            .set_custom("bins", cloud.to_string());
+        self
+    }
+
     pub fn cloud(&self) -> bool {
         match self.configuration().custom("cloud") {
             Some(cloud) => std::str::FromStr::from_str(cloud).unwrap(),
@@ -146,6 +166,13 @@ where
     pub fn cdf(&self) -> bool {
         match self.configuration().custom("cdf") {
             Some(cdf) => std::str::FromStr::from_str(cdf).unwrap(),
+            None => unreachable!(),
+        }
+    }
+
+    pub fn bins(&self) -> bool {
+        match self.configuration().custom("bins") {
+            Some(bins) => std::str::FromStr::from_str(bins).unwrap(),
             None => unreachable!(),
         }
     }
@@ -203,15 +230,9 @@ where
 
         gnuplot_script += "set zeroaxis\n";
 
-        // Values for the histogram
-
-        let mut length = 0;
-
         let mut realizations = self.realizations.clone().into_iter();
         match realizations.next() {
             Some(_) => {
-                length += 1 + realizations.len();
-
                 // Gnuplot scrpit
 
                 gnuplot_script +=
@@ -222,6 +243,7 @@ where
                     None => 1,
                 };
 
+                gnuplot_script += "set style fill solid 0.5\n\n";
                 gnuplot_script += "plot ";
                 if self.cloud() {
                     gnuplot_script +=
@@ -232,9 +254,9 @@ where
                         gnuplot_script += ", \\\n\t ";
                     }
                     gnuplot_script += &format!(
-                        "{:?} using 1:({}) smooth kdensity with {} dashtype {}",
+                        "{:?} using 1:(1./{}) smooth kdensity with {} dashtype {}",
                         self.data_path(),
-                        1. / length as f64,
+                        realizations.len(),
                         self.style(),
                         dashtype,
                     );
@@ -244,6 +266,12 @@ where
                         gnuplot_script += ", \\\n\t ";
                     }
                     gnuplot_script += &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
+                }
+                if self.bins() {
+                	if self.cloud() || self.pdf() || self.cdf() {
+                        gnuplot_script += ", \\\n\t ";
+                    }
+                    gnuplot_script += &format!("{:?} using 1:(1./{}) bins with boxes", self.data_path(), realizations.len());
                 }
                 gnuplot_script += "\n";
             }
