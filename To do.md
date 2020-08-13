@@ -1,8 +1,8 @@
+- Add bins to Density
 - Statistical analysis
-
-  - SequenceError
-
-    - [x] Plotting 
+- SequenceError
+  
+  - [x] Plotting 
       - [x] yerrorbars (x:y:error with yerrorbars or w yerr)
       - [x] Trend Line of centers (x:y w lines)
     - [x] new
@@ -10,13 +10,13 @@
     - [x] Comparison
       - [x] ... 
   - ProcessError
-
-    - [x] continuous yerrorbars (x:y:error with yerrorbars) or (x:y:error with filledc fs transparent solid 0.5 lc rgb "dark-grey")
+  
+  - [x] continuous yerrorbars (x:y:error with yerrorbars) or (x:y:error with filledc fs transparent solid 0.5 lc rgb "dark-grey")
     - [x] trend 
     - [x] Check out: [gnuplot](http://gnuplot.sourceforge.net/demo_5.4/errorbars.html) 
   - SequenceViolin
-
-    - [x] Violin
+  
+  - [x] Violin
     - SequenceBin
       - [x] Bin
   - ProgressBin
