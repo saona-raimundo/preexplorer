@@ -1,38 +1,37 @@
-//! Most basic explorable structure: a sequence of values.
+//! Sequence of histograms normalize to represent a probability density function through bins.
 //!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
+//! To renormalize the histograms (that cover a unit area by default), 
+//! you should find your best renormalization by trying out with gnuplot until you find the perfect fit.
+//! 
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
+//! let data = (0..10).map(|i| (i..10 + i));
+//! let binwidth = 0.5;
+//! pre::SequenceBin::new(data, binwidth).plot("my_identifier").unwrap();
 //! ```
 //!
-//! Compare ``Sequence``s.
+//! Compare ``SequenceBin``s.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
+//! pre::SequenceBins::new(vec![
+//!     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 1),
+//!     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 0.5),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
 
 // Traits
-// use core::ops::Add;
+use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-// /// Compare various ``Sequence``s.
-// pub mod comparison;
+/// Compare various ``Sequence``s.
+pub mod comparison;
 
-// pub use comparison::Sequences;
+pub use comparison::SequenceBins;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -53,9 +52,10 @@ where
     ///
     /// # Remarks
     ///
-    /// Fixed binwidth for consistency and plotting constant values. If this value were omitted in the gnuplot script, then there
-    /// would be no histogram for constant data, for example, the histogram of realizations 0, 0, 0 is not a single bin centered in zero
-    /// because the width is ill defined.
+    /// By construction, a fixed binwidth is needed. This is okay in most of the cases, since it gives consistency and
+    /// allows plotting constant values. If you want to change it, please go to the gnuplot script. 
+    /// Notice that this crate simply prints the binwidth in the correct place in the gnuplot script generated, so 
+    /// if you use a value less or equal to zero gnuplot will use a default behaviour. 
     ///
     /// # Examples
     ///
@@ -84,18 +84,18 @@ where
     }
 }
 
-// impl<T> Add for SequenceBin<T>
-// where
-//     T: Display + Clone,
-// {
-//     type Output = crate::SequenceBins<T>;
+impl<T> Add for SequenceBin<T>
+where
+    T: Display + Clone,
+{
+    type Output = crate::SequenceBins<T>;
 
-//     fn add(self, other: crate::SequenceBin<T>) -> crate::SequenceBins<T> {
-//         let mut cmp = self.into();
-//         cmp += other;
-//         cmp
-//     }
-// }
+    fn add(self, other: crate::SequenceBin<T>) -> crate::SequenceBins<T> {
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
+    }
+}
 
 impl<T> Configurable for SequenceBin<T>
 where
@@ -146,16 +146,17 @@ where
 # Plotting each histogram
 do for [i=0:{}] {{
     set table '{}'.'partial_plot'.i
-    plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
+    plot {:?} index i using 2:(1. / (DataPoints[i+1] * {})) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
     unset table
 }}
 # Plotting the serie of histograms
-set style fill solid 0.5
+set style fill transparent solid 0.5
 plot for [i=0:{}] '{}'.'partial_plot'.i using (i):1:(i):(i+$2):3:4 with boxxyerrorbars # using x:y:xlow:xhigh:ylow:yhigh
 ",
             self.data.len() - 1,
             self.data_path().display(),
             self.data_path(),
+            self.binwidth,
             self.data.len() - 1,
             self.data_path().display(),
         );

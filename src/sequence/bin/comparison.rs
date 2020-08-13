@@ -5,69 +5,69 @@
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! let many_seq_err = (0..5).map(|_| pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))));
-//! pre::SequenceViolins::new(many_seq_err).plot("my_identifier").unwrap();
+//! let many_seq_bin = (0..5).map(|_| pre::SequenceBin::new((0..10).map(|i| (i..10 + i))));
+//! pre::SequenceBins::new(many_seq_bin).plot("my_identifier").unwrap();
 //! ```
 //!
 
 // Structs
 use crate::errors::PreexplorerError;
-use crate::SequenceViolin;
+use crate::SequenceBin;
 
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``SequenceViolin`` struct.
+/// Comparison counter part of ``SequenceBin`` struct.
 ///
 #[derive(Debug, PartialEq)]
-pub struct SequenceViolins<T>
+pub struct SequenceBins<T>
 where
     T: Display + Clone,
 {
-    data_set: Vec<SequenceViolin<T>>,
+    data_set: Vec<SequenceBin<T>>,
     config: crate::configuration::Configuration,
 }
 
-impl<T> SequenceViolins<T>
+impl<T> SequenceBins<T>
 where
     T: Display + Clone,
 {
     pub fn new<I>(data_set: I) -> Self
     where
-        I: IntoIterator<Item = SequenceViolin<T>>,
+        I: IntoIterator<Item = SequenceBin<T>>,
     {
         let config = crate::configuration::Configuration::default();
         let data_set = data_set
             .into_iter()
-            .collect::<Vec<SequenceViolin<T>>>();
-        SequenceViolins { data_set, config }
+            .collect::<Vec<SequenceBin<T>>>();
+        SequenceBins { data_set, config }
     }
 }
 
-impl<T> From<SequenceViolin<T>> for SequenceViolins<T>
+impl<T> From<SequenceBin<T>> for SequenceBins<T>
 where
     T: Display + Clone,
 {
-    fn from(sequence: SequenceViolin<T>) -> Self {
-        SequenceViolins::new(vec![sequence])
+    fn from(sequence: SequenceBin<T>) -> Self {
+        SequenceBins::new(vec![sequence])
     }
 }
 
-impl<T> Add<SequenceViolin<T>> for SequenceViolins<T>
+impl<T> Add<SequenceBin<T>> for SequenceBins<T>
 where
     T: Display + Clone,
 {
     type Output = Self;
 
-    fn add(mut self, other: SequenceViolin<T>) -> Self {
+    fn add(mut self, other: SequenceBin<T>) -> Self {
         self += other;
         self
     }
 }
 
-impl<T> Add for SequenceViolins<T>
+impl<T> Add for SequenceBins<T>
 where
     T: Display + Clone,
 {
@@ -79,16 +79,16 @@ where
     }
 }
 
-impl<T> AddAssign<SequenceViolin<T>> for SequenceViolins<T>
+impl<T> AddAssign<SequenceBin<T>> for SequenceBins<T>
 where
     T: Display + Clone,
 {
-    fn add_assign(&mut self, other: SequenceViolin<T>) {
+    fn add_assign(&mut self, other: SequenceBin<T>) {
         self.data_set.push(other);
     }
 }
 
-impl<T> AddAssign for SequenceViolins<T>
+impl<T> AddAssign for SequenceBins<T>
 where
     T: Display + Clone,
 {
@@ -97,7 +97,7 @@ where
     }
 }
 
-impl<T> Configurable for SequenceViolins<T>
+impl<T> Configurable for SequenceBins<T>
 where
     T: Display + Clone,
 {
@@ -109,7 +109,7 @@ where
     }
 }
 
-impl<T> Saveable for SequenceViolins<T>
+impl<T> Saveable for SequenceBins<T>
 where
     T: Display + Clone,
 {
@@ -132,7 +132,7 @@ where
     }
 }
 
-impl<T> Plotable for SequenceViolins<T>
+impl<T> Plotable for SequenceBins<T>
 where
     T: Display + Clone,
 {
@@ -140,15 +140,9 @@ where
         let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
-
-        gnuplot_script += &format!("array RENORMALIZE[{}]\n", self.data_set.len());
-        gnuplot_script += &format!("array DATA_POINTS[{}] = [", self.data_set.len());
-        for counter in 0..self.data_set.iter().len() - 1 {
-            gnuplot_script += &format!("{}, ", self.data_set[counter].data.len());
-        }
-        gnuplot_script += &format!("{}]\n", self.data_set[self.data_set.len() - 1].data.len());
-        
-        for (counter, sequence_violin) in self.data_set.iter().enumerate() {
+        gnuplot_script += &format!("array SEQUENCE_LENGTHS[{}]\n", self.data_set.len());
+        for counter in 0..self.data_set.len() {
+            gnuplot_script += &format!("# SequenceBin number {}\n", counter);
             let inner_id = format!("{}_{}", id, counter);
             let mut inner_path = self.data_path().to_path_buf();
             if let Some(extension) = self.data_extension() {
@@ -157,60 +151,53 @@ where
             } else {
                 inner_path.set_file_name(&inner_id);
             }
-            
+
+            let sequence_bin = &self.data_set[counter];
+            gnuplot_script += &format!("BINWIDTH_{} = {}\n", counter, sequence_bin.binwidth);
+            gnuplot_script += &format!("SEQUENCE_LENGTHS[{}] = {}\n", counter + 1, sequence_bin.data.len());
+            gnuplot_script += &format!("array DATA_POINTS_{}[{}] = [", counter, sequence_bin.data.len());
+            for i in 0..sequence_bin.data.len() - 1 {
+                gnuplot_script += &format!("{}, ", sequence_bin.data[i].len());
+            }
+            gnuplot_script += &format!("{}]\n", sequence_bin.data[sequence_bin.data.len() - 1].len());
             gnuplot_script += &format!("\
-# Precomputation for violin sequence number {} 
-RENORMALIZE[{}] = 2
+# Plotting each histogram
 do for [i=0:{}] {{
-    # Computing some values
-    set table $_
-    plot {:?} index i using 2:(1) smooth kdensity
-    unset table
-    RENORMALIZE[{}] = (RENORMALIZE[{}] < 2 * GPVAL_Y_MAX) ? 2 * GPVAL_Y_MAX : RENORMALIZE[{}]
-    # Plotting a greater domain
     set table {:?}.'_partial_plot'.i
-    x_min = (GPVAL_X_MIN < GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH)? GPVAL_X_MIN : GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH
-    x_max = (GPVAL_X_MAX > GPVAL_X_MAX + 5 * GPVAL_KDENSITY_BANDWIDTH)? GPVAL_X_MAX : GPVAL_X_MAX + 5 * GPVAL_KDENSITY_BANDWIDTH
-    set xrange [x_min:x_max]
-    plot {:?} index i using 2:(1) smooth kdensity
+    plot {:?} index i using 2:(1. / (DATA_POINTS_{}[i+1] * {})) bins binwidth=BINWIDTH_{} with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
     unset table
-    # Clean the plotting
-    unset xrange
-    unset yrange
 }}
 ",
-                counter,
-                counter + 1,
-                sequence_violin.data.len() - 1,
-                inner_path,
-                counter + 1,
-                counter + 1,
-                counter + 1,
+                sequence_bin.data.len() - 1,
                 self.data_path().with_file_name(inner_id),
                 inner_path,
-            );
+                counter,
+                sequence_bin.binwidth,
+                counter,
+            ); 
         }
+          
+        gnuplot_script += "set style fill transparent solid 0.5\n#Ploting the first histogram of each sequence\n";  
 
-        gnuplot_script += "set style fill transparent solid 0.5\n";
+
 
         // Plot with titles
-        for (counter, sequence_violin) in self.data_set.iter().enumerate() {
+        for (counter, sequence_bin) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             let mut inner_path = self.data_path().to_path_buf();
             inner_path.set_file_name(&inner_id);
 
 
-            let legend = match sequence_violin.title() {
+            let legend = match sequence_bin.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
 
             if counter > 0 { gnuplot_script += "re"; }
             gnuplot_script += &format!("\
-plot '{}'.'_partial_plot'.'0' using (0 + $2/RENORMALIZE[{}]):1 with filledcurve x=0 linecolor {} title \"{}\"
+plot '{}'.'_partial_plot'.'0' using (0):1:(0):(0+$2):3:4 with boxxyerrorbars linecolor {} title \"{}\" # using x:y:xlow:xhigh:ylow:yhigh
 ",
                 inner_path.display(),
-                counter + 1,
                 counter,
                 legend,
             );
@@ -220,13 +207,9 @@ plot '{}'.'_partial_plot'.'0' using (0 + $2/RENORMALIZE[{}]):1 with filledcurve 
         let mut path = self.data_path().to_path_buf();
         path.set_file_name(&id);
         gnuplot_script += &format!("\
-# Right side
-replot for [j=0:{}] for [i=1:DATA_POINTS[j+1]-1] '{}_'.j.'_partial_plot'.i using (i + $2/RENORMALIZE[j+1]):1 with filledcurve x=i linecolor j notitle
-# Left side
-replot for [j=0:{}] for [i=0:DATA_POINTS[j+1]-1] '{}_'.j.'_partial_plot'.i using (i - $2/RENORMALIZE[j+1]):1 with filledcurve x=i linecolor j notitle
+# Plotting the rest of the histograms in each sequence
+replot for [j=0:{}] for [i=1:SEQUENCE_LENGTHS[j+1]-1] '{}_'.j.'_partial_plot'.i using (i):1:(i):(i+$2):3:4 with boxxyerrorbars linecolor j notitle # using x:y:xlow:xhigh:ylow:yhigh
 ",
-            self.data_set.len() - 1,
-            path.display(),
             self.data_set.len() - 1,
             path.display(),
         );

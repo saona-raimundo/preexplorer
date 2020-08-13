@@ -12,7 +12,7 @@
 //! Compare ``SequenceViolin``s.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::SequencViolins::new(vec![
+//! pre::SequenceViolins::new(vec![
 //!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
 //!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
 //!     ])

@@ -38,7 +38,7 @@ pub mod error;
 /// Sequence of violin plots.
 pub mod violin;
 
-pub use bin::SequenceBin;
+pub use bin::{SequenceBin, SequenceBins};
 pub use comparison::Sequences;
 pub use error::{SequenceError, SequenceErrors};
 pub use violin::{SequenceViolin, SequenceViolins};

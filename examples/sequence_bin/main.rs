@@ -3,7 +3,7 @@ use preexplorer::prelude::*;
 fn main() -> anyhow::Result<()> {
     let data: Vec<Vec<f64>> = (1..15)
         .map(|i| {
-            (0..10)
+            (0..20)
                 .map(|j| {
                     let j = j as f64;
                     let i = i as f64;
@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
                 .collect()
         })
         .collect();
-    let binwidth = 0.3;
+    let binwidth = 0.003;
 
     pre::SequenceBin::new(data, binwidth)
         .set_title("Numerical results through histograms")

@@ -1,13 +1,11 @@
 - Comparisons
-  - SequenceBins
   - ProcessBins
   - ProcessViolins
 - Clean the source file
-  - [ ] SequenceBin
   - [ ] ProcessBin
   - [ ] ProcessViolin
   - [ ] Heatmaps
-- Tests
+- Tests/document
   - [x] SequenceError
   - [ ] Process
   - [ ] ProcessError
