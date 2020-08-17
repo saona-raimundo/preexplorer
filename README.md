@@ -42,7 +42,16 @@ Want to use gnuplot as an interactive plotting engine? Run ``gnuplot`` in the co
 - Implementable traits
 - Extensive documentation
 
-# Examples
+# Gallery
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence/main.rs"><img src="examples/sequence/sequence.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequences/main.rs">
+<img src="examples/sequences/sequences.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process/main.rs"><img src="examples/process/process.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/processes/main.rs">
+	<img src="examples/processes/processes.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/density/main.rs"><img src="examples/density/density.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/densities/main.rs">
+    <img src="examples/densities/densities.png" class="galleryItem" width=200px></img></a>
 
 For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
 
