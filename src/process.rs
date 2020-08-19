@@ -38,7 +38,7 @@ pub mod error;
 /// Process of violin plots.
 pub mod violin;
 
-pub use bin::ProcessBin;
+pub use bin::{ProcessBin, ProcessBins};
 pub use comparison::Processes;
 pub use error::{ProcessError, ProcessErrors};
 pub use violin::ProcessViolin;

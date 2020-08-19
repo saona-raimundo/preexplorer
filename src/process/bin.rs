@@ -1,40 +1,38 @@
-//! Most basic explorable structure: a sequence of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
+//! Indexed collection of histograms.
 //!
 //! # Examples
 //!
 //! Quick plot.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
+//! let image = (0..10).map(|i| (i..10 + i));
+//! let binwidth = 1;
+//! pre::ProcessBin::new((2..12), image, binwidth).plot("my_identifier").unwrap();
 //! ```
 //!
-//! Compare ``Sequence``s.
+//! Compare ``ProcessBin``s.
 //! ```no_run
 //! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
+//! let image = (0..10).map(|i| (i..10 + i));
+//! let binwidth = 1;
+//! pre::ProcessBins::new(vec![
+//!     pre::ProcessBin::new((2..12), image.clone(), binwidth),
+//!     pre::ProcessBin::new((2..12), image, binwidth),
 //!     ])
 //!     .plot("my_identifier").unwrap();
 //! ```
 
 // Traits
-// use core::ops::Add;
+use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 
-// /// Compare various ``Sequence``s.
-// pub mod comparison;
+/// Compare various ``ProcessBin``s.
+pub mod comparison;
 
-// pub use comparison::Sequences;
+pub use comparison::ProcessBins;
 
-/// Sequence of values.
+/// Indexed collection of histograms.
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProcessBin<T, S>
 where
@@ -61,7 +59,7 @@ where
     /// use preexplorer::prelude::*;
     /// let image = (0..10).map(|i| (i..10 + i));
     /// let binwidth = 1;
-    /// let pro_bin = pre::ProcessBin::new((0..10), image, binwidth);
+    /// let pro_bin = pre::ProcessBin::new((2..12), image, binwidth);
     /// ```
     pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessBin<T, S>
     where
@@ -84,19 +82,19 @@ where
     }
 }
 
-// impl<T, S> Add for ProcessBin<T, S>
-// where
-//     T: Display + Clone,
-//     S: Display + Clone,
-// {
-//     type Output = crate::ProcessBines<T, S>;
+impl<T, S> Add for ProcessBin<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    type Output = crate::ProcessBins<T, S>;
 
-//     fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBines<T, S> {
-//         let mut cmp = self.into();
-//         cmp += other;
-//         cmp
-//     }
-// }
+    fn add(self, other: crate::ProcessBin<T, S>) -> crate::ProcessBins<T, S> {
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
+    }
+}
 
 impl<T, S> Configurable for ProcessBin<T, S>
 where
@@ -155,7 +153,8 @@ where
 # Plotting each histogram
 do for [i=0:{}] {{
     set table '{}'.'partial_plot'.i
-    plot {:?} index i using 2:(1. / DataPoints[i+1]) bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
+    WEIGTH = 1. / (DataPoints[i+1] * BINWIDTH)
+    plot {:?} index i using 2:WEIGTH bins binwidth=BINWIDTH with boxes # reference: http://www.bersch.net/gnuplot-doc/plot.html#commands-plot-datafile-bins 
     unset table
 }}
 # Plotting the serie of histograms

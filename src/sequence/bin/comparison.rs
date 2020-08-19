@@ -1,4 +1,4 @@
-//! Comparison of sequences of values with a given violin.
+//! Comparison of sequences of histograms.
 //!
 //! # Examples
 //!
@@ -115,17 +115,17 @@ where
 {
     fn plotable_data(&self) -> String {
         let mut raw_data = String::new();
-        for sequence_violin in self.data_set.iter() {
-            raw_data += &sequence_violin.plotable_data();
+        for sequence_bin in self.data_set.iter() {
+            raw_data += &sequence_bin.plotable_data();
             raw_data += "\n";
         }
         raw_data
     }
 
     fn save_with_id<S: Display>(&self, id: S) -> Result<&Self, PreexplorerError> {
-        for (counter, sequence_violin) in self.data_set.iter().enumerate() {
+        for (counter, sequence_bin) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
-            sequence_violin.save_with_id(&inner_id)?;
+            sequence_bin.save_with_id(&inner_id)?;
         }
 
         Ok(self)

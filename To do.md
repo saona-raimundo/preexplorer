@@ -1,9 +1,7 @@
 - Add to the gallery
 - Comparisons
-  - ProcessBins
   - ProcessViolins
 - Clean the source file
-  - [ ] ProcessBin
   - [ ] ProcessViolin
   - [ ] Heatmaps
 - Tests/document
