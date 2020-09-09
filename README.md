@@ -58,7 +58,7 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 # Installation
 
 - Download and [install gnuplot](http://www.gnuplot.info/download.html), a command line engine for plotting. (Note that the gnuplot project has nothing to do with GNU).
-- Add ``preexplorer = "0.2"`` to your ``Cargo.toml`` file under ``[dependencies]``.
+- Add ``preexplorer = "*"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
 # Future
