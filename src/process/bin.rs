@@ -23,9 +23,9 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
 /// Compare various ``ProcessBin``s.
 pub mod comparison;

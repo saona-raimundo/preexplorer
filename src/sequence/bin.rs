@@ -1,8 +1,8 @@
 //! Sequence of histograms normalize to represent a probability density function through bins.
 //!
-//! To renormalize the histograms (that cover a unit area by default), 
+//! To renormalize the histograms (that cover a unit area by default),
 //! you should find your best renormalization by trying out with gnuplot until you find the perfect fit.
-//! 
+//!
 //! # Examples
 //!
 //! Quick plot.
@@ -24,9 +24,9 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
 /// Compare various ``Sequence``s.
 pub mod comparison;
@@ -53,9 +53,9 @@ where
     /// # Remarks
     ///
     /// By construction, a fixed binwidth is needed. This is okay in most of the cases, since it gives consistency and
-    /// allows plotting constant values. If you want to change it, please go to the gnuplot script. 
-    /// Notice that this crate simply prints the binwidth in the correct place in the gnuplot script generated, so 
-    /// if you use a value less or equal to zero gnuplot will use a default behaviour. 
+    /// allows plotting constant values. If you want to change it, please go to the gnuplot script.
+    /// Notice that this crate simply prints the binwidth in the correct place in the gnuplot script generated, so
+    /// if you use a value less or equal to zero gnuplot will use a default behaviour.
     ///
     /// # Examples
     ///

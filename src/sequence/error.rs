@@ -39,8 +39,8 @@ pub struct SequenceError {
 }
 
 impl SequenceError {
-    /// Create a new ``SequenceError`` from data. 
-    /// Each dataset is processed so that the final plot shows the mean of the data set and 
+    /// Create a new ``SequenceError`` from data.
+    /// Each dataset is processed so that the final plot shows the mean of the data set and
     /// an error bar of one standard deviation.
     ///
     /// # Examples
@@ -139,14 +139,13 @@ where
         let config = seq_err.configuration_mut();
         *config = densities.configuration_mut().clone();
         seq_err
-
     }
 }
 
 ///////////////////////////////////////////////
 #[cfg(test)]
 mod tests {
-    
+
     use super::*;
 
     #[test]

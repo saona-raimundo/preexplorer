@@ -23,7 +23,7 @@ fn main() -> anyhow::Result<()> {
                     let j = j as f64;
                     let i = i as f64;
                     // Some computation
-                    - i + j / i
+                    -i + j / i
                 })
                 .collect()
         })
@@ -31,13 +31,16 @@ fn main() -> anyhow::Result<()> {
 
     let binwidth = 0.2;
 
-    (pre::ProcessBin::new(domain_1, image_1, binwidth).set_title("first").to_owned()
-        + pre::ProcessBin::new(domain_2, image_2, binwidth).set_title("second").to_owned()
-        )
-        .set_xlabel("index")
-        .set_ylabel("value")
-        .set_title("Overall title")
-        .plot("my_identifier")?;
+    (pre::ProcessBin::new(domain_1, image_1, binwidth)
+        .set_title("first")
+        .to_owned()
+        + pre::ProcessBin::new(domain_2, image_2, binwidth)
+            .set_title("second")
+            .to_owned())
+    .set_xlabel("index")
+    .set_ylabel("value")
+    .set_title("Overall title")
+    .plot("my_identifier")?;
 
     Ok(())
 }

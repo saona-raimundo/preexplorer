@@ -25,14 +25,14 @@
 //! ```
 
 // Traits
-// use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
-// /// Compare various ``Sequence``s.
-// pub mod comparison;
+/// Compare various ``Sequence``s.
+pub mod comparison;
 
-// pub use comparison::Sequences;
+pub use comparison::ProcessViolins;
 
 /// Sequence of values.
 #[derive(Debug, PartialEq, Clone)]
@@ -79,19 +79,19 @@ where
     }
 }
 
-// impl<T, S> Add for ProcessViolin<T, S>
-// where
-//     T: Display + Clone,
-//     S: Display + Clone,
-// {
-//     type Output = crate::ProcessViolines<T, S>;
+impl<T, S> Add for ProcessViolin<T, S>
+where
+    T: Display + Clone,
+    S: Display + Clone,
+{
+    type Output = ProcessViolins<T, S>;
 
-//     fn add(self, other: crate::ProcessViolin<T, S>) -> crate::ProcessViolines<T, S> {
-//         let mut cmp = self.into();
-//         cmp += other;
-//         cmp
-//     }
-// }
+    fn add(self, other: crate::ProcessViolin<T, S>) -> ProcessViolins<T, S> {
+        let mut cmp = self.into();
+        cmp += other;
+        cmp
+    }
+}
 
 impl<T, S> Configurable for ProcessViolin<T, S>
 where
@@ -139,20 +139,14 @@ where
         }
         gnuplot_script += &format!("{}]\n", self.domain[self.domain.len() - 1]); // Last time
 
-        // gnuplot_script += &format!("array DataPoints[{}] = [", self.image.len());
-        // for i in 0..self.image.len() - 1 {
-        //     gnuplot_script += &format!("{}, ", self.image[i].len());
-        // }
-        // gnuplot_script += &format!("{}]\n", self.image[self.image.len() - 1].len()); // Last time
-
         gnuplot_script += &format!("\
-renormalize = 2
+RENORMALIZE = 2
 do for [i=0:{}] {{
     # Computing some values
     set table $_
     plot {:?} index i using 2:(1) smooth kdensity
     unset table
-    renormalize = (renormalize < 2 * GPVAL_Y_MAX) ? 2 * GPVAL_Y_MAX : renormalize
+    RENORMALIZE = (RENORMALIZE < 2 * GPVAL_Y_MAX) ? 2 * GPVAL_Y_MAX : RENORMALIZE
     # Plotting a greater domain
     set table '{}'.'_partial_plot'.i
     x_min = (GPVAL_X_MIN < GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH)? GPVAL_X_MIN : GPVAL_X_MIN - 5 * GPVAL_KDENSITY_BANDWIDTH
@@ -168,9 +162,9 @@ do for [i=0:{}] {{
 # Plotting the violins
 set style fill transparent solid 0.5
 # Right side
-plot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] + $2/renormalize):1 with filledcurve x=TIMES[i+1] linecolor i
+plot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] + $2/RENORMALIZE):1 with filledcurve x=TIMES[i+1] linecolor i
 # Left side
-replot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] - $2/renormalize):1 with filledcurve x=TIMES[i+1] linecolor i
+replot for [i=0:{}] '{}'.'_partial_plot'.i using (TIMES[i+1] - $2/RENORMALIZE):1 with filledcurve x=TIMES[i+1] linecolor i
 ",
             self.image.len() - 1,
             self.data_path(),

@@ -20,7 +20,7 @@ fn main() -> anyhow::Result<()> {
                     let j = j as f64;
                     let i = i as f64;
                     // Some computation
-                    - i + j / i
+                    -i + j / i
                 })
                 .collect()
         })
@@ -28,13 +28,16 @@ fn main() -> anyhow::Result<()> {
 
     let binwidth = 0.3;
 
-    (pre::SequenceBin::new(data_1, binwidth).set_title("first").to_owned()
-        + pre::SequenceBin::new(data_2, binwidth).set_title("second").to_owned()
-        )
-        .set_xlabel("index")
-        .set_ylabel("value")
-        .set_title("Overall title")
-        .plot("my_identifier")?;
+    (pre::SequenceBin::new(data_1, binwidth)
+        .set_title("first")
+        .to_owned()
+        + pre::SequenceBin::new(data_2, binwidth)
+            .set_title("second")
+            .to_owned())
+    .set_xlabel("index")
+    .set_ylabel("value")
+    .set_title("Overall title")
+    .plot("my_identifier")?;
 
     Ok(())
 }

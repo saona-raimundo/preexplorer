@@ -39,9 +39,7 @@ where
         I: IntoIterator<Item = SequenceBin<T>>,
     {
         let config = crate::configuration::Configuration::default();
-        let data_set = data_set
-            .into_iter()
-            .collect::<Vec<SequenceBin<T>>>();
+        let data_set = data_set.into_iter().collect::<Vec<SequenceBin<T>>>();
         SequenceBins { data_set, config }
     }
 }
@@ -154,12 +152,23 @@ where
 
             let sequence_bin = &self.data_set[counter];
             gnuplot_script += &format!("BINWIDTH_{} = {}\n", counter, sequence_bin.binwidth);
-            gnuplot_script += &format!("SEQUENCE_LENGTHS[{}] = {}\n", counter + 1, sequence_bin.data.len());
-            gnuplot_script += &format!("array DATA_POINTS_{}[{}] = [", counter, sequence_bin.data.len());
+            gnuplot_script += &format!(
+                "SEQUENCE_LENGTHS[{}] = {}\n",
+                counter + 1,
+                sequence_bin.data.len()
+            );
+            gnuplot_script += &format!(
+                "array DATA_POINTS_{}[{}] = [",
+                counter,
+                sequence_bin.data.len()
+            );
             for i in 0..sequence_bin.data.len() - 1 {
                 gnuplot_script += &format!("{}, ", sequence_bin.data[i].len());
             }
-            gnuplot_script += &format!("{}]\n", sequence_bin.data[sequence_bin.data.len() - 1].len());
+            gnuplot_script += &format!(
+                "{}]\n",
+                sequence_bin.data[sequence_bin.data.len() - 1].len()
+            );
             gnuplot_script += &format!("\
 # Plotting each histogram
 do for [i=0:{}] {{
@@ -174,12 +183,11 @@ do for [i=0:{}] {{
                 counter,
                 sequence_bin.binwidth,
                 counter,
-            ); 
+            );
         }
-          
-        gnuplot_script += "set style fill transparent solid 0.5\n#Ploting the first histogram of each sequence\n";  
 
-
+        gnuplot_script +=
+            "set style fill transparent solid 0.5\n#Ploting the first histogram of each sequence\n";
 
         // Plot with titles
         for (counter, sequence_bin) in self.data_set.iter().enumerate() {
@@ -187,13 +195,14 @@ do for [i=0:{}] {{
             let mut inner_path = self.data_path().to_path_buf();
             inner_path.set_file_name(&inner_id);
 
-
             let legend = match sequence_bin.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
 
-            if counter > 0 { gnuplot_script += "re"; }
+            if counter > 0 {
+                gnuplot_script += "re";
+            }
             gnuplot_script += &format!("\
 plot '{}'.'_partial_plot'.'0' using (0):1:(0):(0+$2):3:4 with boxxyerrorbars linecolor {} title \"{}\" # using x:y:xlow:xhigh:ylow:yhigh
 ",

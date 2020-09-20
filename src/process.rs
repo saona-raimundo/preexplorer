@@ -41,7 +41,7 @@ pub mod violin;
 pub use bin::{ProcessBin, ProcessBins};
 pub use comparison::Processes;
 pub use error::{ProcessError, ProcessErrors};
-pub use violin::ProcessViolin;
+pub use violin::{ProcessViolin, ProcessViolins};
 
 /// Indexed sequence of values.
 #[derive(Debug, PartialEq, Clone)]

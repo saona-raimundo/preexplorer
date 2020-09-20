@@ -88,10 +88,12 @@ pub use self::data::Data;
 pub use self::density::{Densities, Density};
 pub use self::matrix::{Heatmap, Heatmaps};
 pub use self::process::{
-    Process, Processes, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, 
+    Process, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, ProcessViolins,
+    Processes,
 };
 pub use self::sequence::{
-    Sequence, Sequences, SequenceBin, SequenceBins, SequenceError, SequenceErrors, SequenceViolin, SequenceViolins, 
+    Sequence, SequenceBin, SequenceBins, SequenceError, SequenceErrors, SequenceViolin,
+    SequenceViolins, Sequences,
 };
 pub use self::traits::*;
 

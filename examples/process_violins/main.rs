@@ -1,35 +1,38 @@
 use preexplorer::prelude::*;
 
 fn main() -> anyhow::Result<()> {
-    let data_1: Vec<Vec<f64>> = (1..15)
+    let domain_1: Vec<f64> = (1..4).map(|i| (500. * i as f64).sqrt()).collect();
+    let image_1: Vec<Vec<f64>> = (1..4)
         .map(|i| {
-            (0..10)
+            (-5..10)
                 .map(|j| {
                     let j = j as f64;
                     let i = i as f64;
                     // Some computation
-                    i + j / i
-                })
-                .collect()
-        })
-        .collect();
-    let data_2: Vec<Vec<f64>> = (1..20)
-        .map(|i| {
-            (0..10)
-                .map(|j| {
-                    let j = j as f64;
-                    let i = i as f64;
-                    // Some computation
-                    -i + j / i
+                    3. * i + 3. * j.cos() / i
                 })
                 .collect()
         })
         .collect();
 
-    (pre::SequenceViolin::new(data_1)
+    let domain_2: Vec<f64> = (1..7).map(|i| (500. * i as f64).sqrt()).collect();
+    let image_2: Vec<Vec<f64>> = (1..7)
+        .map(|i| {
+            (0..10)
+                .map(|j| {
+                    let j = j as f64;
+                    let i = i as f64;
+                    // Some computation
+                    -3. * i + 3. * j.sin() / i
+                })
+                .collect()
+        })
+        .collect();
+
+    (pre::ProcessViolin::new(domain_1, image_1)
         .set_title("first")
         .to_owned()
-        + pre::SequenceViolin::new(data_2)
+        + pre::ProcessViolin::new(domain_2, image_2)
             .set_title("second")
             .to_owned())
     .set_xlabel("index")

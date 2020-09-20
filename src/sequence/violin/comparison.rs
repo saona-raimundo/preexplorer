@@ -39,9 +39,7 @@ where
         I: IntoIterator<Item = SequenceViolin<T>>,
     {
         let config = crate::configuration::Configuration::default();
-        let data_set = data_set
-            .into_iter()
-            .collect::<Vec<SequenceViolin<T>>>();
+        let data_set = data_set.into_iter().collect::<Vec<SequenceViolin<T>>>();
         SequenceViolins { data_set, config }
     }
 }
@@ -140,14 +138,13 @@ where
         let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
-
         gnuplot_script += &format!("array RENORMALIZE[{}]\n", self.data_set.len());
         gnuplot_script += &format!("array DATA_POINTS[{}] = [", self.data_set.len());
         for counter in 0..self.data_set.iter().len() - 1 {
             gnuplot_script += &format!("{}, ", self.data_set[counter].data.len());
         }
         gnuplot_script += &format!("{}]\n", self.data_set[self.data_set.len() - 1].data.len());
-        
+
         for (counter, sequence_violin) in self.data_set.iter().enumerate() {
             let inner_id = format!("{}_{}", id, counter);
             let mut inner_path = self.data_path().to_path_buf();
@@ -157,7 +154,7 @@ where
             } else {
                 inner_path.set_file_name(&inner_id);
             }
-            
+
             gnuplot_script += &format!("\
 # Precomputation for violin sequence number {} 
 RENORMALIZE[{}] = 2
@@ -199,13 +196,14 @@ do for [i=0:{}] {{
             let mut inner_path = self.data_path().to_path_buf();
             inner_path.set_file_name(&inner_id);
 
-
             let legend = match sequence_violin.title() {
                 Some(leg) => String::from(leg),
                 None => counter.to_string(),
             };
 
-            if counter > 0 { gnuplot_script += "re"; }
+            if counter > 0 {
+                gnuplot_script += "re";
+            }
             gnuplot_script += &format!("\
 plot '{}'.'_partial_plot'.'0' using (0 + $2/RENORMALIZE[{}]):1 with filledcurve x=0 linecolor {} title \"{}\"
 ",

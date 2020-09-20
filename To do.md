@@ -1,8 +1,5 @@
 - Add to the gallery
-- Comparisons
-  - ProcessViolins
 - Clean the source file
-  - [ ] ProcessViolin
   - [ ] Heatmaps
 - Tests/document
   - [x] SequenceError
@@ -21,4 +18,3 @@
   - Images
 - [ ] Check out: 
   - https://serialmentor.com/dataviz/
-  - https://serialmentor.com/

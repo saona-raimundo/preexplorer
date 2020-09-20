@@ -20,9 +20,9 @@
 //! ```
 
 // Traits
-use core::ops::Add;
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
+use core::ops::Add;
 
 /// Compare various ``Sequence``s.
 pub mod comparison;
@@ -163,16 +163,12 @@ where
 {
     fn from(mut densities: crate::Densities<T>) -> Self {
         let data: Vec<Vec<T>> = (0..densities.data_set.len())
-            .map(|i| {
-                densities.data_set[i]
-                    .realizations.clone()
-            })
+            .map(|i| densities.data_set[i].realizations.clone())
             .collect();
         let mut seq_vio = SequenceViolin::new(data);
         let config = seq_vio.configuration_mut();
         *config = densities.configuration_mut().clone();
         seq_vio
-
     }
 }
 
