@@ -23,17 +23,21 @@ This is the crate for you!
 2. Pass the results to a suitable struct from ``preexplorer``, or use the ``preexplore`` method.
 3. Use the method ``plot`` or ``plot_later``. 
 
-In both cases, after ``cargo run``, your data is saved and a suitable first script for gnuplot to plot it is saved too. If you used ``plot``, you will get a plot by gnuplot that you can save. 
+After ``cargo run``, your data is saved and a suitable first script for gnuplot to plot the data is saved. If you used ``plot``, you will get a plot by gnuplot that you can save. 
 
-To get the plot again, run from the console
+The gnuplot script is located in 
 
-``gnuplot target\\preexplorer\\plots\\my_identifier.gnu``,
+``target\\preexplorer\\plots\\my_identifier.gnu``
 
-where ``my_identifier`` is the name you gave in rust. That is the location of the script for gnuplot.
+where ``my_identifier`` is the name you gave in rust to the plot. 
 
-Want a different plot? Change this file according to your needs and run again. 
+Therefore, to run it in gnuplot (and get the plot again), run from the console
 
-Want to use gnuplot as an interactive plotting engine? Run ``gnuplot`` in the console, copy and paste the script and keep going with your favorite gnuplot commands.
+``gnuplot target\\preexplorer\\plots\\my_identifier.gnu``
+
+- Want a different plot? Change this file according to your needs and run again. 
+
+- Want to use gnuplot as an interactive plotting engine? Run ``gnuplot`` in the console, copy and paste the script and keep going with your favorite gnuplot commands.
 
 # Main features
 
@@ -44,14 +48,29 @@ Want to use gnuplot as an interactive plotting engine? Run ``gnuplot`` in the co
 
 # Gallery
 
-<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence/main.rs"><img src="examples/sequence/sequence.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequences/main.rs">
-<img src="examples/sequences/sequences.png" class="galleryItem" width=200px></img></a>
+## Sequences
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence/main.rs"><img src="examples/sequence/sequence.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequences/main.rs"><img src="examples/sequences/sequences.png" class="galleryItem" width=200px></img></a>
 
-<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process/main.rs"><img src="examples/process/process.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/processes/main.rs">
-	<img src="examples/processes/processes.png" class="galleryItem" width=200px></img></a>
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_bin/main.rs"><img src="examples/sequence_bin/sequence_bin.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_bins/main.rs"><img src="examples/sequence_bins/sequence_bins.png" class="galleryItem" width=200px></img></a>
 
-<a href="https://github.com/rasa200/preexplorer/blob/master/examples/density/main.rs"><img src="examples/density/density.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/densities/main.rs">
-    <img src="examples/densities/densities.png" class="galleryItem" width=200px></img></a>
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_error/main.rs"><img src="examples/sequence_error/sequence_error.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_errors/main.rs"><img src="examples/sequence_errors/sequence_errors.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_violin/main.rs"><img src="examples/sequence_violin/sequence_violin.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/sequence_violins/main.rs"><img src="examples/sequence_violins/sequence_violins.png" class="galleryItem" width=200px></img></a>
+
+## Processes
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process/main.rs"><img src="examples/process/process.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/processes/main.rs"><img src="examples/processes/processes.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_bin/main.rs"><img src="examples/process_bin/process_bin.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_bins/main.rs"><img src="examples/process_bins/process_bins.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_error/main.rs"><img src="examples/process_error/process_error.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_errors/main.rs"><img src="examples/process_errors/process_errors.png" class="galleryItem" width=200px></img></a>
+
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_violin/main.rs"><img src="examples/process_violin/process_violin.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/process_violins/main.rs"><img src="examples/process_violins/process_violins.png" class="galleryItem" width=200px></img></a>
+
+## Densities
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/density/main.rs"><img src="examples/density/density.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/densities/main.rs"><img src="examples/densities/densities.png" class="galleryItem" width=200px></img></a>
+
+## Heatmaps
+<a href="https://github.com/rasa200/preexplorer/blob/master/examples/heatmap/main.rs"><img src="examples/heatmap/heatmap.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/rasa200/preexplorer/blob/master/examples/heatmaps/main.rs"><img src="examples/heatmaps/heatmaps.png" class="galleryItem" width=200px></img></a>
 
 For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/master/examples). 
 
@@ -63,9 +82,6 @@ For more, see the folder [examples](https://github.com/rasa200/preexplorer/tree/
 
 # Future
 
-- [ ] New Structs for error plotting
-  - [ ] SequenceWithError 
-  - [ ] ProcessWithError
 - [ ] More senses involved in exploration
   - [ ] Audio
     - [ ] audify()

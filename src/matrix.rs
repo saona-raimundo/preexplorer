@@ -16,7 +16,7 @@
 //! pre::Heatmap::new(0..10, 0..5, values).plot("my_identifier").unwrap();
 //! ```
 //!
-//! Compare ``Heatmap``es.
+//! Compare ``Heatmap``s.
 //! ```no_run
 //! # use itertools::iproduct;
 //! use preexplorer::prelude::*;
