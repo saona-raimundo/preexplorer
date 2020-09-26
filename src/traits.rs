@@ -669,6 +669,12 @@ pub trait Configurable {
 /// See ``traits`` module level documentation.
 pub trait Saveable: Configurable {
     /// Extract the data from the struct.
+    /// 
+    /// # Warnings
+    /// 
+    /// If there is no data, a warning will be printed to [`io::stderr`].
+    ///
+    /// [`io::stderr`]: https://doc.rust-lang.org/std/io/struct.Stderr.html
     fn plotable_data(&self) -> String;
 
     /// Save the file. The directory is ``target\\preexplorer\\data\\``.
@@ -689,7 +695,7 @@ pub trait Saveable: Configurable {
     /// Incorrectly identifying before saving. This panics.  
     /// ```should_panic, no_run
     /// # use preexplorer::prelude::*;
-    /// (0..10).preexplore().save().unwrap();
+    /// (0..10).preexplore().save();
     /// ```
     fn save(&self) -> Result<&Self, PreexplorerError> {
         let id = self.checked_id();

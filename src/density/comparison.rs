@@ -139,18 +139,7 @@ where
         let id = self.checked_id();
         let mut gnuplot_script = self.config.opening_plot_script_comparison();
 
-        // Treat each data to a prob distr funct
-
-        for density in self.data_set.iter() {
-            let mut realizations = density.realizations.clone().into_iter();
-            if let None = realizations.next() {
-                std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    "No data to plot: There are no realizations, so no script can be prepared.",
-                );
-            }
-        }
-
+        // Treat each data to a probability distribution function
         gnuplot_script += "plot ";
         let style = self.style();
         let mut dashtype_counter = 0;

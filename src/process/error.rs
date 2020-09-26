@@ -112,6 +112,11 @@ where
     T: Display + Clone,
 {
     fn plotable_data(&self) -> String {
+        // Initial warning
+        if self.domain.is_empty() {
+            eprintln!("Warning: There is no data.");
+        }
+        
         let mut raw_data = String::new();
         for (time, (value, error)) in self.domain.clone().into_iter().zip(self.image.clone()) {
             raw_data.push_str(&format!("{}\t{}\t{}\n", time, value, error));

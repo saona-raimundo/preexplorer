@@ -91,6 +91,11 @@ impl Configurable for SequenceError {
 
 impl Saveable for SequenceError {
     fn plotable_data(&self) -> String {
+        // Initial warning
+        if self.data.is_empty() {
+            eprintln!("Warning: There is no data.");
+        }
+
         let mut plotable_data = String::new();
 
         for (counter, (value, error)) in self.data.clone().into_iter().enumerate() {

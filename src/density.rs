@@ -208,6 +208,11 @@ where
     T: Display + Clone,
 {
     fn plotable_data(&self) -> String {
+        // Initial warning
+        if self.realizations.is_empty() {
+            eprintln!("Warning: There are no realizations.");
+        }
+        
         let mut raw_data = String::new();
         for value in self.realizations.clone() {
             raw_data.push_str(&format!("{}\n", value));
@@ -226,68 +231,54 @@ where
     ///
     /// Only works for real numbers.
     fn plot_script(&self) -> String {
+
+        // Gnuplot script
         let mut gnuplot_script = self.opening_plot_script();
-
         gnuplot_script += "set zeroaxis\n";
+        gnuplot_script +=
+            "# Warning: this script only works when the data are real numbers. \n\n";
+        gnuplot_script += "set style fill solid 0.5\n\n";
 
-        let mut realizations = self.realizations.clone().into_iter();
-        match realizations.next() {
-            Some(_) => {
-                // Gnuplot scrpit
+        // Ploting cloud, pdf, cdf and/or bins
+        let dashtype = match self.dashtype() {
+            Some(dashtype) => dashtype,
+            None => 1,
+        };
 
-                gnuplot_script +=
-                    "# Warning: this script only works when the data are real numbers. \n\n";
-
-                let dashtype = match self.dashtype() {
-                    Some(dashtype) => dashtype,
-                    None => 1,
-                };
-
-                gnuplot_script += "set style fill solid 0.5\n\n";
-                gnuplot_script += "plot ";
-                if self.cloud() {
-                    gnuplot_script +=
-                        &format!("{:?} using 1:(0.25*rand(0)-.35)", self.data_path(),);
-                }
-                if self.pdf() {
-                    if self.cloud() {
-                        gnuplot_script += ", \\\n\t ";
-                    }
-                    gnuplot_script += &format!(
-                        "{:?} using 1:(1./{}) smooth kdensity with {} dashtype {}",
-                        self.data_path(),
-                        realizations.len(),
-                        self.style(),
-                        dashtype,
-                    );
-                }
-                if self.cdf() {
-                    if self.cloud() || self.pdf() {
-                        gnuplot_script += ", \\\n\t ";
-                    }
-                    gnuplot_script += &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
-                }
-                if self.bins() {
-                    if self.cloud() || self.pdf() || self.cdf() {
-                        gnuplot_script += ", \\\n\t ";
-                    }
-                    gnuplot_script += &format!(
-                        "{:?} using 1:(1./{}) bins with boxes",
-                        self.data_path(),
-                        realizations.len()
-                    );
-                }
-                gnuplot_script += "\n";
-            }
-            None => {
-                std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    "No data to plot: There are no realizations, so no script can be prepared.",
-                );
+        gnuplot_script += "plot ";
+        if self.cloud() {
+            gnuplot_script +=
+                &format!("{:?} using 1:(0.25*rand(0)-.35)", self.data_path(),);
+            if self.pdf() || self.cdf() || self.bins() {
+                gnuplot_script += ", \\\n\t ";
             }
         }
-
-        // Gnuplot section
+        if self.pdf() {
+            gnuplot_script += &format!(
+                "{:?} using 1:(1./{}) smooth kdensity with {} dashtype {}",
+                self.data_path(),
+                self.realizations.len(),
+                self.style(),
+                dashtype,
+            );
+            if self.cdf() || self.bins() {
+                gnuplot_script += ", \\\n\t ";
+            }
+        }
+        if self.cdf() {
+            gnuplot_script += &format!("{:?} using 1:(1.) smooth cnorm", self.data_path(),);
+            if self.bins() {
+                gnuplot_script += ", \\\n\t ";
+            }
+        }
+        if self.bins() {
+            gnuplot_script += &format!(
+                "{:?} using 1:(1./{}) bins with boxes",
+                self.data_path(),
+                self.realizations.len()
+            );
+        }
+        gnuplot_script += "\n";
 
         gnuplot_script += &self.ending_plot_script();
 

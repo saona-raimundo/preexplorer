@@ -108,7 +108,7 @@ where
 
         let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.plot_path());
         Err(PreexplorerError::Plotting(
-            std::io::Error::new(std::io::ErrorKind::Other, message).into(),
+            std::io::Error::new(std::io::ErrorKind::Other, message),
         ))
     }
 

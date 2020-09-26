@@ -137,6 +137,11 @@ where
     U: Display + Clone,
 {
     fn plotable_data(&self) -> String {
+        // Initial warning
+        if self.xs.is_empty() {
+            eprintln!("Warning: There is no data.");
+        }
+
         let mut plotable_data = String::new();
         for i in 0..self.xs.len() {
             for j in 0..self.ys.len() {

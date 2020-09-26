@@ -265,7 +265,6 @@ replot '{}'.'_partial_plot'.'0' using (TIMES({}, 1) - $2/RENORMALIZE[{}]):1 with
             );
         }
 
-
         // Plot without titles
         let mut path = self.data_path().to_path_buf();
         path.set_file_name(&id);

@@ -111,7 +111,7 @@ pub mod prelude {
     //! # Examples
     //!
     //! Quickly check your results.
-    //! ```no-run
+    //! ```no_run
     //! use preexplorer::prelude::*;
     //! (0..100).map(|i| i * i)
     //!     .preexplore()
@@ -120,7 +120,7 @@ pub mod prelude {
     //! ```
     //!
     //! Check numerical simulations.
-    //! ```no-run
+    //! ```no_run
     //! use preexplorer::prelude::*;
     //! use rand_distr::Exp1;
     //! use rand::prelude::*;
