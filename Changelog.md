@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.3.3 [ongoing]
+## 0.3.3
 
+- Update documentation
 - Warning added when saving a struct when no data
 - Implement statistical data representation
   - Sequence and Process variants of: bin, error and violin plots.
