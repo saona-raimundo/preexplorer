@@ -1,16 +1,3 @@
-//! Comparison of indexed sequences of values.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! # use itertools::iproduct;
-//! use preexplorer::prelude::*;
-//! let many_heatmaps = (0..5).map(|_| pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)));
-//! pre::Heatmaps::new(many_heatmaps).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -19,8 +6,19 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Heatmap`` struct.
+/// Comparison counter part of [Heatmap] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// # use itertools::iproduct;
+/// use preexplorer::prelude::*;
+/// let many_heatmaps = (0..5).map(|_| pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)));
+/// pre::Heatmaps::new(many_heatmaps).plot("my_identifier").unwrap();
+/// ```
+///
+/// [Heatmap]: struct.Heatmap.html
 #[derive(Debug, PartialEq)]
 pub struct Heatmaps<T, S, U>
 where

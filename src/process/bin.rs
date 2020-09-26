@@ -1,38 +1,37 @@
-//! Indexed collection of histograms.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let image = (0..10).map(|i| (i..10 + i));
-//! let binwidth = 1;
-//! pre::ProcessBin::new((2..12), image, binwidth).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``ProcessBin``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let image = (0..10).map(|i| (i..10 + i));
-//! let binwidth = 1;
-//! pre::ProcessBins::new(vec![
-//!     pre::ProcessBin::new((2..12), image.clone(), binwidth),
-//!     pre::ProcessBin::new((2..12), image, binwidth),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
-/// Compare various ``ProcessBin``s.
 pub mod comparison;
 
 pub use comparison::ProcessBins;
 
 /// Indexed collection of histograms.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let image = (0..10).map(|i| (i..10 + i));
+/// let binwidth = 1;
+/// pre::ProcessBin::new((2..12), image, binwidth).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [ProcessBin] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let image = (0..10).map(|i| (i..10 + i));
+/// let binwidth = 1;
+/// pre::ProcessBins::new(vec![
+///     pre::ProcessBin::new((2..12), image.clone(), binwidth),
+///     pre::ProcessBin::new((2..12), image, binwidth),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [ProcessBin]: struct.ProcessBin.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProcessBin<T, S>
 where
@@ -50,16 +49,17 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-    /// Create a new ``ProcessBin``.
+    /// Constructs a new ``ProcessBin<T, S>``.
     ///
     /// # Examples
     ///
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let image = (0..10).map(|i| (i..10 + i));
+    /// let domain = (2..12);
+    /// let image = domain.clone().map(|i| (i..10 + i));
     /// let binwidth = 1;
-    /// let pro_bin = pre::ProcessBin::new((2..12), image, binwidth);
+    /// let pro_bin = pre::ProcessBin::new(domain, image, binwidth);
     /// ```
     pub fn new<I, J, K, U>(domain: I, image: J, binwidth: U) -> ProcessBin<T, S>
     where

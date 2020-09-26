@@ -1,15 +1,3 @@
-//! Comparison of sequences of values.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_seqs = (0..5).map(|_| (0..10).preexplore());
-//! pre::Sequences::new(many_seqs).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -18,8 +6,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Sequence`` struct.
+/// Comparison counter part of [Sequence] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_seqs = (0..5).map(|_| (0..10).preexplore());
+/// pre::Sequences::new(many_seqs).plot("my_identifier").unwrap();
+/// ```
+///
+/// [Sequence]: struct.Sequence.html
 #[derive(Debug, PartialEq)]
 pub struct Sequences<T>
 where

@@ -1,15 +1,3 @@
-//! Comparison of indexed collections of histograms.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_pro_vio = (0..5).map(|_| pre::ProcessViolin::new((0..10).map(|i| (i..10 + i))));
-//! pre::ProcessViolins::new(many_pro_bin).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 use crate::ProcessViolin;
@@ -19,8 +7,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``ProcessViolin`` struct.
+/// Comparison counter part of [ProcessViolin] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_pro_vio = (0..5).map(|_| pre::ProcessViolin::new((2..12), (0..10).map(|i| (i..10 + i))));
+/// pre::ProcessViolins::new(many_pro_vio).plot("my_identifier").unwrap();
+/// ```
+///
+/// [ProcessViolin]: struct.ProcessViolin.html
 #[derive(Debug, PartialEq)]
 pub struct ProcessViolins<T, S>
 where
@@ -202,7 +200,7 @@ do for [i=0:PROCESS_LENGTHS[{}] - 1] {{
             );
 
             // Forget extension
-            if let Some(_) = self.data_extension() {
+            if self.data_extension().is_some() {
                 inner_path.set_extension("");
             }
 

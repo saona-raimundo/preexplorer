@@ -1,13 +1,13 @@
 //! # Implementing
 //!
 //! You should proceed in the following order.
-//! 1. ``Configurable``
-//! 2. ``Saveable``
-//! 3. ``Plotable``
+//! 1. [Configurable]
+//! 2. [Saveable]
+//! 3. [Plotable]
 //!
 //! ## Configurable
 //!
-//! Include ``Configuration`` as part of your struct, as a field.
+//! Include [Configuration] as a new field ``config`` of your struct.
 //! This allows to handle all options. Then, include the following code.
 //! ```
 //! struct MyStruct{config: preexplorer::Configuration};
@@ -28,7 +28,7 @@
 //!
 //! ### Examples
 //!
-//! After implementing ``Configurable``.
+//! After implementing [Configurable].
 //! ```
 //! struct MyStruct {
 //!     content: f64,
@@ -55,11 +55,11 @@
 //! ## Plotable
 //!
 //! Write your own plot script to be executed in gnuplot.
-//! You can base this script by helper functions from the ``Configurable`` trait.
+//! You can base this script by helper functions from the [Configurable] trait.
 //!
 //! ### Examples
 //!
-//! After implementing ``Configurable`` and ``Saveable``.
+//! After implementing [Configurable] and [Saveable].
 //! ```
 //! struct MyStruct {
 //!     content: f64,
@@ -104,6 +104,11 @@
 //!     }
 //! }
 //! ```
+//!
+//! [Configurable]: trait.Configurable.html
+//! [Saveable]: trait.Saveable.html
+//! [Plotable]: trait.Plotable.html
+//! [Configuration]: struct.Configuration.html
 
 // Types
 use crate::errors::PreexplorerError;
@@ -178,7 +183,9 @@ where
 ///
 /// # Implementation
 ///
-/// See ``traits`` module level documentation.
+/// See [traits] module level documentation.
+///
+/// [traits]: index.html
 pub trait Configurable {
     /// Mutable access to ``Configuration``.
     fn configuration_mut(&mut self) -> &mut crate::configuration::Configuration;
@@ -666,7 +673,9 @@ pub trait Configurable {
 ///
 /// # Implementation
 ///
-/// See ``traits`` module level documentation.
+/// See [traits] module level documentation.
+///
+/// [traits]: index.html
 pub trait Saveable: Configurable {
     /// Extract the data from the struct.
     /// 
@@ -747,7 +756,9 @@ pub trait Saveable: Configurable {
 ///
 /// # Implementation
 ///
-/// See ``traits`` module level documentation.
+/// See [traits] module level documentation.
+///
+/// [traits]: index.html
 pub trait Plotable: Configurable + Saveable {
     ///////////////////// Needed methods ///////////////////////////////
 
@@ -855,8 +866,7 @@ pub trait Plotable: Configurable + Saveable {
         let gnuplot_file = self.plot_path();
         std::process::Command::new("gnuplot")
             .arg(gnuplot_file)
-            .spawn()
-            .map_err(|e| PreexplorerError::Plotting(e))?;
+            .spawn()?;
         Ok(self)
     }
 

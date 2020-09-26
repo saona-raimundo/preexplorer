@@ -1,15 +1,3 @@
-//! Comparison of sequences of values with a given violin.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_seq_err = (0..5).map(|_| pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))));
-//! pre::SequenceViolins::new(many_seq_err).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 use crate::SequenceViolin;
@@ -19,8 +7,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``SequenceViolin`` struct.
+/// Comparison counter part of [SequenceViolin] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_seq_vio = (0..5).map(|_| pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))));
+/// pre::SequenceViolins::new(many_seq_vio).plot("my_identifier").unwrap();
+/// ```
+///
+/// [SequenceViolin]: struct.SequenceViolin.html
 #[derive(Debug, PartialEq)]
 pub struct SequenceViolins<T>
 where

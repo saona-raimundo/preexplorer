@@ -1,24 +1,3 @@
-//! Indexed collection of values with a given error.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let image = (0..10).map(|i| i..10 + i);
-//! pre::ProcessError::new((5..15), image).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Process``es.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::ProcessErrors::new(vec![
-//!     pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)),
-//!     pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
@@ -27,12 +6,31 @@ use core::ops::Add;
 // Structs
 use average::Variance;
 
-/// Compare various ``Process``es.
 pub mod comparison;
 
 pub use comparison::ProcessErrors;
 
-/// Indexed sequence of values.
+/// Indexed collection of values with a given error.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let domain = (0..10).map(|i: i32| i.pow(2));
+/// let image = domain.clone().map(|i| i..10 + i);
+/// pre::ProcessError::new(domain, image).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare ``ProcessError`` structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::ProcessErrors::new(vec![
+///     pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)),
+///     pre::ProcessError::new((5..15), (0..10).map(|i| i..20 + i)),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProcessError<T>
 where
@@ -47,7 +45,7 @@ impl<T> ProcessError<T>
 where
     T: Display + Clone,
 {
-    /// Create a new ``Process``.
+    /// Constructs a new ``ProcessError<T>``.
     ///
     /// # Examples
     ///

@@ -1,41 +1,11 @@
-//! Most basic explorable structure: a sequence of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Sequence``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
-/// Sequence of histograms.
 pub mod bin;
-/// Compare various ``Sequence``s.
 pub mod comparison;
-/// Sequence of values with an associated error.
 pub mod error;
-/// Sequence of violin plots.
 pub mod violin;
 
 pub use bin::{SequenceBin, SequenceBins};
@@ -43,7 +13,37 @@ pub use comparison::Sequences;
 pub use error::{SequenceError, SequenceErrors};
 pub use violin::{SequenceViolin, SequenceViolins};
 
-/// Sequence of values.
+/// Most basic explorable structure: a sequence of values.
+///
+/// # Remarks
+///
+/// With the [prelude] module, we can easily convert a [IntoIterator] struct
+/// into [Sequence] for ease of use. The same can be achieved with the
+/// [new] method.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// (0..10).preexplore().plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [Sequence] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::Sequences::new(vec![
+///     (0..10).preexplore(),
+///     (0..10).preexplore(),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [prelude]: prelude/index.html
+/// [IntoIterator]: https://doc.rust-lang.org/core/iter/trait.IntoIterator.html
+/// [Sequence]: struct.Sequence.html
+/// [new]: struct.Sequence.html#method.new
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Sequence<T>
 where
@@ -57,7 +57,7 @@ impl<T> Sequence<T>
 where
     T: Display + Clone,
 {
-    /// Create a new ``Sequence``.
+    /// Constructs a new ``Sequence<T>``.
     ///
     /// # Examples
     ///

@@ -1,5 +1,3 @@
-//! Errors from the crate.
-
 use thiserror::Error;
 
 /// Error from writting while saving files (data or plot scripts).

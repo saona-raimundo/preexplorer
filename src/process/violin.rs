@@ -1,29 +1,3 @@
-//! Most basic explorable structure: a sequence of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert ``IntoIterator``s
-//! into ``Sequence`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! (0..10).preexplore().plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Sequence``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::Sequences::new(vec![
-//!     (0..10).preexplore(),
-//!     (0..10).preexplore(),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
@@ -34,7 +8,29 @@ pub mod comparison;
 
 pub use comparison::ProcessViolins;
 
-/// Sequence of values.
+/// Indexed collection of histograms, which will be represented as violins.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let image = (0..10).map(|i| (i..10 + i));
+/// pre::ProcessViolin::new((2..12), image).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [ProcessViolin] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let image = (0..10).map(|i| (i..10 + i));
+/// pre::ProcessViolins::new(vec![
+///     pre::ProcessViolin::new((2..12), image.clone()),
+///     pre::ProcessViolin::new((2..12), image),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [ProcessViolin]: struct.ProcessViolin.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProcessViolin<T, S>
 where
@@ -51,7 +47,7 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-    /// Create a new ``ProcessViolin``.
+    /// Constructs a new ``ProcessViolin<T, S>``.
     ///
     /// # Examples
     ///

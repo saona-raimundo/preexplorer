@@ -1,41 +1,11 @@
-//! Indexed collection of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert a tuple of ``IntoIterator``s
-//! into ``Process`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Process``es.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::Processes::new(vec![
-//!     ((0..10), (0..10)).preexplore(),
-//!     ((0..10), (0..10)).preexplore(),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
-/// Process of histograms.
 pub mod bin;
-/// Compare various ``Process``es.
 pub mod comparison;
-/// Process of values with an associated error.
 pub mod error;
-/// Process of violin plots.
 pub mod violin;
 
 pub use bin::{ProcessBin, ProcessBins};
@@ -44,6 +14,35 @@ pub use error::{ProcessError, ProcessErrors};
 pub use violin::{ProcessViolin, ProcessViolins};
 
 /// Indexed sequence of values.
+///
+/// # Remarks
+///
+/// With the [prelude] module, we can easily convert a tuple of [IntoIterator] structs
+/// into [Process] for ease of use. The same can be achieved with the
+/// [new] method.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// ((0..10), (0..10)).preexplore().plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [Process] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::Processes::new(vec![
+///     ((0..10), (0..10)).preexplore(),
+///     ((0..10), (0..10)).preexplore(),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [prelude]: prelude/index.html
+/// [IntoIterator]: https://doc.rust-lang.org/core/iter/trait.IntoIterator.html
+/// [Process]: struct.Process.html
+/// [new]: struct.Process.html#method.new
 #[derive(Debug, PartialEq, Clone)]
 pub struct Process<T, S>
 where
@@ -60,7 +59,7 @@ where
     T: Display + Clone,
     S: Display + Clone,
 {
-    /// Create a new ``Process``.
+    /// Construct a new ``Process<T, S>``.
     ///
     /// # Examples
     ///
@@ -68,7 +67,7 @@ where
     /// ```
     /// use preexplorer::prelude::*;
     /// let data = (0..10).map(|i| i * i + 1);
-    /// let seq = pre::Process::new((0..10), data);
+    /// let pro = pre::Process::new((0..10), data);
     /// ```
     pub fn new<I, J>(domain: I, image: J) -> Process<T, S>
     where

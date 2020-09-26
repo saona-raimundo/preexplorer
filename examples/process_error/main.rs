@@ -1,7 +1,7 @@
 use preexplorer::prelude::*;
 
 fn main() -> anyhow::Result<()> {
-    let times = (0..10).map(|i: i32| i.pow(2));
+    let domain = (0..10).map(|i: i32| i.pow(2));
     let values: Vec<Vec<f64>> = (0..10)
         .map(|i| {
             (0..10)
@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
         })
         .collect();
 
-    pre::ProcessError::new(times, values)
+    pre::ProcessError::new(domain, values)
         .set_title("Numerical results with variable error")
         .set_xlabel("index")
         .set_ylabel("value")

@@ -1,43 +1,36 @@
-//! Indexed collection of values.
-//!
-//! # Remarks
-//!
-//! With the ``prelude`` module, we can easily convert a tuple of ``IntoIterator``s
-//! into ``Heatmap`` for ease of use. The same can be achieved with the
-//! ``new`` method.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! # use itertools::iproduct;
-//! use preexplorer::prelude::*;
-//! let values = iproduct!(0..10, 0..5).map(|(x, y)| x + y);
-//! pre::Heatmap::new(0..10, 0..5, values).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Heatmap``s.
-//! ```no_run
-//! # use itertools::iproduct;
-//! use preexplorer::prelude::*;
-//! pre::Heatmaps::new(vec![
-//!     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)),
-//!     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x * y)),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::Add;
 
-/// Compare various ``Heatmap``s.
 pub mod comparison;
 
 pub use comparison::Heatmaps;
 
 /// Indexed sequence of values.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// # use itertools::iproduct;
+/// use preexplorer::prelude::*;
+/// let values = iproduct!(0..10, 0..5).map(|(x, y)| x + y);
+/// pre::Heatmap::new(0..10, 0..5, values).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [Heatmap] structs.
+/// ```no_run
+/// # use itertools::iproduct;
+/// use preexplorer::prelude::*;
+/// pre::Heatmaps::new(vec![
+///     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)),
+///     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x * y)),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [Heatmap]: struct.Heatmap.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct Heatmap<T, S, U>
 where
@@ -57,11 +50,12 @@ where
     S: Display + Clone,
     U: Display + Clone,
 {
-    /// Create a new ``Heatmap``.
+    /// Constructs a new ``Heatmap<T, S, U>``.
     ///
     /// # Panics
     ///
-    /// The number of values must be equal to the dimension of the grid.
+    /// The number of values must be equal to the dimension of the grid 
+    /// given by the cartesian product of ``xs`` and ``ys``.
     ///
     /// # Examples
     ///

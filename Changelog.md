@@ -2,6 +2,7 @@
 
 ## 0.3.3 [ongoing]
 
+- Warning added when saving a struct when no data
 - Implement statistical data representation
   - Sequence and Process variants of: bin, error and violin plots.
 - Implement heatmap

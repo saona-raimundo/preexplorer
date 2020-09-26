@@ -1,15 +1,3 @@
-//! Comparison of histograms.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_dens = (0..5).map(|_| pre::Density::new(0..10));
-//! pre::Densities::new(many_dens).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -18,8 +6,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Density`` struct.
+/// Comparison counter part of [Density] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// # use preexplorer::prelude::*;
+/// let many_dens = (0..5).map(|_| pre::Density::new(0..10));
+/// pre::Densities::new(many_dens).plot("my_identifier").unwrap();
+/// ```
+///
+/// [Density]: struct.Density.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct Densities<T>
 where

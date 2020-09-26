@@ -1,15 +1,3 @@
-//! Comparison of sequences of histograms.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_seq_bin = (0..5).map(|_| pre::SequenceBin::new((0..10).map(|i| (i..10 + i))));
-//! pre::SequenceBins::new(many_seq_bin).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 use crate::SequenceBin;
@@ -19,8 +7,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``SequenceBin`` struct.
+/// Comparison counter part of [SequenceBin] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_seq_bin = (0..5).map(|_| pre::SequenceBin::new((0..10).map(|i| i..10 + i), 0.5));
+/// pre::SequenceBins::new(many_seq_bin).plot("my_identifier").unwrap();
+/// ```
+///
+/// [SequenceBin]: struct.SequenceBin.html
 #[derive(Debug, PartialEq)]
 pub struct SequenceBins<T>
 where

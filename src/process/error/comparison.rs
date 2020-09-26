@@ -1,14 +1,3 @@
-//! Comparison of indexed sequences of values.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_pro_err = (0..5).map(|_| pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)));
-//! pre::ProcessErrors::new(many_pro_err).plot("my_identifier").unwrap();
-//! ```
-//!
 
 // Structs
 use crate::errors::PreexplorerError;
@@ -18,8 +7,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Process`` struct.
+/// Comparison counter part of [ProcessError] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_pro_err = (0..5).map(|_| pre::ProcessError::new((5..15), (0..10).map(|i| i..10 + i)));
+/// pre::ProcessErrors::new(many_pro_err).plot("my_identifier").unwrap();
+/// ```
+///
+/// [ProcessError]: struct.ProcessError.html
 #[derive(Debug, PartialEq)]
 pub struct ProcessErrors<T>
 where

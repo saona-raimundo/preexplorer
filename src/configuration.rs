@@ -1,9 +1,3 @@
-//! Configuration for all basic options included.
-//!
-//! # Remarks
-//!
-//! See ``Configurable`` documentation for its main use.
-
 // Traits
 use core::fmt::Display;
 
@@ -19,7 +13,9 @@ pub use plot::*;
 
 /// Configuration for all basic options included.
 ///
-/// See the documentation of ``Configurable`` trait for all methods.
+/// See trait [Configurable] documentation for its main use.
+///
+/// [Configurable]: trait.Configurable.html 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct Configuration {
     save_config: crate::configuration::save::SaveConfiguration,

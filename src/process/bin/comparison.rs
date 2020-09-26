@@ -1,15 +1,3 @@
-//! Comparison of indexed collections of histograms.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_pro_bin = (0..5).map(|_| pre::ProcessBin::new((0..10).map(|i| (i..10 + i))));
-//! pre::ProcessBins::new(many_pro_bin).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 use crate::ProcessBin;
@@ -19,8 +7,23 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``ProcessBin`` struct.
+/// Comparison counter part of [ProcessBin] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_pro_bin = (0..5).map(|_| {
+///     let domain = (0..10);
+///     let image = domain.clone().map(|i| (i..10 + i));
+///     let binwidth = 0.5;
+///     pre::ProcessBin::new(domain, image, binwidth)
+/// });
+/// pre::ProcessBins::new(many_pro_bin).plot("my_identifier").unwrap();
+/// ```
+///
+/// [ProcessBin]: struct.ProcessBin.html
 #[derive(Debug, PartialEq)]
 pub struct ProcessBins<T, S>
 where

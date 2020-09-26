@@ -1,28 +1,3 @@
-//! Sequence of histograms normalize to represent a probability density function through bins.
-//!
-//! To renormalize the histograms (that cover a unit area by default),
-//! you should find your best renormalization by trying out with gnuplot until you find the perfect fit.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let data = (0..10).map(|i| (i..10 + i));
-//! let binwidth = 0.5;
-//! pre::SequenceBin::new(data, binwidth).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``SequenceBin``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::SequenceBins::new(vec![
-//!     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 1),
-//!     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 0.5),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
@@ -33,7 +8,33 @@ pub mod comparison;
 
 pub use comparison::SequenceBins;
 
-/// Sequence of values.
+/// Sequence of histograms normalize to represent a probability density function through bins.
+///
+/// To renormalize the histograms (that cover a unit area by default),
+/// change the renormalization constant in the gnuplot script.  
+/// By trying out with gnuplot, you can find the perfect fit.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let data = (0..10).map(|i| (i..10 + i));
+/// let binwidth = 0.5;
+/// pre::SequenceBin::new(data, binwidth).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [SequenceBin] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::SequenceBins::new(vec![
+///     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 1),
+///     pre::SequenceBin::new((0..10).map(|i| (i..10 + i)), 0.5),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [SequenceBin]: struct.SequenceBin.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct SequenceBin<T>
 where
@@ -48,14 +49,17 @@ impl<T> SequenceBin<T>
 where
     T: Display + Clone,
 {
-    /// Create a new ``SequenceBin``.
+    /// Constructs a new ``SequenceBin<T>``.
     ///
     /// # Remarks
     ///
+    /// To change the binwidth, please refer to the gnuplot script generated.
     /// By construction, a fixed binwidth is needed. This is okay in most of the cases, since it gives consistency and
     /// allows plotting constant values. If you want to change it, please go to the gnuplot script.
-    /// Notice that this crate simply prints the binwidth in the correct place in the gnuplot script generated, so
-    /// if you use a value less or equal to zero gnuplot will use a default behaviour.
+    /// 
+    /// Negative binwidths are handled by gnuplot. 
+    /// This crate simply prints the binwidth in the correct place in the gnuplot script generated, so
+    /// if you use a value less or equal to zero gnuplot will resolve this issue by using a default behaviour.
     ///
     /// # Examples
     ///

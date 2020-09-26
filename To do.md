@@ -1,7 +1,3 @@
-- Errors:
-  
-  - Density and Densities, when there is no data to plot?
-  
 - Tests/document
   
   - [x] SequenceError

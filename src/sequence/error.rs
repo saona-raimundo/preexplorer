@@ -1,24 +1,3 @@
-//! A sequence of values with a given error.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let data = (0..10).map(|i| (i..10 + i));
-//! let seq_err = pre::SequenceError::new(data).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``SequenceError``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::SequenceErrors::new(vec![
-//!     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
-//!     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::ops::Add;
@@ -32,6 +11,27 @@ pub mod comparison;
 pub use comparison::SequenceErrors;
 
 /// Sequence of values with a given error.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let data = (0..10).map(|i| (i..10 + i));
+/// let seq_err = pre::SequenceError::new(data).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [SequenceError] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::SequenceErrors::new(vec![
+///     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
+///     pre::SequenceError::new((0..10).map(|i| (i..10 + i))),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+///
+/// [SequenceError]: struct.SequenceError.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct SequenceError {
     data: Vec<(f64, f64)>,
@@ -39,7 +39,8 @@ pub struct SequenceError {
 }
 
 impl SequenceError {
-    /// Create a new ``SequenceError`` from data.
+    /// Constructs a new ``SequenceError`` from data.
+    ///
     /// Each dataset is processed so that the final plot shows the mean of the data set and
     /// an error bar of one standard deviation.
     ///
@@ -48,7 +49,7 @@ impl SequenceError {
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| (i..10 + i));
+    /// let data = (0..10).map(|i| i..10 + i);
     /// let seq_err = pre::SequenceError::new(data);
     /// ```
     pub fn new<I, J, T>(data: I) -> SequenceError

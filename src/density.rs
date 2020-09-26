@@ -1,24 +1,3 @@
-//! Histogram type of plotting: point cloud, density or probability density function
-//! (pdf) and cummulative density function (cdf).
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::Density::new((0..10)).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``Density``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::Densities::new(vec![
-//!     pre::Density::new((0..10)),
-//!     pre::Density::new((0..10)),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
@@ -27,10 +6,29 @@ use core::ops::Add;
 // Structs
 pub use comparison::Densities;
 
-/// Compare various ``Distribution`` types together.
 pub mod comparison;
 
-/// Akin to a histogram: point cloud, density and cummulative distribution.
+/// A type to a histogram: point cloud, probability density, cummulative probability distribution and/or bins.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::Density::new((0..10)).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare [Density] structs.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::Densities::new(vec![
+///     pre::Density::new((0..10)),
+///     pre::Density::new((0..10)),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
+/// 
+/// [Density]: struct.Density.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct Density<T>
 where
@@ -44,15 +42,15 @@ impl<T> Density<T>
 where
     T: Display + Clone,
 {
-    /// Create a new ``Density``.
+    /// Constructs a new ``Density<T>``.
     ///
     /// # Examples
     ///
-    /// From a complicated computation.
+    /// From a simulation.
     /// ```no_run
-    /// use preexplorer::prelude::*;
-    /// use rand_distr::Exp1;
-    /// use rand::prelude::*;
+    /// # use preexplorer::prelude::*;
+    /// # use rand_distr::Exp1;
+    /// # use rand::prelude::*;
     /// let simulation_results: Vec<f64> = (0..100).map(|_| thread_rng().sample(Exp1)).collect();
     /// pre::Density::new(simulation_results)
     ///     .set_title("Empirical Exponential 1")

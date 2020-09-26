@@ -1,15 +1,3 @@
-//! Comparison of indexed sequences of values.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
-//! pre::Processes::new(many_pros).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -18,8 +6,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Process`` struct.
+/// Comparison counter part of [Process] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_pros = (0..5).map(|_| ((0..10), (0..10)).preexplore());
+/// pre::Processes::new(many_pros).plot("my_identifier").unwrap();
+/// ```
+///
+/// [Process]: struct.Process.html
 #[derive(Debug, PartialEq)]
 pub struct Processes<T, S>
 where

@@ -1,15 +1,3 @@
-//! Comparison of sequences of values with a given error.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let many_seq_err = (0..5).map(|_| pre::SequenceError::new((0..10).map(|i| (i..10 + i))));
-//! pre::SequenceErrors::new(many_seq_err).plot("my_identifier").unwrap();
-//! ```
-//!
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -18,8 +6,18 @@ pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
 use core::ops::{Add, AddAssign};
 
-/// Comparison counter part of ``Sequence`` struct.
+/// Comparison counter part of [SequenceError] struct.
 ///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let many_seq_err = (0..5).map(|_| pre::SequenceError::new((0..10).map(|i| i..10 + i)));
+/// pre::SequenceErrors::new(many_seq_err).plot("my_identifier").unwrap();
+/// ```
+///
+/// [SequenceError]: struct.SequenceError.html
 #[derive(Debug, PartialEq)]
 pub struct SequenceErrors {
     data_set: Vec<crate::sequence::error::SequenceError>,

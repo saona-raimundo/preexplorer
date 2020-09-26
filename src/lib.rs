@@ -70,6 +70,10 @@
 //!     .unwrap();
 //! ```
 //! <img src="https://user-images.githubusercontent.com/37874270/80872600-27069980-8cb3-11ea-9f3f-4a60e5c4d06a.png" height="200px">
+//!
+//! Check out the [gallery] for more.
+//!
+//! [gallery]: https://github.com/rasa200/preexplorer#gallery
 
 /// Generic multi-dimensional data. Not automatically ploted.
 mod data;
@@ -102,7 +106,7 @@ mod configuration;
 /// Errors wrapper from writting data.
 pub mod errors;
 /// Traits for easy use or self implmentation.
-mod traits;
+pub mod traits;
 
 /// All you ussually need.
 pub mod prelude {
@@ -136,6 +140,8 @@ pub mod prelude {
 
 /// Directory paths.
 mod constants {
+	/// Path the data directory.
     pub const DATA_DIR: [&str; 3] = [r"target", "preexplorer", "data"];
+    /// Path the plot scripts directory.
     pub const PLOT_DIR: [&str; 3] = [r"target", "preexplorer", "plots"];
 }

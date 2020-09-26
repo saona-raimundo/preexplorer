@@ -1,24 +1,3 @@
-//! Sequence of violin plots.
-//!
-//! # Examples
-//!
-//! Quick plot.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! let data = (0..10).map(|i| (i..10 + i));
-//! pre::SequenceViolin::new(data).plot("my_identifier").unwrap();
-//! ```
-//!
-//! Compare ``SequenceViolin``s.
-//! ```no_run
-//! use preexplorer::prelude::*;
-//! pre::SequenceViolins::new(vec![
-//!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
-//!     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
-//!     ])
-//!     .plot("my_identifier").unwrap();
-//! ```
-
 // Traits
 pub use crate::traits::{Configurable, Plotable, Saveable};
 use core::fmt::Display;
@@ -29,7 +8,26 @@ pub mod comparison;
 
 pub use comparison::SequenceViolins;
 
-/// Sequence of values.
+/// Sequence of violin plots.
+///
+/// # Examples
+///
+/// Quick plot.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// let data = (0..10).map(|i| (i..10 + i));
+/// pre::SequenceViolin::new(data).plot("my_identifier").unwrap();
+/// ```
+///
+/// Compare ``SequenceViolin``s.
+/// ```no_run
+/// use preexplorer::prelude::*;
+/// pre::SequenceViolins::new(vec![
+///     pre::SequenceViolin::new((0..10).map(|i| (i..10 + i))),
+///     pre::SequenceViolin::new((0..10).map(|i| (i..10 + 2 * i))),
+///     ])
+///     .plot("my_identifier").unwrap();
+/// ```
 #[derive(Debug, PartialEq, Clone)]
 pub struct SequenceViolin<T>
 where
@@ -43,14 +41,14 @@ impl<T> SequenceViolin<T>
 where
     T: Display + Clone,
 {
-    /// Create a new ``SequenceViolin``.
+    /// Constructs a new ``SequenceViolin<T>``.
     ///
     /// # Examples
     ///
     /// From a complicated computation.
     /// ```
     /// use preexplorer::prelude::*;
-    /// let data = (0..10).map(|i| (i..10 + i));
+    /// let data = (0..10).map(|i| i..10 + i);
     /// let seq = pre::SequenceViolin::new(data);
     /// ```
     pub fn new<I, J>(data: I) -> SequenceViolin<T>
