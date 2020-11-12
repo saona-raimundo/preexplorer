@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.3.4 [ongoing]
+## 0.3.4 
 
-- 
+- Make Style Enum public
 
 ## 0.3.3
 
