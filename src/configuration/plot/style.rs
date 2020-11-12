@@ -9,15 +9,25 @@ use core::fmt::Display;
 /// There are ``From<>`` implementations for ease of use.
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Style {
+    /// Default "default" or 0
     Default,
+    /// Continuous lines "-" or "lines" or 1
     Lines,
+    /// Points "*" or "points" or 2
     Points,
+    /// Points and lines together "-*-" or "linepoints" or 3
     Linespoints,
+    /// Vertical line per data point "|" or "impulses" or 4
     Impulses,
+    /// Smallest point possible "." or "dots" or 5
     Dots,
+    /// Piecewise constant with jumps on data points "_|" or "steps" or 6
     Steps,
+    /// Piecewise constant with jumps previouse to data points "|-"or "fsteps" or 7
     Fsteps,
+    /// Piecewise constant centered in data points "_-_" or "histeps" or 8
     Histeps,
+    /// Adjustable piecewise constant centered in data points "_--_" or "boxes" or 9
     Boxes,
 }
 
@@ -26,15 +36,15 @@ impl From<&str> for Style {
         let s = s.trim().to_lowercase();
         match s.as_str() {
             "default" => Style::Default,
-            "lines" => Style::Lines,
-            "points" => Style::Points,
-            "linespoints" => Style::Linespoints,
-            "impulses" => Style::Impulses,
-            "dots" => Style::Dots,
-            "steps" => Style::Steps,
-            "fsteps" => Style::Fsteps,
-            "histeps" => Style::Histeps,
-            "boxes" => Style::Boxes,
+            "lines" | "-" => Style::Lines,
+            "points" | "*" => Style::Points,
+            "linespoints" | "-*-" => Style::Linespoints,
+            "impulses" | "|" => Style::Impulses,
+            "dots" | "." => Style::Dots,
+            "steps" | "_|" => Style::Steps,
+            "fsteps" | "|-" => Style::Fsteps,
+            "histeps" | "_-_" => Style::Histeps,
+            "boxes" | "_--_" => Style::Boxes,
             _ => Style::Lines,
         }
     }

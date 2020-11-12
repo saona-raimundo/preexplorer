@@ -9,7 +9,7 @@ use std::path::Path;
 pub mod plot;
 pub mod save;
 
-pub use plot::*;
+pub use plot::{*, style::Style};
 
 /// Configuration for all basic options included.
 ///
@@ -405,7 +405,7 @@ mod tests {
 
     #[test]
     fn style() {
-        use crate::configuration::Style;
+        use crate::configuration::plot::style::Style;
         let mut config = Configuration::default();
         assert_eq!(config.style(), &Style::Default);
 

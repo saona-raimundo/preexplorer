@@ -86,7 +86,7 @@ mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
 
-pub use self::configuration::Configuration;
+pub use self::configuration::{Configuration, Style};
 pub use self::constants::{DATA_DIR, PLOT_DIR};
 pub use self::data::Data;
 pub use self::density::{Densities, Density};
