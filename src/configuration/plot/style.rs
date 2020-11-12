@@ -13,9 +13,9 @@ pub enum Style {
     Default,
     /// Continuous lines "-" or "lines" or 1
     Lines,
-    /// Points "*" or "points" or 2
+    /// Points "+" or "points" or 2
     Points,
-    /// Points and lines together "-*-" or "linepoints" or 3
+    /// Points and lines together "-+-" or "linepoints" or 3
     Linespoints,
     /// Vertical line per data point "|" or "impulses" or 4
     Impulses,
@@ -37,8 +37,8 @@ impl From<&str> for Style {
         match s.as_str() {
             "default" => Style::Default,
             "lines" | "-" => Style::Lines,
-            "points" | "*" => Style::Points,
-            "linespoints" | "-*-" => Style::Linespoints,
+            "points" | "+" => Style::Points,
+            "linespoints" | "-+-" => Style::Linespoints,
             "impulses" | "|" => Style::Impulses,
             "dots" | "." => Style::Dots,
             "steps" | "_|" => Style::Steps,
