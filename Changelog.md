@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.3.5 [ongoing]
+## 0.3.5
 
-- 
+- Correct Style::Point symbol documentation
+- Add a global `preexplorer::clean()` function to remove all generated files 
 
 ## 0.3.4 
 

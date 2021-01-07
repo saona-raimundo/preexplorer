@@ -105,3 +105,7 @@ There is no connection with the gnuplot project.
 # Changelog
 
 See [Changelog](https://github.com/saona-raimundo/preexplorer/blob/master/Changelog.md).
+
+# References 
+
+A nice overview of what a good plot should look like: https://serialmentor.com/dataviz/

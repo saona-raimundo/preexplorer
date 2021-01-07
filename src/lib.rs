@@ -85,29 +85,12 @@ mod matrix;
 mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
-
-pub use self::configuration::{Configuration, Style};
-pub use self::constants::{DATA_DIR, PLOT_DIR};
-pub use self::data::Data;
-pub use self::density::{Densities, Density};
-pub use self::matrix::{Heatmap, Heatmaps};
-pub use self::process::{
-    Process, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, ProcessViolins,
-    Processes,
-};
-pub use self::sequence::{
-    Sequence, SequenceBin, SequenceBins, SequenceError, SequenceErrors, SequenceViolin,
-    SequenceViolins, Sequences,
-};
-pub use self::traits::*;
-
 /// Struct with all configurations for saving and ploting.
 mod configuration;
 /// Errors wrapper from writting data.
 pub mod errors;
 /// Traits for easy use or self implmentation.
 pub mod traits;
-
 /// All you ussually need.
 pub mod prelude {
     //! Easily start preexploring you results.
@@ -145,3 +128,68 @@ mod constants {
     /// Path the plot scripts directory.
     pub const PLOT_DIR: [&str; 3] = [r"target", "preexplorer", "plots"];
 }
+
+/// Overall, generic functions of the crate
+mod functions {
+
+
+	/// Removes generated artifacts
+	///
+	/// Inspired by the `cargo clean` command, this methods removes all 
+	/// artifacts from the target directory that `preexplorer` has generated in the past.
+	///
+	/// # Remarks
+	///
+	/// This method is particulary useful when you: 
+	/// - run various versions of a script with identical ids
+	/// - want to delete all previous records as they are not longer useful.
+	///
+	/// # Errors
+	/// 
+	/// This function will return an error in the following situations, 
+	/// but is not limited to just these cases:
+	/// - The user lacks permissions to perform [`std::fs::metadata`] call 
+	/// on the relevant paths.
+	/// - Either [`std::fs::remove_file`] or [`std::fs::remove_dir`] errors.
+	///
+	/// [`std::fs::metadata`]: https://doc.rust-lang.org/std/fs/fn.metadata.html
+	/// [`std::fs::remove_file`]: https://doc.rust-lang.org/std/fs/fn.remove_file.html 
+    /// [`std::fs::remove_dir`]: https://doc.rust-lang.org/std/fs/fn.remove_dir.html
+	pub fn clean() -> Result<(), crate::errors::PreexplorerError> {
+		let path = "./target/preexplorer";
+		match std::fs::metadata(path) {
+			Err(e) => {
+				match e.kind() {
+					std::io::ErrorKind::NotFound => Ok(()),
+					_ => Err(crate::errors::PreexplorerError::Removing(
+								e, 
+								String::from("Could not query the relevant directory.")
+							)
+						),
+				}
+			},
+			Ok(_) => std::fs::remove_dir_all(path).map_err(|e| 
+					crate::errors::PreexplorerError::Removing(
+						e,
+						String::from("Could not remove the relevant directory.")
+					)
+				),
+		}
+	}
+}
+
+pub use self::configuration::{Configuration, Style};
+pub use self::constants::{DATA_DIR, PLOT_DIR};
+pub use self::data::Data;
+pub use self::density::{Densities, Density};
+pub use self::matrix::{Heatmap, Heatmaps};
+pub use self::process::{
+    Process, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, ProcessViolins,
+    Processes,
+};
+pub use self::sequence::{
+    Sequence, SequenceBin, SequenceBins, SequenceError, SequenceErrors, SequenceViolin,
+    SequenceViolins, Sequences,
+};
+pub use self::traits::*;
+pub use self::functions::*;
