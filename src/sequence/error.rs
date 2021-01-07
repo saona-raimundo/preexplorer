@@ -111,10 +111,7 @@ impl Plotable for SequenceError {
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        let dashtype = match self.dashtype() {
-            Some(dashtype) => dashtype,
-            None => 1,
-        };
+        let dashtype = self.dashtype().unwrap_or(1);
         gnuplot_script += &format!(
             "plot {:?} using 1:2 with {} dashtype {}, \"\" using 1:2:3 with yerrorbars \n",
             self.data_path(),

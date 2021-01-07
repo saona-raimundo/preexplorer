@@ -130,10 +130,7 @@ where
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        let dashtype = match self.dashtype() {
-            Some(dashtype) => dashtype,
-            None => 1,
-        };
+        let dashtype = self.dashtype().unwrap_or(1);
         gnuplot_script += &format!(
             "plot {:?} with {} dashtype {} \n",
             self.data_path(),

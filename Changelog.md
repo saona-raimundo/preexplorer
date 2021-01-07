@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6 [ongoing]
+
+- Updated dependencies
+
 ## 0.3.5
 
 - Correct Style::Point symbol documentation

@@ -90,7 +90,7 @@ where
             counter += 1;
             if counter == self.dim {
                 counter = 0;
-                raw_data.push_str("\n");
+                raw_data.push('\n');
             }
         }
 

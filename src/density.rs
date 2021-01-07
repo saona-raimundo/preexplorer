@@ -238,10 +238,7 @@ where
         gnuplot_script += "set style fill solid 0.5\n\n";
 
         // Ploting cloud, pdf, cdf and/or bins
-        let dashtype = match self.dashtype() {
-            Some(dashtype) => dashtype,
-            None => 1,
-        };
+        let dashtype = self.dashtype().unwrap_or(1);
 
         gnuplot_script += "plot ";
         if self.cloud() {

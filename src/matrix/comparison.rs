@@ -135,10 +135,7 @@ where
 
         let rows = (self.data_set.len() as f64).sqrt().ceil();
         let columns = (self.data_set.len() as f64 / rows).ceil();
-        let overall_title = match self.title() {
-            Some(title) => title,
-            None => "",
-        };
+        let overall_title: &str = self.title().map(|s| s.as_str()).unwrap_or("");
         gnuplot_script += &format!(
             "set multiplot layout {},{} rowsfirst downwards title \"{}\"\n",
             rows, columns, overall_title

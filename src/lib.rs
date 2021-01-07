@@ -135,13 +135,13 @@ mod functions {
 
 	/// Removes generated artifacts
 	///
-	/// Inspired by the `cargo clean` command, this methods removes all 
+	/// Inspired by the [`cargo clean`] command, this methods removes all 
 	/// artifacts from the target directory that `preexplorer` has generated in the past.
 	///
 	/// # Remarks
 	///
 	/// This method is particulary useful when you: 
-	/// - run various versions of a script with identical ids
+	/// - run various versions of a script with identical ids.
 	/// - want to delete all previous records as they are not longer useful.
 	///
 	/// # Errors
@@ -152,6 +152,7 @@ mod functions {
 	/// on the relevant paths.
 	/// - Either [`std::fs::remove_file`] or [`std::fs::remove_dir`] errors.
 	///
+	/// [`cargo clean`]: https://doc.rust-lang.org/cargo/commands/cargo-clean.html
 	/// [`std::fs::metadata`]: https://doc.rust-lang.org/std/fs/fn.metadata.html
 	/// [`std::fs::remove_file`]: https://doc.rust-lang.org/std/fs/fn.remove_file.html 
     /// [`std::fs::remove_dir`]: https://doc.rust-lang.org/std/fs/fn.remove_dir.html
