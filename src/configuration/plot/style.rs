@@ -23,7 +23,7 @@ pub enum Style {
     Dots,
     /// Piecewise constant with jumps on data points "_|" or "steps" or 6
     Steps,
-    /// Piecewise constant with jumps previouse to data points "|-"or "fsteps" or 7
+    /// Piecewise constant with jumps previous to data points "|-"or "fsteps" or 7
     Fsteps,
     /// Piecewise constant centered in data points "_-_" or "histeps" or 8
     Histeps,

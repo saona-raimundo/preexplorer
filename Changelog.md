@@ -3,6 +3,7 @@
 ## 0.3.6 [ongoing]
 
 - Updated dependencies
+- Errors are now non-exhaustive for less breaking changes
 
 ## 0.3.5
 
