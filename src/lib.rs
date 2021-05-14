@@ -142,7 +142,7 @@ mod functions {
 	///
 	/// This method is particulary useful when you: 
 	/// - run various versions of a script with identical ids.
-	/// - want to delete all previous records as they are not longer useful.
+	/// - want to delete all previous records as they are no longer useful.
 	///
 	/// # Errors
 	/// 
