@@ -14,7 +14,9 @@ If you are looking for a pure Rust plotter, check out [plotters](https://crates.
 # Purpose
 
 Do you have a costly process in Rust and want to save the data for postprocessing?
+
 Would you like to still have a basic glance to check it and leave fine-tuning of the plot for later?
+
 This is the crate for you!
 
 # Work flow
@@ -89,12 +91,12 @@ For more, see the folder [examples](https://github.com/saona-raimundo/preexplore
 
 # Q & A
 
-1. Why processes must be the same structs to be compared? 
-   Because of Rust explicit typing: comparisons need to save an explicit type. 
+1. When comparing processes (`Process`-related structs), why must they be the same structs? 
+   The comparison of processes (`Processes`-related structs) are a collection of processes. As such, it works as `Vec<Process>`, so two process structs must be the same type to be compared.
 2. Are there n-dimensional variants?
-   No, it is out of scope. Please implement your own plot script for that. You can do so easily based in the Data struct. 
+   No, it is out of scope. If you want to implement similar functionalities, you can do so easily based on the source code for `Data`. 
 3. How to deactivate some options, e.g. tics?
-   What would represent the empty value instead of None. This happens because of inferring type errors in Rust.
+   All structs implement the trait `Configurable`. Each option has documented how to disable it in its corresponding method.
 
 # Disclaimer
 

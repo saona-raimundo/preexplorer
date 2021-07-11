@@ -135,6 +135,14 @@ where
     /// # Default
     ///
     /// The default value is true.
+    ///
+    /// # Remarks
+    ///
+    /// The number of bins is controlled in gnuplot. Refer to the [gnuplot documentation],
+    /// you want to search for the `bins`, under the `Data` section. 
+    ///
+    /// [gnuplot documentation]: http://www.gnuplot.info/documentation.html
+    ///
     /// ```
     /// # use preexplorer::prelude::*;
     /// let mut den = pre::Density::new((0..10));
@@ -142,9 +150,9 @@ where
     /// den.set_bins(false);
     /// assert_eq!(den.bins(), false);
     /// ```
-    pub fn set_bins(&mut self, cloud: bool) -> &mut Self {
+    pub fn set_bins(&mut self, bins: bool) -> &mut Self {
         self.configuration_mut()
-            .set_custom("bins", cloud.to_string());
+            .set_custom("bins", bins.to_string());
         self
     }
 
