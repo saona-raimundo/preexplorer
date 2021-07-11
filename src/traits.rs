@@ -678,15 +678,19 @@ pub trait Configurable {
 /// [traits]: index.html
 pub trait Saveable: Configurable {
     /// Extract the data from the struct.
-    /// 
+    ///
+    /// # Remarks
+    ///
+    /// The data format should be directly readable by gnuplot. Look up gnuplot datafile for more information.
+    ///
     /// # Warnings
-    /// 
+    ///
     /// If there is no data, a warning will be printed to [`io::stderr`].
     ///
     /// [`io::stderr`]: https://doc.rust-lang.org/std/io/struct.Stderr.html
     fn plotable_data(&self) -> String;
 
-    /// Save the file. The directory is ``target\\preexplorer\\data\\``.
+    /// Save the data in a file. The directory is ``target\\preexplorer\\data\\``.
     ///
     /// # Panics
     ///
