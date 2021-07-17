@@ -13,7 +13,7 @@ pub use comparison::Heatmaps;
 ///
 /// Quick plot.
 /// ```no_run
-/// # use itertools::iproduct;
+/// use itertools::iproduct;
 /// use preexplorer::prelude::*;
 /// let values = iproduct!(0..10, 0..5).map(|(x, y)| x + y);
 /// pre::Heatmap::new(0..10, 0..5, values).plot("my_identifier").unwrap();
@@ -21,7 +21,7 @@ pub use comparison::Heatmaps;
 ///
 /// Compare [Heatmap] structs.
 /// ```no_run
-/// # use itertools::iproduct;
+/// use itertools::iproduct;
 /// use preexplorer::prelude::*;
 /// pre::Heatmaps::new(vec![
 ///     pre::Heatmap::new(0..10, 0..5, iproduct!(0..10, 0..5).map(|(x, y)| x + y)),
@@ -54,7 +54,7 @@ where
     ///
     /// # Panics
     ///
-    /// The number of values must be equal to the dimension of the grid 
+    /// The number of values must be equal to the dimension of the grid
     /// given by the cartesian product of ``xs`` and ``ys``.
     ///
     /// # Examples
