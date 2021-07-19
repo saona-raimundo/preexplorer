@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.1 [ongoing]
+## 0.4.2 [ongoing]
+
+- Doc: correcting an image
+
+## 0.4.1
 
 - Fix: Heatmaps are now plotted correctly using `pm3d` instead of `image` 
 - Updated dependencies
