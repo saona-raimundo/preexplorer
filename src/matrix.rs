@@ -9,6 +9,19 @@ pub use comparison::Heatmaps;
 
 /// Indexed sequence of values.
 ///
+/// Check out [pm3d documentation] of gnuplot for more options.
+///
+/// # Remarks
+///
+/// If you want to plot the original grid points (and not some interpolation), then
+/// try the command
+/// ```gnuplot
+/// splot <file> with points pointsize 3 pointtype 5 palette
+/// ```
+/// adjusting the pointsize value (in this case `3`) to your case.
+/// This is particularly useful when you have just a few values.
+///
+///
 /// # Examples
 ///
 /// Quick plot.
@@ -31,6 +44,7 @@ pub use comparison::Heatmaps;
 /// ```
 ///
 /// [Heatmap]: struct.Heatmap.html
+/// [pm3d documentation]: http://gnuplot.sourceforge.net/demo/pm3d.html
 #[derive(Debug, PartialEq, Clone)]
 pub struct Heatmap<T, S, U>
 where
@@ -146,6 +160,7 @@ where
                     self.values[i * self.ys.len() + j]
                 ));
             }
+            plotable_data.push_str("\n");
         }
         plotable_data
     }
@@ -160,7 +175,8 @@ where
     fn plot_script(&self) -> String {
         let mut gnuplot_script = self.opening_plot_script();
 
-        gnuplot_script += &format!("plot {:?} using 1:2:3 with image\n", self.data_path(),);
+        gnuplot_script += "set pm3d map\n";
+        gnuplot_script += &format!("splot {:?} using 1:2:3\n", self.data_path(),);
         gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script

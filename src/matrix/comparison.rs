@@ -155,10 +155,9 @@ where
                 None => counter.to_string(),
             };
 
-            gnuplot_script += &format!(
-                "set title \"{}\"\nplot {:?} using 1:2:3 with image\n",
-                legend, inner_path,
-            );
+            gnuplot_script += &format!("set title \"{}\"\n", legend,);
+            gnuplot_script += "set pm3d map\n";
+            gnuplot_script += &format!("splot {:?} using 1:2:3\n", inner_path,);
         }
         gnuplot_script += "\n";
         gnuplot_script += &self.ending_plot_script();
