@@ -112,6 +112,8 @@
 
 // Types
 use crate::errors::PreexplorerError;
+use core::convert::TryInto;
+use core::fmt::Debug;
 use std::ffi::OsStr;
 use std::path::Path;
 
@@ -369,15 +371,16 @@ pub trait Configurable {
     ///
     /// # Default
     ///
-    /// The default value is ``default``, which is read as ``lines``.
+    /// The default value is ``default``, which means ``lines``.
     /// ```
     /// # use preexplorer::prelude::*;
     /// let seq = (0..10).preexplore();
-    /// assert_eq!(seq.style().to_string().as_str(), "lines");
+    /// assert_eq!(seq.style().to_string(), "Default".to_string());
     /// ```
     fn set_style<S>(&mut self, style: S) -> &mut Self
     where
-        crate::configuration::plot::style::Style: From<S>,
+        S: TryInto<crate::configuration::plot::style::Style>,
+        <S as TryInto<crate::configuration::plot::style::Style>>::Error: Debug,
     {
         self.configuration_mut().set_style(style);
         self

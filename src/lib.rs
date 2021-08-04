@@ -74,21 +74,25 @@
 //! Check out the [gallery] for more.
 //!
 //! [gallery]: https://github.com/rasa200/preexplorer#gallery
+//!
+//! # Optional features
+//!
+//! - **`serde`** — Enables [serde](https://crates.io/crates/serde) support.
 
+/// Struct with all configurations for saving and ploting.
+mod configuration;
 /// Generic multi-dimensional data. Not automatically ploted.
 mod data;
 /// Histograms or realizations of the same variable. Empirical densities.
 mod density;
+/// Errors wrapper from writting data.
+pub mod errors;
 /// (Squared) Matrices.
 mod matrix;
 /// Time-series, indexed by a subset of R.
 mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
-/// Struct with all configurations for saving and ploting.
-mod configuration;
-/// Errors wrapper from writting data.
-pub mod errors;
 /// Traits for easy use or self implmentation.
 pub mod traits;
 /// All you ussually need.
@@ -123,7 +127,7 @@ pub mod prelude {
 
 /// Directory paths.
 mod constants {
-	/// Path the data directory.
+    /// Path the data directory.
     pub const DATA_DIR: [&str; 3] = [r"target", "preexplorer", "data"];
     /// Path the plot scripts directory.
     pub const PLOT_DIR: [&str; 3] = [r"target", "preexplorer", "plots"];
@@ -132,57 +136,54 @@ mod constants {
 /// Overall, generic functions of the crate
 mod functions {
 
-
-	/// Removes generated artifacts
-	///
-	/// Inspired by the [`cargo clean`] command, this methods removes all 
-	/// artifacts from the target directory that `preexplorer` has generated in the past.
-	///
-	/// # Remarks
-	///
-	/// This method is particulary useful when you: 
-	/// - run various versions of a script with identical ids.
-	/// - want to delete all previous records as they are no longer useful.
-	///
-	/// # Errors
-	/// 
-	/// This function will return an error in the following situations, 
-	/// but is not limited to just these cases:
-	/// - The user lacks permissions to perform [`std::fs::metadata`] call 
-	/// on the relevant paths.
-	/// - Either [`std::fs::remove_file`] or [`std::fs::remove_dir`] errors.
-	///
-	/// [`cargo clean`]: https://doc.rust-lang.org/cargo/commands/cargo-clean.html
-	/// [`std::fs::metadata`]: https://doc.rust-lang.org/std/fs/fn.metadata.html
-	/// [`std::fs::remove_file`]: https://doc.rust-lang.org/std/fs/fn.remove_file.html 
+    /// Removes generated artifacts
+    ///
+    /// Inspired by the [`cargo clean`] command, this methods removes all
+    /// artifacts from the target directory that `preexplorer` has generated in the past.
+    ///
+    /// # Remarks
+    ///
+    /// This method is particulary useful when you:
+    /// - run various versions of a script with identical ids.
+    /// - want to delete all previous records as they are no longer useful.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error in the following situations,
+    /// but is not limited to just these cases:
+    /// - The user lacks permissions to perform [`std::fs::metadata`] call
+    /// on the relevant paths.
+    /// - Either [`std::fs::remove_file`] or [`std::fs::remove_dir`] errors.
+    ///
+    /// [`cargo clean`]: https://doc.rust-lang.org/cargo/commands/cargo-clean.html
+    /// [`std::fs::metadata`]: https://doc.rust-lang.org/std/fs/fn.metadata.html
+    /// [`std::fs::remove_file`]: https://doc.rust-lang.org/std/fs/fn.remove_file.html
     /// [`std::fs::remove_dir`]: https://doc.rust-lang.org/std/fs/fn.remove_dir.html
-	pub fn clean() -> Result<(), crate::errors::PreexplorerError> {
-		let path = "./target/preexplorer";
-		match std::fs::metadata(path) {
-			Err(e) => {
-				match e.kind() {
-					std::io::ErrorKind::NotFound => Ok(()),
-					_ => Err(crate::errors::PreexplorerError::Removing(
-								e, 
-								String::from("Could not query the relevant directory.")
-							)
-						),
-				}
-			},
-			Ok(_) => std::fs::remove_dir_all(path).map_err(|e| 
-					crate::errors::PreexplorerError::Removing(
-						e,
-						String::from("Could not remove the relevant directory.")
-					)
-				),
-		}
-	}
+    pub fn clean() -> Result<(), crate::errors::PreexplorerError> {
+        let path = "./target/preexplorer";
+        match std::fs::metadata(path) {
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::NotFound => Ok(()),
+                _ => Err(crate::errors::PreexplorerError::Removing(
+                    e,
+                    String::from("Could not query the relevant directory."),
+                )),
+            },
+            Ok(_) => std::fs::remove_dir_all(path).map_err(|e| {
+                crate::errors::PreexplorerError::Removing(
+                    e,
+                    String::from("Could not remove the relevant directory."),
+                )
+            }),
+        }
+    }
 }
 
 pub use self::configuration::{Configuration, Style};
 pub use self::constants::{DATA_DIR, PLOT_DIR};
 pub use self::data::Data;
 pub use self::density::{Densities, Density};
+pub use self::functions::*;
 pub use self::matrix::{Heatmap, Heatmaps};
 pub use self::process::{
     Process, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, ProcessViolins,
@@ -193,4 +194,3 @@ pub use self::sequence::{
     SequenceViolins, Sequences,
 };
 pub use self::traits::*;
-pub use self::functions::*;
