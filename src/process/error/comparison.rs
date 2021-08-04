@@ -1,4 +1,3 @@
-
 // Structs
 use crate::errors::PreexplorerError;
 
@@ -20,6 +19,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [ProcessError]: struct.ProcessError.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProcessErrors<T>
 where
     T: Display + Clone,

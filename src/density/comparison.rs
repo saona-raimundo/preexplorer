@@ -18,6 +18,7 @@ use core::ops::{Add, AddAssign};
 /// ```
 ///
 /// [Density]: struct.Density.html
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Clone)]
 pub struct Densities<T>
 where

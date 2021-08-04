@@ -27,9 +27,10 @@ pub mod comparison;
 ///     ])
 ///     .plot("my_identifier").unwrap();
 /// ```
-/// 
+///
 /// [Density]: struct.Density.html
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Density<T>
 where
     T: Display + Clone,
@@ -139,7 +140,7 @@ where
     /// # Remarks
     ///
     /// The number of bins is controlled in gnuplot. Refer to the [gnuplot documentation],
-    /// you want to search for the `bins`, under the `Data` section. 
+    /// you want to search for the `bins`, under the `Data` section.
     ///
     /// [gnuplot documentation]: http://www.gnuplot.info/documentation.html
     ///
@@ -218,7 +219,7 @@ where
         if self.realizations.is_empty() {
             eprintln!("Warning: There are no realizations.");
         }
-        
+
         let mut raw_data = String::new();
         for value in self.realizations.clone() {
             raw_data.push_str(&format!("{}\n", value));
@@ -237,12 +238,10 @@ where
     ///
     /// Only works for real numbers.
     fn plot_script(&self) -> String {
-
         // Gnuplot script
         let mut gnuplot_script = self.opening_plot_script();
         gnuplot_script += "set zeroaxis\n";
-        gnuplot_script +=
-            "# Warning: this script only works when the data are real numbers. \n\n";
+        gnuplot_script += "# Warning: this script only works when the data are real numbers. \n\n";
         gnuplot_script += "set style fill solid 0.5\n\n";
 
         // Ploting cloud, pdf, cdf and/or bins
@@ -250,8 +249,7 @@ where
 
         gnuplot_script += "plot ";
         if self.cloud() {
-            gnuplot_script +=
-                &format!("{:?} using 1:(0.25*rand(0)-.35)", self.data_path(),);
+            gnuplot_script += &format!("{:?} using 1:(0.25*rand(0)-.35)", self.data_path(),);
             if self.pdf() || self.cdf() || self.bins() {
                 gnuplot_script += ", \\\n\t ";
             }

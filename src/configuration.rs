@@ -19,6 +19,7 @@ pub use plot::{style::Style, *};
 ///
 /// [Configurable]: trait.Configurable.html
 #[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Configuration {
     save_config: crate::configuration::save::SaveConfiguration,
     plot_config: crate::configuration::plot::PlotConfiguration,
@@ -94,14 +95,13 @@ impl crate::traits::Configurable for Configuration {
             .set_rangey((f64::from(down), f64::from(up)));
         self
     }
-    fn set_style<S>(&mut self, style: S) -> &mut Self
+    fn set_style<S>(&mut self, style: S) -> Result<&mut Self, <S as TryInto<style::Style>>::Error>
     where
         S: TryInto<crate::configuration::plot::style::Style>,
-        <S as TryInto<style::Style>>::Error: Debug,
     {
-        let style: Style = style.try_into().unwrap();
+        let style: Style = style.try_into()?;
         self.plot_config.set_style(style);
-        self
+        Ok(self)
     }
     fn set_dashtype(&mut self, dashtype: usize) -> &mut Self {
         self.plot_config.set_dashtype(dashtype);
@@ -407,17 +407,18 @@ mod tests {
         assert_eq!(config.yrange(), Some((4.0, 3.0)));
     }
 
-    // #[test]
-    // fn style() {
-    //     use crate::configuration::plot::style::Style;
-    //     let mut config = Configuration::default();
-    //     assert_eq!(config.style(), &Style::Default);
+    #[test]
+    fn style() -> anyhow::Result<()> {
+        use crate::configuration::plot::style::Style;
+        let mut config = Configuration::default();
+        assert_eq!(config.style(), &Style::Default);
 
-    //     config.set_style("linespoints");
-    //     assert_eq!(config.style(), &Style::Linespoints);
-    //     config.set_style(9);
-    //     assert_eq!(config.style(), &Style::Boxes);
-    // }
+        config.set_style("linespoints")?;
+        assert_eq!(config.style(), &Style::Linespoints);
+        config.set_style(9)?;
+        assert_eq!(config.style(), &Style::Boxes);
+        Ok(())
+    }
 
     #[test]
     fn tics() {

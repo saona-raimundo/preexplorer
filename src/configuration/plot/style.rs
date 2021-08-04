@@ -23,7 +23,7 @@ use strum::{AsRefStr, Display, EnumCount, EnumIter, EnumString, EnumVariantNames
     EnumVariantNames,
     IntoStaticStr,
 )]
-// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Style {
     /// Default "default" or 0
     #[strum(ascii_case_insensitive)]
@@ -38,7 +38,7 @@ pub enum Style {
     Points,
     /// Points and lines together "-+-" or "linepoints" or 3
     #[strum(ascii_case_insensitive)]
-    #[strum(serialize = "linepoints", serialize = "-+-")]
+    #[strum(serialize = "linespoints", serialize = "-+-")]
     Linespoints,
     /// Vertical line per data point "|" or "impulses" or 4
     #[strum(ascii_case_insensitive)]
@@ -109,23 +109,23 @@ mod tests {
 
     #[test]
     fn from_str() {
-        let s = "linepoints";
+        let s = "linespoints";
         let style = Style::from_str(s).unwrap();
         assert_eq!(style, Style::Linespoints);
     }
 
-    // #[cfg(feature = "serde")]
-    // #[test]
-    // fn serde() -> Result<(), ron::Error> {
-    //     // Serializing
-    //     let style = Style::default();
-    //     let string = ron::ser::to_string(&style)?;
-    //     assert_eq!(string, "Default");
-    //     // Deserializing
-    //     let string = "Default";
-    //     let style: Style = ron::de::from_str(string)?;
-    //     assert_eq!(style, Style::default());
+    #[cfg(feature = "use-serde")]
+    #[test]
+    fn serde() -> Result<(), ron::Error> {
+        // Serializing
+        let style = Style::default();
+        let string = ron::ser::to_string(&style)?;
+        assert_eq!(string, "Default");
+        // Deserializing
+        let string = "Default";
+        let style: Style = ron::de::from_str(string)?;
+        assert_eq!(style, Style::default());
 
-    //     Ok(())
-    // }
+        Ok(())
+    }
 }

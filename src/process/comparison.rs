@@ -19,6 +19,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [Process]: struct.Process.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Processes<T, S>
 where
     T: Display + Clone,

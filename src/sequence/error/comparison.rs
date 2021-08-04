@@ -19,6 +19,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [SequenceError]: struct.SequenceError.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SequenceErrors {
     data_set: Vec<crate::sequence::error::SequenceError>,
     config: crate::configuration::Configuration,

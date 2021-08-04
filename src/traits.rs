@@ -113,7 +113,6 @@
 // Types
 use crate::errors::PreexplorerError;
 use core::convert::TryInto;
-use core::fmt::Debug;
 use std::ffi::OsStr;
 use std::path::Path;
 
@@ -377,13 +376,15 @@ pub trait Configurable {
     /// let seq = (0..10).preexplore();
     /// assert_eq!(seq.style().to_string(), "Default".to_string());
     /// ```
-    fn set_style<S>(&mut self, style: S) -> &mut Self
+    fn set_style<S>(
+        &mut self,
+        style: S,
+    ) -> Result<&mut Self, <S as TryInto<crate::configuration::plot::style::Style>>::Error>
     where
         S: TryInto<crate::configuration::plot::style::Style>,
-        <S as TryInto<crate::configuration::plot::style::Style>>::Error: Debug,
     {
-        self.configuration_mut().set_style(style);
-        self
+        self.configuration_mut().set_style(style)?;
+        Ok(self)
     }
 
     /// Choose the dashtype for the plot.

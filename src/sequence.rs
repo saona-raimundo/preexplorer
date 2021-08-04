@@ -45,6 +45,7 @@ pub use violin::{SequenceViolin, SequenceViolins};
 /// [new]: struct.Sequence.html#method.new
 
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Sequence<T>
 where
     T: Display + Clone,
@@ -152,7 +153,7 @@ mod tests {
     fn set_style() {
         let data = 0..2;
         let mut seq = Sequence::new(data);
-        seq.set_style("points");
+        seq.set_style("points").unwrap();
 
         assert_eq!(
             &crate::configuration::plot::style::Style::Points,

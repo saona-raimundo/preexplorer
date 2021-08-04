@@ -77,7 +77,7 @@
 //!
 //! # Optional features
 //!
-//! - **`serde`** — Enables [serde](https://crates.io/crates/serde) support.
+//! - **`use-serde`** — Enables [serde](https://crates.io/crates/serde) support.
 
 /// Struct with all configurations for saving and ploting.
 mod configuration;

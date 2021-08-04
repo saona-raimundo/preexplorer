@@ -1,6 +1,4 @@
-- Add serde support
-- Add set_output to plotting configuration and plotting codes
-- 
+- Add `set_output` to plotting configuration and plotting codes
 
 ## Plotters
 

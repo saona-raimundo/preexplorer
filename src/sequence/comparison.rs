@@ -19,6 +19,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [Sequence]: struct.Sequence.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Sequences<T>
 where
     T: Display + Clone,

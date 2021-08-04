@@ -33,6 +33,7 @@ pub use comparison::SequenceErrors;
 ///
 /// [SequenceError]: struct.SequenceError.html
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SequenceError {
     data: Vec<(f64, f64)>,
     config: crate::configuration::Configuration,
@@ -155,7 +156,7 @@ mod tests {
     fn set_style() {
         let data = vec![vec![0., 1.], vec![0., 1., 2.], vec![3., 4., 5.]];
         let mut seq = SequenceError::new(data);
-        seq.set_style("points");
+        seq.set_style("points").unwrap();
 
         assert_eq!(
             &crate::configuration::plot::style::Style::Points,

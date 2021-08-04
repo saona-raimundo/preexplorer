@@ -32,6 +32,7 @@ pub use comparison::ProcessViolins;
 ///
 /// [ProcessViolin]: struct.ProcessViolin.html
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProcessViolin<T, S>
 where
     T: Display + Clone,
@@ -112,7 +113,7 @@ where
         if self.domain.is_empty() {
             eprintln!("Warning: There is no data.");
         }
-        
+
         let mut plotable_data = String::new();
 
         for (time, values) in self.domain.clone().into_iter().zip(self.image.clone()) {
@@ -192,7 +193,7 @@ mod tests {
         let domain = 0..2;
         let image = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let mut seq = ProcessViolin::new(domain, image);
-        seq.set_style("points");
+        seq.set_style("points").unwrap();
 
         assert_eq!(
             &crate::configuration::plot::style::Style::Points,

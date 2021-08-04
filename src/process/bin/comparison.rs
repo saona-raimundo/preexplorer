@@ -25,6 +25,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [ProcessBin]: struct.ProcessBin.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProcessBins<T, S>
 where
     T: Display + Clone,

@@ -6,6 +6,7 @@ use std::path::PathBuf;
 use getset::Getters;
 
 #[derive(Getters, Debug, PartialOrd, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[getset(get = "pub")]
 pub(crate) struct SaveConfiguration {
     path_buf: PathBuf,

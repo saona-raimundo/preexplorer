@@ -20,6 +20,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [Heatmap]: struct.Heatmap.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Heatmaps<T, S, U>
 where
     T: Display + Clone,

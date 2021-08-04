@@ -11,6 +11,7 @@ pub mod style;
 pub use style::*;
 
 #[derive(Getters, Debug, PartialOrd, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[getset(get = "pub")]
 pub(crate) struct PlotConfiguration {
     path_buf: PathBuf,
@@ -230,5 +231,31 @@ impl Default for PlotConfiguration {
             ticsy,
             pause,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn pause() {
+        let mut plot_config = PlotConfiguration::default();
+        plot_config.set_pause(2.);
+        assert_eq!(plot_config.pause(), &Some(2.));
+    }
+
+    #[cfg(feature = "use-serde")]
+    #[test]
+    fn serde() -> Result<(), ron::Error> {
+        // Serializing
+        let plot_config = PlotConfiguration::default();
+        let string = ron::ser::to_string(&plot_config)?;
+        assert_eq!(string, "(path_buf:\"target\\\\preexplorer\\\\plots\\\\none.gnu\",title:None,logx:None,logy:None,labelx:None,labely:None,rangex:None,rangey:None,ticsx:Some(\"\"),ticsy:Some(\"\"),style:Default,dashtype:None,pause:Some(-1))");
+        // Deserializing
+        let string = "(path_buf:\"target\\\\preexplorer\\\\plots\\\\none.gnu\",title:None,logx:None,logy:None,labelx:None,labely:None,rangex:None,rangey:None,ticsx:Some(\"\"),ticsy:Some(\"\"),style:Default,dashtype:None,pause:Some(-1))";
+        let style: PlotConfiguration = ron::de::from_str(string)?;
+        assert_eq!(style, PlotConfiguration::default());
+
+        Ok(())
     }
 }

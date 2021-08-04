@@ -46,6 +46,7 @@ pub use comparison::Heatmaps;
 /// [Heatmap]: struct.Heatmap.html
 /// [pm3d documentation]: http://gnuplot.sourceforge.net/demo/pm3d.html
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Heatmap<T, S, U>
 where
     T: Display + Clone,

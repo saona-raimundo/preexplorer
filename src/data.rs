@@ -32,6 +32,7 @@ use core::fmt::Display;
 ///
 /// [plot_later]: trait.Plotable.html#method.plot_later
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Data<T>
 where
     T: Display,
@@ -110,9 +111,10 @@ where
         self.plot_later(id)?;
 
         let message = format!("Tried to plot general data: do it directly with gnuplot. A preliminar gnuplot script is located in {:?}", self.plot_path());
-        Err(PreexplorerError::Plotting(
-            std::io::Error::new(std::io::ErrorKind::Other, message),
-        ))
+        Err(PreexplorerError::Plotting(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            message,
+        )))
     }
 
     fn plot_script(&self) -> String {
@@ -127,5 +129,26 @@ where
         gnuplot_script += &self.ending_plot_script();
 
         gnuplot_script
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() {
+        Data::new([1], 1);
+    }
+
+    #[cfg(feature = "use-serde")]
+    #[test]
+    fn serde() -> Result<(), ron::Error> {
+        let data = Data::new([1], 1);
+        // Serializing
+        let string = ron::ser::to_string(&data)?;
+        // Deserializing
+        let style: Data<_> = ron::de::from_str(string)?;
+        Ok(())
     }
 }

@@ -1,8 +1,10 @@
 # Changelog
 
-## 0.4.2 [ongoing]
+## 0.5.1 [ongoing]
 
 - Doc: correcting an image
+- More traits for `Style` and be more careful with conversions
+- Adding `serde` support 
 
 ## 0.4.1
 

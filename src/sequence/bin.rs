@@ -36,6 +36,7 @@ pub use comparison::SequenceBins;
 ///
 /// [SequenceBin]: struct.SequenceBin.html
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SequenceBin<T>
 where
     T: Display + Clone,
@@ -56,8 +57,8 @@ where
     /// To change the binwidth, please refer to the gnuplot script generated.
     /// By construction, a fixed binwidth is needed. This is okay in most of the cases, since it gives consistency and
     /// allows plotting constant values. If you want to change it, please go to the gnuplot script.
-    /// 
-    /// Negative binwidths are handled by gnuplot. 
+    ///
+    /// Negative binwidths are handled by gnuplot.
     /// This crate simply prints the binwidth in the correct place in the gnuplot script generated, so
     /// if you use a value less or equal to zero gnuplot will resolve this issue by using a default behaviour.
     ///
@@ -185,7 +186,7 @@ mod tests {
         let data = (0..2).map(|i| -> Vec<u64> { (0..4).map(|j| j + i).collect() });
         let binwidth = 1;
         let mut seq = SequenceBin::new(data, binwidth);
-        seq.set_style("points");
+        seq.set_style("points").unwrap();
 
         assert_eq!(
             &crate::configuration::plot::style::Style::Points,

@@ -20,6 +20,7 @@ use core::ops::{Add, AddAssign};
 ///
 /// [SequenceViolin]: struct.SequenceViolin.html
 #[derive(Debug, PartialEq)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SequenceViolins<T>
 where
     T: Display + Clone,

@@ -44,6 +44,7 @@ pub use violin::{ProcessViolin, ProcessViolins};
 /// [Process]: struct.Process.html
 /// [new]: struct.Process.html#method.new
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Process<T, S>
 where
     T: Display + Clone,
