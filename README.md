@@ -111,3 +111,8 @@ See [Changelog](https://github.com/saona-raimundo/preexplorer/blob/master/Change
 # References 
 
 A nice overview of what a good plot should look like: https://serialmentor.com/dataviz/
+
+# For the reader
+
+Has this project been useful to you? How? :)
+Let me know through a github issue!
