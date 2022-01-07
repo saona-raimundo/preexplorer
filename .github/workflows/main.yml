@@ -1,0 +1,58 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+defaults:
+  run:
+    shell: bash
+
+# Cancel any in-flight jobs for the same PR/branch so there's only one active
+# at a time
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        mode: [debug, release]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Rust
+      run: rustup update stable --no-self-update && rustup default stable
+      
+    - if: matrix.mode == 'release'
+      name: Test release build
+      run: cargo test --workspace --release
+
+    - if: matrix.mode != 'release'
+      name: Test debug build
+      run: cargo test --workspace
+
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install Rust
+      run: rustup update stable && rustup default stable && rustup component add rustfmt
+
+    - name: Format source code
+      run: cargo fmt -- --check
+
+    - name: Format test module source code
+      run: cargo fmt -- --check
