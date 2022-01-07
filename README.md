@@ -9,7 +9,7 @@
 
 Easy plotter and saver of simple data. Handy tool for development stage or small computational projects. Save data, have a quick view and an initial [gnuplot](http://www.gnuplot.info/) script to plot it. 
 
-If you are looking for a pure Rust plotter, check out [plotters](https://crates.io/crates/plotters).
+If you are looking for a pure Rust plotter, check out [`plotters`](https://crates.io/crates/plotters).
 
 # Purpose
 
