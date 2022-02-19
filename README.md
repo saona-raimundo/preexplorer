@@ -74,6 +74,9 @@ Therefore, to run it in gnuplot (and get the plot again), run from the console
 ## Heatmaps
 <a href="https://github.com/saona-raimundo/preexplorer/blob/master/examples/heatmap/main.rs"><img src="examples/heatmap/heatmap.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/saona-raimundo/preexplorer/blob/master/examples/heatmaps/main.rs"><img src="examples/heatmaps/heatmaps.png" class="galleryItem" width=200px></img></a>
 
+## Ternaries
+<a href="https://github.com/saona-raimundo/preexplorer/blob/master/examples/ternary/main.rs"><img src="examples/ternary/ternary.png" class="galleryItem" width=200px></img></a>	<a href="https://github.com/saona-raimundo/preexplorer/blob/master/examples/ternaries/main.rs"><img src="examples/ternaries/ternaries.png" class="galleryItem" width=200px></img></a>
+
 For more, see the folder [examples](https://github.com/saona-raimundo/preexplorer/tree/master/examples). 
 
 # Installation
@@ -116,3 +119,4 @@ A nice overview of what a good plot should look like: https://serialmentor.com/d
 
 Has this project been useful to you? How? :)
 Let me know through a github issue!
+

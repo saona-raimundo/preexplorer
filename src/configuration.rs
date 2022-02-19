@@ -69,12 +69,20 @@ impl crate::traits::Configurable for Configuration {
         self.plot_config.set_logy(logy.into());
         self
     }
+    fn set_logz<N: Into<f64>>(&mut self, logz: N) -> &mut Self {
+        self.plot_config.set_logz(logz.into());
+        self
+    }
     fn set_labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
         self.plot_config.set_labelx(labelx.to_string());
         self
     }
     fn set_labely<S: Display>(&mut self, labely: S) -> &mut Self {
         self.plot_config.set_labely(labely.to_string());
+        self
+    }
+    fn set_labelz<S: Display>(&mut self, labelz: S) -> &mut Self {
+        self.plot_config.set_labelz(labelz.to_string());
         self
     }
     fn set_rangex<S, T>(&mut self, left: S, right: T) -> &mut Self
@@ -93,6 +101,15 @@ impl crate::traits::Configurable for Configuration {
     {
         self.plot_config
             .set_rangey((f64::from(down), f64::from(up)));
+        self
+    }
+    fn set_rangez<S, T>(&mut self, down: S, up: T) -> &mut Self
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.plot_config
+            .set_rangez((f64::from(down), f64::from(up)));
         self
     }
     fn set_style<S>(&mut self, style: S) -> Result<&mut Self, <S as TryInto<style::Style>>::Error>
@@ -125,6 +142,15 @@ impl crate::traits::Configurable for Configuration {
         self.plot_config.set_ticsy(ticsy.map(|t| t.to_string()));
         self
     }
+    fn set_ticsz<T, S>(&mut self, ticsz: T) -> &mut Self
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        let ticsz: Option<S> = ticsz.into();
+        self.plot_config.set_ticsz(ticsz.map(|t| t.to_string()));
+        self
+    }
     fn set_pause<T, S>(&mut self, pause: T) -> &mut Self
     where
         T: Into<Option<S>>,
@@ -151,17 +177,26 @@ impl crate::traits::Configurable for Configuration {
     fn logy(&self) -> Option<f64> {
         *self.plot_config.logy()
     }
+    fn logz(&self) -> Option<f64> {
+        *self.plot_config.logz()
+    }
     fn labelx(&self) -> Option<&String> {
         self.plot_config.labelx().as_ref()
     }
     fn labely(&self) -> Option<&String> {
         self.plot_config.labely().as_ref()
     }
+    fn labelz(&self) -> Option<&String> {
+        self.plot_config.labelz().as_ref()
+    }
     fn rangex(&self) -> Option<(f64, f64)> {
         *self.plot_config.rangex()
     }
     fn rangey(&self) -> Option<(f64, f64)> {
         *self.plot_config.rangey()
+    }
+    fn rangez(&self) -> Option<(f64, f64)> {
+        *self.plot_config.rangez()
     }
     fn style(&self) -> &crate::configuration::plot::style::Style {
         self.plot_config.style()
@@ -174,6 +209,9 @@ impl crate::traits::Configurable for Configuration {
     }
     fn ticsy(&self) -> Option<&String> {
         self.plot_config.ticsy().as_ref()
+    }
+    fn ticsz(&self) -> Option<&String> {
+        self.plot_config.ticsz().as_ref()
     }
     fn pause(&self) -> Option<f64> {
         *self.plot_config.pause()

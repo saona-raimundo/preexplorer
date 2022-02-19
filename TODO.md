@@ -1,5 +1,14 @@
 ## Request
 
+### [Ternary plot](https://en.wikipedia.org/wiki/Ternary_plot)
+
+- Hardcode the gnuplot plot in ternary and ternaries.
+	- [Drawing in gnuplot](https://staff.aist.go.jp/a.noda/programs/ternary/ternary-en.html)
+	- [stackoverflow](https://stackoverflow.com/questions/69248239/how-to-make-a-ternary-diagram-with-gnuplot)
+- Testear ternary plots
+- Chequear imagenes del README
+- publish
+
 ### Scatter plot
 
 - New scatter plot example
@@ -26,3 +35,4 @@ Add features for other libraries (other than the main library)
 ## Audify
 
 - [dasp](https://crates.io/crates/dasp)
+

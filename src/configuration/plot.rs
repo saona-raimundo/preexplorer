@@ -18,12 +18,16 @@ pub(crate) struct PlotConfiguration {
     title: Option<String>,
     logx: Option<f64>,
     logy: Option<f64>,
+    logz: Option<f64>,
     labelx: Option<String>,
     labely: Option<String>,
+    labelz: Option<String>,
     rangex: Option<(f64, f64)>,
     rangey: Option<(f64, f64)>,
+    rangez: Option<(f64, f64)>,
     ticsx: Option<String>,
     ticsy: Option<String>,
+    ticsz: Option<String>,
     style: Style,
     dashtype: Option<usize>,
     pause: Option<f64>,
@@ -73,6 +77,15 @@ impl PlotConfiguration {
             }
         }
 
+        match self.labelz() {
+            Some(labelz) => {
+                gnuplot_script += &format!("set zlabel \"{}\"\n", labelz);
+            }
+            None => {
+                gnuplot_script += "set zlabel \"\"\n";
+            }
+        }
+
         if let Some(logx) = &self.logx() {
             if *logx <= 0.0 {
                 gnuplot_script += "set logscale x\n";
@@ -87,12 +100,22 @@ impl PlotConfiguration {
                 gnuplot_script += &format!("set logscale y {}\n", logy);
             }
         }
+        if let Some(logz) = &self.logz() {
+            if *logz <= 0.0 {
+                gnuplot_script += "set logscale z\n";
+            } else {
+                gnuplot_script += &format!("set logscale z {}\n", logy);
+            }
+        }
 
         if let Some(rangex) = &self.rangex() {
             gnuplot_script += &format!("set xrange [{}:{}]\n", rangex.0, rangex.1);
         }
         if let Some(rangey) = &self.rangey() {
             gnuplot_script += &format!("set yrange [{}:{}]\n", rangey.0, rangey.1);
+        }
+        if let Some(rangez) = &self.rangez() {
+            gnuplot_script += &format!("set zrange [{}:{}]\n", rangez.0, rangez.1);
         }
 
         match self.ticsx() {
@@ -103,13 +126,20 @@ impl PlotConfiguration {
                 gnuplot_script += "unset xtics\n";
             }
         }
-
         match self.ticsy() {
             Some(ticsy) => {
                 gnuplot_script += &format!("set ytics {}\n", ticsy);
             }
             None => {
                 gnuplot_script += "unset ytics\n";
+            }
+        }
+        match self.ticsz() {
+            Some(ticsz) => {
+                gnuplot_script += &format!("set ztics {}\n", ticsy);
+            }
+            None => {
+                gnuplot_script += "unset ztics\n";
             }
         }
 
@@ -138,6 +168,10 @@ impl PlotConfiguration {
         self.logy = Some(logy);
         self
     }
+    pub(crate) fn set_logz(&mut self, logz: f64) -> &mut Self {
+        self.logz = Some(logz);
+        self
+    }
     pub(crate) fn set_labelx(&mut self, labelx: String) -> &mut Self {
         self.labelx = Some(labelx);
         self
@@ -146,12 +180,20 @@ impl PlotConfiguration {
         self.labely = Some(labely);
         self
     }
+    pub(crate) fn set_labelz(&mut self, labelz: String) -> &mut Self {
+        self.labelz = Some(labelz);
+        self
+    }
     pub(crate) fn set_rangex(&mut self, rangex: (f64, f64)) -> &mut Self {
         self.rangex = Some(rangex);
         self
     }
     pub(crate) fn set_rangey(&mut self, rangey: (f64, f64)) -> &mut Self {
         self.rangey = Some(rangey);
+        self
+    }
+    pub(crate) fn set_rangez(&mut self, rangez: (f64, f64)) -> &mut Self {
+        self.rangez = Some(rangez);
         self
     }
     pub(crate) fn set_style(&mut self, style: Style) -> &mut Self {
@@ -174,6 +216,13 @@ impl PlotConfiguration {
         T: Into<Option<String>>,
     {
         self.ticsy = ticsy.into();
+        self
+    }
+    pub(crate) fn set_ticsz<T>(&mut self, ticsz: T) -> &mut Self
+    where
+        T: Into<Option<String>>,
+    {
+        self.ticsz = ticsz.into();
         self
     }
     pub(crate) fn set_pause<T>(&mut self, pause: T) -> &mut Self
@@ -206,14 +255,18 @@ impl Default for PlotConfiguration {
         let title = None;
         let logx = None;
         let logy = None;
+        let logz = None;
         let labelx = None;
         let labely = None;
+        let labelz = None;
         let rangex = None;
         let rangey = None;
+        let rangez = None;
         let style = Style::Default;
         let dashtype = None;
         let ticsx = Some(String::from(""));
         let ticsy = Some(String::from(""));
+        let ticsz = Some(String::from(""));
         let pause = Some(-1.0);
 
         PlotConfiguration {
@@ -221,14 +274,18 @@ impl Default for PlotConfiguration {
             title,
             logx,
             logy,
+            logz,
             rangex,
             rangey,
+            rangez,
             labelx,
             labely,
+            labelz,
             style,
             dashtype,
             ticsx,
             ticsy,
+            ticsz,
             pause,
         }
     }

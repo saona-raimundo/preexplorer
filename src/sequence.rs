@@ -32,7 +32,7 @@ pub use violin::{SequenceViolin, SequenceViolins};
 /// Compare [Sequence] structs.
 /// ```no_run
 /// use preexplorer::prelude::*;
-/// pre::Sequences::new(vec![
+/// pre::Sequences::new([
 ///     (0..10).preexplore(),
 ///     (0..10).preexplore(),
 ///     ])

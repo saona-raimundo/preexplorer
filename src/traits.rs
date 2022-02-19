@@ -220,6 +220,16 @@ pub trait Configurable {
         self
     }
 
+    /// Set logaritmic scale in the z axis.
+    ///
+    /// # Remark
+    ///
+    /// The z axis that will be ploted should not include zero.
+    fn set_logz<N: Into<f64>>(&mut self, logz: N) -> &mut Self {
+        self.configuration_mut().set_logz(logz.into());
+        self
+    }
+
     /// Set logaritmic scale in the x axis.
     ///
     /// # Remark
@@ -240,6 +250,16 @@ pub trait Configurable {
         self.set_logy(logy)
     }
 
+    /// Set logaritmic scale in the z axis.
+    ///
+    /// # Remark
+    ///
+    /// The z axis that will be ploted should not include zero.
+    /// This is a mirror method of ``logz``, for convinience.  
+    fn set_zlog<N: Into<f64>>(&mut self, logz: N) -> &mut Self {
+        self.set_logz(logz)
+    }
+
     /// Set a label in the x axis.
     fn set_labelx<S: Display>(&mut self, labelx: S) -> &mut Self {
         self.configuration_mut().set_labelx(labelx.to_string());
@@ -249,6 +269,12 @@ pub trait Configurable {
     /// Set a label in the y axis.
     fn set_labely<S: Display>(&mut self, labely: S) -> &mut Self {
         self.configuration_mut().set_labely(labely.to_string());
+        self
+    }
+
+    /// Set a label in the z axis.
+    fn set_labelz<S: Display>(&mut self, labelz: S) -> &mut Self {
+        self.configuration_mut().set_labelz(labelz.to_string());
         self
     }
 
@@ -268,6 +294,15 @@ pub trait Configurable {
     /// This is a mirror method of ``labely``, for convinience.
     fn set_ylabel<S: Display>(&mut self, labely: S) -> &mut Self {
         self.set_labely(labely)
+    }
+
+    /// Set a label in the z axis.
+    ///
+    /// # Remarks
+    ///
+    /// This is a mirror method of ``labelz``, for convinience.
+    fn set_zlabel<S: Display>(&mut self, labelz: S) -> &mut Self {
+        self.set_labelz(labely)
     }
 
     /// Set the range in the x axis. If left > right, then the x axis is inverted.
@@ -290,6 +325,16 @@ pub trait Configurable {
         self
     }
 
+    /// Set the range in the z axis. If down > up, then the z axis is inverted.
+    fn set_rangey<S, T>(&mut self, down: S, up: T) -> &mut Self
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.configuration_mut().set_rangez(down, up);
+        self
+    }
+
     /// Set the range in the x axis. If left > right, then the x axis is inverted.
     ///
     /// # Remarks
@@ -309,6 +354,19 @@ pub trait Configurable {
     ///
     /// This is a mirror method of ``rangey``, for convinience.
     fn set_yrange<S, T>(&mut self, down: S, up: T) -> &mut Self
+    where
+        f64: From<S>,
+        f64: From<T>,
+    {
+        self.set_rangey(down, up)
+    }
+
+    /// Set the range in the z axis. If down > up, then the y axis is inverted.
+    ///
+    /// # Remarks
+    ///
+    /// This is a mirror method of ``rangez``, for convinience.
+    fn set_zrange<S, T>(&mut self, down: S, up: T) -> &mut Self
     where
         f64: From<S>,
         f64: From<T>,
@@ -515,6 +573,18 @@ pub trait Configurable {
         self
     }
 
+
+    /// Control tics in the z axis. Passing ``""`` shows no tics.
+    /// See gnuplot documentation for a correct format.
+    fn set_ticsz<T, S>(&mut self, ticsz: T) -> &mut Self
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        self.configuration_mut().set_ticsz(ticsz);
+        self
+    }
+
     /// Control tics in the x axis. See gnuplot documentation for a correct format.
     ///
     /// # Remarks
@@ -539,6 +609,19 @@ pub trait Configurable {
         S: Display,
     {
         self.set_ticsy(ticsy)
+    }
+
+    /// Control tics in the z axis. See gnuplot documentation for a correct format.
+    ///
+    /// # Remarks
+    ///
+    /// This is a mirror method of ``ticsz``, for convinience.
+    fn set_ztics<T, S>(&mut self, ticsz: T) -> &mut Self
+    where
+        T: Into<Option<S>>,
+        S: Display,
+    {
+        self.set_ticsz(ticsy)
     }
 
     /// Control the time for which the plot is in the screen. The unit is seconds.
@@ -593,11 +676,17 @@ pub trait Configurable {
     fn logy(&self) -> Option<f64> {
         self.configuration().logy()
     }
+    fn logz(&self) -> Option<f64> {
+        self.configuration().logz()
+    }
     fn xlog(&self) -> Option<f64> {
         self.logx()
     }
     fn ylog(&self) -> Option<f64> {
         self.logy()
+    }
+    fn zlog(&self) -> Option<f64> {
+        self.logz()
     }
     fn labelx(&self) -> Option<&String> {
         self.configuration().labelx()
@@ -605,11 +694,17 @@ pub trait Configurable {
     fn labely(&self) -> Option<&String> {
         self.configuration().labely()
     }
+    fn labelz(&self) -> Option<&String> {
+        self.configuration().labelz()
+    }
     fn xlabel(&self) -> Option<&String> {
         self.labelx()
     }
     fn ylabel(&self) -> Option<&String> {
         self.labely()
+    }
+    fn zlabel(&self) -> Option<&String> {
+        self.labelz()
     }
     fn rangex(&self) -> Option<(f64, f64)> {
         self.configuration().rangex()
@@ -617,11 +712,17 @@ pub trait Configurable {
     fn rangey(&self) -> Option<(f64, f64)> {
         self.configuration().rangey()
     }
+    fn rangez(&self) -> Option<(f64, f64)> {
+        self.configuration().rangez()
+    }
     fn xrange(&self) -> Option<(f64, f64)> {
         self.rangex()
     }
     fn yrange(&self) -> Option<(f64, f64)> {
         self.rangey()
+    }
+    fn zrange(&self) -> Option<(f64, f64)> {
+        self.rangez()
     }
     fn plot_extension(&self) -> Option<&OsStr> {
         self.configuration().plot_extension()
@@ -659,14 +760,20 @@ pub trait Configurable {
     fn ticsx(&self) -> Option<&String> {
         self.configuration().ticsx()
     }
-    fn xtics(&self) -> Option<&String> {
-        self.ticsx()
-    }
     fn ticsy(&self) -> Option<&String> {
         self.configuration().ticsy()
     }
+    fn ticsz(&self) -> Option<&String> {
+        self.configuration().ticsz()
+    }
+    fn xtics(&self) -> Option<&String> {
+        self.ticsx()
+    }
     fn ytics(&self) -> Option<&String> {
         self.ticsy()
+    }
+    fn ztics(&self) -> Option<&String> {
+        self.ticsz()
     }
     fn pause(&self) -> Option<f64> {
         self.configuration().pause()
