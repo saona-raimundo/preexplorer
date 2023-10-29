@@ -104,7 +104,7 @@ impl PlotConfiguration {
             if *logz <= 0.0 {
                 gnuplot_script += "set logscale z\n";
             } else {
-                gnuplot_script += &format!("set logscale z {}\n", logy);
+                gnuplot_script += &format!("set logscale z {}\n", logz);
             }
         }
 
@@ -136,7 +136,7 @@ impl PlotConfiguration {
         }
         match self.ticsz() {
             Some(ticsz) => {
-                gnuplot_script += &format!("set ztics {}\n", ticsy);
+                gnuplot_script += &format!("set ztics {}\n", ticsz);
             }
             None => {
                 gnuplot_script += "unset ztics\n";

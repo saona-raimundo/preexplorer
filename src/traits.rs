@@ -302,7 +302,7 @@ pub trait Configurable {
     ///
     /// This is a mirror method of ``labelz``, for convinience.
     fn set_zlabel<S: Display>(&mut self, labelz: S) -> &mut Self {
-        self.set_labelz(labely)
+        self.set_labelz(labelz)
     }
 
     /// Set the range in the x axis. If left > right, then the x axis is inverted.
@@ -326,7 +326,7 @@ pub trait Configurable {
     }
 
     /// Set the range in the z axis. If down > up, then the z axis is inverted.
-    fn set_rangey<S, T>(&mut self, down: S, up: T) -> &mut Self
+    fn set_rangez<S, T>(&mut self, down: S, up: T) -> &mut Self
     where
         f64: From<S>,
         f64: From<T>,
@@ -371,7 +371,7 @@ pub trait Configurable {
         f64: From<S>,
         f64: From<T>,
     {
-        self.set_rangey(down, up)
+        self.set_rangez(down, up)
     }
 
     /// Set an extension for the data file.
@@ -621,7 +621,7 @@ pub trait Configurable {
         T: Into<Option<S>>,
         S: Display,
     {
-        self.set_ticsz(ticsy)
+        self.set_ticsz(ticsz)
     }
 
     /// Control the time for which the plot is in the screen. The unit is seconds.

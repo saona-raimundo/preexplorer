@@ -93,8 +93,6 @@ mod matrix;
 mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
-/// Ternary plots.
-mod ternary;
 /// Traits for easy use or self implmentation.
 pub mod traits;
 /// All you ussually need.
@@ -195,5 +193,4 @@ pub use self::sequence::{
     Sequence, SequenceBin, SequenceBins, SequenceError, SequenceErrors, SequenceViolin,
     SequenceViolins, Sequences,
 };
-pub use self::ternary::{Ternary, Ternaries};
 pub use self::traits::*;
