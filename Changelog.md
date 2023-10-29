@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More traits for `Style` and be more careful with conversions
 - Add `serde` support 
 - Add z axis configuration
+- Add key positioning
+- Add countour plot
 
 ## [0.4.1] - 2021-07-19
 
