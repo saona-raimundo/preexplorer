@@ -85,12 +85,6 @@ For more, see the folder [examples](https://github.com/saona-raimundo/preexplore
 - Add ``preexplorer = "*"`` to your ``Cargo.toml`` file under ``[dependencies]``.
 - I suggest to simply go with ``use preexplorer::prelude::*;`` in your binary, and then use the short-name ``pre::...`` and the ``preexplore`` method directly in iterators and tuple of iterators.
 
-# Future
-
-- [ ] More senses involved in exploration
-  - [ ] Audio
-    - [ ] audify()
-    - [ ] sonify()
 
 # Q & A
 
