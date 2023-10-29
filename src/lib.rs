@@ -93,6 +93,8 @@ mod matrix;
 mod process;
 /// Process indexed by 1, 2, 3, ...
 mod sequence;
+/// 3-dimensional surface.
+mod contour;
 /// Traits for easy use or self implmentation.
 pub mod traits;
 /// All you ussually need.
@@ -185,6 +187,7 @@ pub use self::data::Data;
 pub use self::density::{Densities, Density};
 pub use self::functions::*;
 pub use self::matrix::{Heatmap, Heatmaps};
+pub use self::contour::{Contour};
 pub use self::process::{
     Process, ProcessBin, ProcessBins, ProcessError, ProcessErrors, ProcessViolin, ProcessViolins,
     Processes,
