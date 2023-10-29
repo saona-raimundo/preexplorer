@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More traits for `Style` and be more careful with conversions
 - Add `serde` support 
 - Add z axis configuration
-- Add ternary plot support
 
 ## [0.4.1] - 2021-07-19
 
@@ -24,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correct Style::Point symbol documentation
 - Add a global `preexplorer::clean()` function to remove all generated files 
 
-## [0.3.4] - 2020-11-12 
+## [0.3.4] - 2020-11-12
 
 - Make Style Enum public
 
@@ -77,3 +76,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2020-03-24
 
 - First working version
+
