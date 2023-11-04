@@ -114,4 +114,8 @@ A nice overview of what a good plot should look like: https://serialmentor.com/d
 Has this project been useful to you? How? :)
 Let me know through a github issue!
 
+# Similar crates
+
+- [debug_plotter](https://crates.io/crates/debug_plotter)
+    + Convenient macro to quickly plot variables using pure Rust `plotters` crate
 
