@@ -107,11 +107,18 @@ See [Changelog](https://github.com/saona-raimundo/preexplorer/blob/master/Change
 
 # References
 
-A nice overview of what a good plot should look like: https://serialmentor.com/dataviz/
+- [Overview: What should a good plot look like?](https://serialmentor.com/dataviz/)
+- [Choosing colors blog post](https://www.storytellingwithdata.com/blog/2020/5/6/picking-the-right-colors)
+- [Color scheme designer](https://paletton.com)
+
 
 # For the reader
 
 Has this project been useful to you? How? :)
 Let me know through a github issue!
 
+# Similar crates
+
+- [debug_plotter](https://crates.io/crates/debug_plotter)
+    + Convenient macro to quickly plot variables using pure Rust `plotters` crate
 
