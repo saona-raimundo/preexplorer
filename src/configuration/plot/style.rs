@@ -27,6 +27,7 @@ use strum::{AsRefStr, Display, EnumCount, EnumIter, EnumString, EnumVariantNames
 pub enum Style {
     /// Default "default" or 0
     #[strum(ascii_case_insensitive)]
+    #[strum(serialize = "lines")]
     Default,
     /// Continuous lines "-" or "lines" or 1
     #[strum(ascii_case_insensitive)]
@@ -105,6 +106,7 @@ mod tests {
     fn default() {
         let style = Style::default();
         assert_eq!(style, Style::Default);
+        assert_eq!("lines".to_string(), format!("{}", style));
     }
 
     #[test]
