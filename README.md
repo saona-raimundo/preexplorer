@@ -122,3 +122,4 @@ Let me know through a github issue!
 - [debug_plotter](https://crates.io/crates/debug_plotter)
     + Convenient macro to quickly plot variables using pure Rust `plotters` crate
 
+
