@@ -107,7 +107,7 @@ See [Changelog](https://github.com/saona-raimundo/preexplorer/blob/master/Change
 
 # References
 
-- [Overview: What should a good plot look like?](https://serialmentor.com/dataviz/)
+- [Overview: What should a good plot look like?](https://clauswilke.com/dataviz/)
 - [Choosing colors blog post](https://www.storytellingwithdata.com/blog/2020/5/6/picking-the-right-colors)
 - [Color scheme designer](https://paletton.com)
 
